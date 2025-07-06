@@ -8,3 +8,5 @@ değişkenler çok önemlidir.
 
 
 bugün branchleri öğreniyoruz.
+
+artık son commiti de atıyoruz

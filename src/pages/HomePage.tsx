@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronRight, Star, Clock, Truck, Award, Users, MapPin, Phone, Mail } from 'lucide-react';
+import { ArrowRight, Star, Clock, Truck, Award, Users, MapPin, Phone, Mail, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useDispatch } from 'react-redux';
@@ -15,235 +15,196 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section - Modern Design */}
-      <section className="hero-section bg-animated">
-        <div className="hero-bg"></div>
-        <div className="hero-pattern"></div>
-        
-        <div className="container-modern relative z-10">
+      {/* Hero Section - Spucky's Style */}
+      <section className="relative bg-blue-600 text-white min-h-screen flex items-center overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-20 h-20 bg-white rounded-full"></div>
+          <div className="absolute top-20 right-20 w-16 h-16 bg-yellow-400 rounded-full"></div>
+          <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-red-500 rounded-full"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-screen py-20">
             {/* Left Content */}
-            <div className="space-y-8 animate-fade-in">
-              <div className="space-y-4">
-                <div className="inline-flex items-center space-x-2 bg-white/10 dark:bg-dark-card/10 backdrop-blur-md rounded-full px-4 py-2 text-white/90">
-                  <Star className="w-4 h-4 text-yellow-400" />
-                  <span className="text-sm font-medium">4.9/5 Müşteri Puanı</span>
-                </div>
-                
-                <h1 className="heading-xl text-white">
-                  Lezzet Durağı
-                  <span className="block text-4xl lg:text-5xl mt-4 font-normal text-yellow-300">
-                    Taze & Lezzetli
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h1 className="text-5xl lg:text-7xl font-poppins font-bold leading-tight">
+                  LEZZET DURAĞI
+                  <span className="block text-2xl lg:text-3xl mt-4 font-normal text-yellow-300">
+                    Döner & Makarna
                   </span>
                 </h1>
                 
-                <p className="text-xl lg:text-2xl text-white/90 max-w-lg leading-relaxed">
-                  Geleneksel tariflerle hazırlanan, taze malzemelerle sunulan lezzetli yemeklerimizi keşfedin.
+                <p className="text-lg lg:text-xl text-white/90 max-w-lg leading-relaxed">
+                  Geleneksel tariflerle hazırlanan, taze malzemelerle sunulan lezzetli yemeklerimizi keşfedin. 
+                  Her lokmada kalite ve lezzet garantisi.
                 </p>
               </div>
 
-              {/* Features */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <Clock className="w-8 h-8 mx-auto mb-2 text-yellow-300" />
-                  <p className="text-white/80 text-sm">15 dk</p>
-                  <p className="text-white/60 text-xs">Hazırlama</p>
+              {/* Features List */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-white/90">Taze malzemeler ile hazırlanır</span>
                 </div>
-                <div className="text-center">
-                  <Truck className="w-8 h-8 mx-auto mb-2 text-yellow-300" />
-                  <p className="text-white/80 text-sm">Ücretsiz</p>
-                  <p className="text-white/60 text-xs">Teslimat</p>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-white/90">15 dakikada hazır teslimat</span>
                 </div>
-                <div className="text-center">
-                  <Award className="w-8 h-8 mx-auto mb-2 text-yellow-300" />
-                  <p className="text-white/80 text-sm">%100</p>
-                  <p className="text-white/60 text-xs">Taze</p>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-white/90">Ücretsiz teslimat hizmeti</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-white/90">Hijyenik ve güvenli ortam</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-white/90">%100 müşteri memnuniyeti</span>
                 </div>
               </div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              {/* CTA Button */}
+              <div className="pt-4">
                 <Link to="/menu">
-                  <Button size="lg" className="btn-primary text-lg px-8 py-4">
-                    MENÜYÜ KEŞFET
+                  <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-blue-600 font-bold text-lg px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105">
+                    SİPARİŞ VER
                     <ArrowRight className="ml-2 w-6 h-6" />
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline" className="btn-outline text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-primary-red">
-                  SİPARİŞ VER
-                </Button>
               </div>
             </div>
 
-            {/* Right Content - Food Showcase */}
-            <div className="hidden lg:grid grid-cols-2 gap-6 animate-slide-up">
-              {/* Top Row */}
-              <div className="space-y-6">
-                <div className="card-glass p-6 text-center hover-lift group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span className="text-3xl">🍖</span>
+            {/* Right Content - Food Image */}
+            <div className="hidden lg:flex items-center justify-center">
+              <div className="relative">
+                {/* Main Food Image */}
+                <div className="w-96 h-96 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                  <div className="text-center">
+                    <span className="text-8xl mb-4 block">🍖</span>
+                    <h3 className="text-2xl font-poppins font-bold text-white">Taze Döner</h3>
+                    <p className="text-white/80">Geleneksel tarifler</p>
                   </div>
-                  <h3 className="text-white font-poppins font-semibold mb-2">Döner</h3>
-                  <p className="text-white/70 text-sm">Geleneksel tarifler</p>
                 </div>
                 
-                <div className="card-glass p-6 text-center hover-lift group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span className="text-3xl">🥗</span>
-                  </div>
-                  <h3 className="text-white font-poppins font-semibold mb-2">Salata</h3>
-                  <p className="text-white/70 text-sm">Taze sebzeler</p>
+                {/* Floating Elements */}
+                <div className="absolute -top-4 -left-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-2xl">🥬</span>
                 </div>
-              </div>
-              
-              {/* Bottom Row */}
-              <div className="space-y-6 mt-12">
-                <div className="card-glass p-6 text-center hover-lift group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span className="text-3xl">🍝</span>
-                  </div>
-                  <h3 className="text-white font-poppins font-semibold mb-2">Makarna</h3>
-                  <p className="text-white/70 text-sm">İtalyan usulü</p>
+                <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-2xl">🍅</span>
                 </div>
-                
-                <div className="card-glass p-6 text-center hover-lift group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span className="text-3xl">🥤</span>
-                  </div>
-                  <h3 className="text-white font-poppins font-semibold mb-2">İçecek</h3>
-                  <p className="text-white/70 text-sm">Soğuk & sıcak</p>
+                <div className="absolute top-1/2 -right-8 w-12 h-12 bg-yellow-300 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-xl">🧂</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Floating Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 right-20 w-32 h-32 bg-white/5 rounded-full floating"></div>
-          <div className="absolute bottom-20 left-20 w-24 h-24 bg-yellow-300/10 rounded-full floating" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-white/10 rounded-full floating" style={{ animationDelay: '4s' }}></div>
-        </div>
       </section>
 
-      {/* About Section */}
-      <section className="section-padding bg-white dark:bg-dark-bg">
-        <div className="container-modern">
+      {/* About Us Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6 animate-fade-in">
-              <div className="inline-flex items-center space-x-2 bg-primary-red/10 text-primary-red rounded-full px-4 py-2">
-                <Award className="w-4 h-4" />
-                <span className="text-sm font-medium">Kalite Garantisi</span>
-              </div>
-              
-              <h2 className="heading-lg text-gradient-dark">
-                Geleneksel Lezzetler, Modern Sunum
-              </h2>
-              
-              <p className="text-body text-gray-600 dark:text-dark-text-secondary">
-                Lezzet Durağı olarak, geleneksel tarifleri modern mutfak teknikleriyle birleştirerek 
-                size unutulmaz lezzetler sunuyoruz. Taze malzemeler, uzman şeflerimiz ve 
-                hijyenik ortamımızla her lokmada kaliteyi hissedeceksiniz.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-6">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary-red/10 rounded-lg flex items-center justify-center">
-                    <Users className="w-5 h-5 text-primary-red" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-dark-text">1000+</p>
-                    <p className="text-sm text-gray-600 dark:text-dark-text-secondary">Mutlu Müşteri</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary-yellow/10 rounded-lg flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-primary-yellow" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-dark-text">5+ Yıl</p>
-                    <p className="text-sm text-gray-600 dark:text-dark-text-secondary">Deneyim</p>
-                  </div>
+            {/* Left - Image */}
+            <div className="relative">
+              <div className="w-full h-96 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="text-center">
+                  <span className="text-8xl mb-4 block">🍝</span>
+                  <h3 className="text-2xl font-poppins font-bold text-blue-600">Taze Makarna</h3>
+                  <p className="text-blue-500">İtalyan usulü hazırlanır</p>
                 </div>
               </div>
             </div>
             
-            <div className="relative animate-slide-up">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="card-modern p-6 text-center hover-lift">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-red to-red-600 rounded-xl mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">🍖</span>
-                    </div>
-                    <h3 className="font-poppins font-semibold text-gray-900 dark:text-dark-text">Taze Et</h3>
-                  </div>
-                  <div className="card-modern p-6 text-center hover-lift">
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">🥬</span>
-                    </div>
-                    <h3 className="font-poppins font-semibold text-gray-900 dark:text-dark-text">Organik Sebze</h3>
-                  </div>
-                </div>
-                <div className="space-y-4 mt-8">
-                  <div className="card-modern p-6 text-center hover-lift">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-yellow to-orange-500 rounded-xl mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">🧂</span>
-                    </div>
-                    <h3 className="font-poppins font-semibold text-gray-900 dark:text-dark-text">Doğal Baharat</h3>
-                  </div>
-                  <div className="card-modern p-6 text-center hover-lift">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">💧</span>
-                    </div>
-                    <h3 className="font-poppins font-semibold text-gray-900 dark:text-dark-text">Temiz Su</h3>
-                  </div>
-                </div>
-              </div>
+            {/* Right - Content */}
+            <div className="space-y-6">
+              <h2 className="text-4xl lg:text-5xl font-poppins font-bold text-blue-600">
+                HAKKIMIZDA
+              </h2>
+              
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Lezzet Durağı olarak, 2019 yılından bu yana geleneksel tarifleri modern mutfak teknikleriyle 
+                birleştirerek size unutulmaz lezzetler sunuyoruz. Taze malzemeler, uzman şeflerimiz ve 
+                hijyenik ortamımızla her lokmada kaliteyi hissedeceksiniz.
+              </p>
+              
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Müşteri memnuniyeti bizim için en önemli değerdir. Bu yüzden her yemeğimizi özenle hazırlar, 
+                en kaliteli malzemeleri kullanır ve sizlere en iyi hizmeti sunmaya çalışırız.
+              </p>
+              
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg">
+                DAHA FAZLA BİLGİ
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Products Section */}
-      <section className="section-padding bg-gray-50 dark:bg-dark-card">
-        <div className="container-modern">
-          <div className="text-center mb-16 animate-fade-in">
-            <h2 className="heading-lg text-gradient-dark mb-6">
-              Öne Çıkan Lezzetler
+      {/* Menu Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-poppins font-bold text-blue-600 mb-6">
+              MENÜMÜZ
             </h2>
-            <p className="text-body text-gray-600 dark:text-dark-text-secondary max-w-3xl mx-auto">
-              En çok tercih edilen ve beğenilen yemeklerimizi keşfedin. Her biri özenle hazırlanmış, 
-              taze malzemelerle sunulan lezzetlerimiz.
-            </p>
+            
+            {/* Category Tabs */}
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
+              <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                Tümü
+              </button>
+              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors border border-blue-200">
+                Döner
+              </button>
+              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors border border-blue-200">
+                Makarna
+              </button>
+              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors border border-blue-200">
+                Salata
+              </button>
+              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors border border-blue-200">
+                İçecek
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredItems.map((item, index) => (
-              <div 
-                key={item.id} 
-                className="card-modern overflow-hidden hover-lift group animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="h-64 bg-gradient-to-br from-primary-red to-primary-yellow flex items-center justify-center relative overflow-hidden">
-                  <span className="text-8xl group-hover:scale-110 transition-transform duration-300">
+              <div key={item.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div className="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                  <span className="text-6xl">
                     {item.category === 'doner' ? '🍖' : item.category === 'makarna' ? '🍝' : '🥗'}
                   </span>
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <div className="p-8">
-                  <h3 className="heading-md text-gray-900 dark:text-dark-text mb-3">
+                <div className="p-6">
+                  <h3 className="text-xl font-poppins font-bold text-gray-800 mb-2">
                     {item.name}
                   </h3>
-                  <p className="text-body text-gray-600 dark:text-dark-text-secondary mb-6">
+                  <p className="text-gray-600 mb-4 text-sm">
                     {item.description}
                   </p>
                   <div className="flex justify-between items-center">
-                    <span className="text-3xl font-bold text-gradient">₺{item.price}</span>
+                    <span className="text-2xl font-bold text-blue-600">₺{item.price}</span>
                     <Button 
                       onClick={() => handleAddToCart(item)}
-                      className="btn-primary"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg"
                     >
-                      Sepete Ekle
+                      SİPARİŞ VER
                     </Button>
                   </div>
                 </div>
@@ -253,132 +214,197 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Special Offers Section */}
-      <section className="section-padding bg-white dark:bg-dark-bg">
-        <div className="container-modern">
-          <div className="text-center mb-16 animate-fade-in">
-            <h2 className="heading-lg text-gradient-dark mb-6">
-              Özel Kampanyalar
-            </h2>
-            <p className="text-body text-gray-600 dark:text-dark-text-secondary">
-              Size özel indirimler ve fırsatlar ile lezzetli yemeklerin keyfini çıkarın
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="card-modern overflow-hidden hover-lift group">
-              <div className="bg-gradient-to-br from-primary-red to-red-600 text-white p-8">
-                <h3 className="heading-md mb-2">Öğrenci İndirimi</h3>
-                <p className="text-red-100 text-lg">%20 İndirim</p>
+      {/* Special Deal Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Content */}
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                  Sınırlı Süre
+                </h3>
+                <h2 className="text-4xl lg:text-5xl font-poppins font-bold">
+                  <span className="text-blue-600">GÜNÜN</span>
+                  <span className="block text-gray-800">TEKLİFİ</span>
+                </h2>
               </div>
-              <div className="p-8">
-                <p className="text-body text-gray-600 dark:text-dark-text-secondary mb-6">
-                  Öğrenci kimliğinizi göstererek tüm menüde %20 indirim kazanın!
-                </p>
-                <Button className="w-full btn-primary">
-                  Detayları Gör
-                </Button>
+              
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Bugün özel olarak hazırladığımız menü ile %25 indirim fırsatını kaçırmayın! 
+                Taze malzemelerle hazırlanan özel menümüz sadece bugün geçerli.
+              </p>
+              
+              <div className="flex items-center space-x-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">%25</div>
+                  <div className="text-sm text-gray-600">İndirim</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">₺50</div>
+                  <div className="text-sm text-gray-600">Yerine ₺37.50</div>
+                </div>
               </div>
+              
+              <Button className="bg-yellow-400 hover:bg-yellow-500 text-blue-600 font-bold px-8 py-3 rounded-lg">
+                SİPARİŞ VER
+              </Button>
             </div>
-
-            <div className="card-modern overflow-hidden hover-lift group">
-              <div className="bg-gradient-to-br from-primary-yellow to-orange-500 text-white p-8">
-                <h3 className="heading-md mb-2">İlk Sipariş</h3>
-                <p className="text-yellow-100 text-lg">%15 İndirim</p>
-              </div>
-              <div className="p-8">
-                <p className="text-body text-gray-600 dark:text-dark-text-secondary mb-6">
-                  İlk siparişinizde %15 indirim fırsatını kaçırmayın!
-                </p>
-                <Button className="w-full btn-secondary">
-                  Detayları Gör
-                </Button>
-              </div>
-            </div>
-
-            <div className="card-modern overflow-hidden hover-lift group">
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-8">
-                <h3 className="heading-md mb-2">Aile Menüsü</h3>
-                <p className="text-gray-300 text-lg">4 Kişilik</p>
-              </div>
-              <div className="p-8">
-                <p className="text-body text-gray-600 dark:text-dark-text-secondary mb-6">
-                  4 kişilik aile menümüzle birlikte tatlı ve içecek hediye!
-                </p>
-                <Button className="w-full bg-gray-800 hover:bg-gray-900 text-white rounded-xl py-3">
-                  Detayları Gör
-                </Button>
+            
+            {/* Right - Image */}
+            <div className="relative">
+              <div className="w-full h-96 bg-gradient-to-br from-yellow-100 to-orange-200 rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="text-center">
+                  <span className="text-8xl mb-4 block">🍖</span>
+                  <h3 className="text-2xl font-poppins font-bold text-orange-600">Özel Döner Menü</h3>
+                  <p className="text-orange-500">Taze malzemelerle</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Customer Reviews Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-poppins font-bold text-blue-600 mb-6">
+              MÜŞTERİ YORUMLARI
+            </h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <div className="flex flex-col lg:flex-row items-center lg:items-start space-y-6 lg:space-y-0 lg:space-x-8">
+                {/* Profile Image */}
+                <div className="flex-shrink-0">
+                  <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                    <span className="text-3xl">👤</span>
+                  </div>
+                </div>
+                
+                {/* Review Content */}
+                <div className="flex-1 text-center lg:text-left">
+                  <h3 className="text-xl font-poppins font-bold text-gray-800 mb-2">
+                    Ahmet Yılmaz
+                  </h3>
+                  <div className="flex justify-center lg:justify-start space-x-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    "Lezzet Durağı'nda yediğim en lezzetli dönerdi! Taze malzemeler, 
+                    hijyenik ortam ve hızlı servis. Kesinlikle tavsiye ederim. 
+                    Özellikle özel sosları çok lezzetli."
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Review Dots */}
+            <div className="flex justify-center space-x-2 mt-8">
+              <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+              <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+              <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+              <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
-      <section className="section-padding bg-gradient-to-br from-primary-red to-primary-yellow text-white">
-        <div className="container-modern">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6 animate-fade-in">
-              <h2 className="heading-lg text-white">
-                Bize Ulaşın
-              </h2>
-              <p className="text-xl text-white/90">
-                Sorularınız için bizimle iletişime geçin. Size en kısa sürede dönüş yapacağız.
-              </p>
+      <section className="py-20 bg-blue-600 text-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Contact Info */}
+            <div className="space-y-6">
+              <h3 className="text-2xl font-poppins font-bold">İLETİŞİM BİLGİLERİ</h3>
               
               <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <MapPin className="w-6 h-6" />
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
                     <p className="font-semibold">Adres</p>
                     <p className="text-white/80">İstanbul, Türkiye</p>
+                    <a href="#" className="text-yellow-400 hover:text-yellow-300 text-sm">Bizi Ziyaret Edin</a>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <Phone className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">Telefon</p>
-                    <p className="text-white/80">+90 212 123 45 67</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <Mail className="w-6 h-6" />
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
                     <p className="font-semibold">E-posta</p>
                     <p className="text-white/80">info@lezzetduragi.com</p>
+                    <a href="#" className="text-yellow-400 hover:text-yellow-300 text-sm">www.lezzetduragi.com</a>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Telefon</p>
+                    <p className="text-white/80">+90 212 123 45 67</p>
+                    <a href="#" className="text-yellow-400 hover:text-yellow-300 text-sm">Bizi Arayın</a>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="card-glass p-8 animate-slide-up">
-              <h3 className="heading-md mb-6">Hızlı İletişim</h3>
+            {/* Social Media */}
+            <div className="space-y-6">
+              <h3 className="text-2xl font-poppins font-bold">SOSYAL MEDYA</h3>
+              <p className="text-white/80">
+                Bizi sosyal medyada takip edin ve en güncel menülerimizi ve kampanyalarımızı kaçırmayın.
+              </p>
+              
+              <div className="flex space-x-4">
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors cursor-pointer">
+                  <span className="text-blue-600 font-bold">f</span>
+                </div>
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors cursor-pointer">
+                  <span className="text-blue-600 font-bold">in</span>
+                </div>
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors cursor-pointer">
+                  <span className="text-blue-600 font-bold">t</span>
+                </div>
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors cursor-pointer">
+                  <span className="text-blue-600 font-bold">g</span>
+                </div>
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors cursor-pointer">
+                  <span className="text-blue-600 font-bold">yt</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Quick Contact Form */}
+            <div className="space-y-6">
+              <h3 className="text-2xl font-poppins font-bold">HIZLI İLETİŞİM</h3>
               <form className="space-y-4">
                 <input 
                   type="text" 
                   placeholder="Adınız" 
-                  className="input-modern bg-white/10 border-white/20 text-white placeholder-white/60"
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-yellow-400"
                 />
                 <input 
                   type="email" 
                   placeholder="E-posta" 
-                  className="input-modern bg-white/10 border-white/20 text-white placeholder-white/60"
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-yellow-400"
                 />
                 <textarea 
                   placeholder="Mesajınız" 
                   rows={4}
-                  className="input-modern bg-white/10 border-white/20 text-white placeholder-white/60 resize-none"
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-yellow-400 resize-none"
                 ></textarea>
-                <Button className="w-full btn-primary">
-                  Gönder
+                <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-600 font-bold py-3 rounded-lg">
+                  GÖNDER
                 </Button>
               </form>
             </div>

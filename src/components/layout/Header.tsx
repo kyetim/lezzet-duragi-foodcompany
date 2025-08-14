@@ -11,7 +11,7 @@ export function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
   const dispatch = useDispatch();
-  
+
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -22,56 +22,40 @@ export function Header() {
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-gray-200 dark:border-dark-border transition-all duration-300">
-      <div className="container-modern">
+    <header className="sticky top-0 z-50 bg-blue-100 text-blue-900 border-b border-blue-200">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-primary-red to-primary-yellow rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <span className="text-white font-poppins font-bold text-lg lg:text-xl">L</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl lg:text-2xl font-poppins font-bold text-gradient">
+              <h1 className="text-xl lg:text-2xl font-poppins font-bold text-blue-800">
                 Lezzet Durağı
               </h1>
-              <p className="text-xs text-gray-500 dark:text-dark-text-secondary">
-                Taze & Lezzetli
+              <p className="text-xs text-blue-600">
+                Döner & Makarna
               </p>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            <Link to="/" className="nav-link">
-              Ana Sayfa
+            <Link to="/" className="text-blue-800 hover:text-blue-600 font-semibold transition-colors">
+              ANA SAYFA
             </Link>
-            <div className="relative group">
-              <button className="nav-link flex items-center space-x-1">
-                <span>Menü</span>
-                <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-              </button>
-              <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-dark-card rounded-xl shadow-strong border border-gray-200 dark:border-dark-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
-                <div className="py-2">
-                  <Link to="/menu?category=doner" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
-                    Döner
-                  </Link>
-                  <Link to="/menu?category=makarna" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
-                    Makarna
-                  </Link>
-                  <Link to="/menu?category=salata" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
-                    Salata
-                  </Link>
-                  <Link to="/menu?category=icecek" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
-                    İçecek
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <Link to="/about" className="nav-link">
-              Hakkımızda
+            <Link to="/menu" className="text-blue-800 hover:text-blue-600 font-semibold transition-colors">
+              MENÜ
             </Link>
-            <Link to="/contact" className="nav-link">
-              İletişim
+            <Link to="/about" className="text-blue-800 hover:text-blue-600 font-semibold transition-colors">
+              HAKKIMIZDA
+            </Link>
+            <Link to="/contact" className="text-blue-800 hover:text-blue-600 font-semibold transition-colors">
+              İLETİŞİM
+            </Link>
+            <Link to="/specials" className="text-blue-800 hover:text-blue-600 font-semibold transition-colors">
+              KAMPANYALAR
             </Link>
           </nav>
 
@@ -80,21 +64,21 @@ export function Header() {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-gray-100 dark:bg-dark-border hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 group"
+              className="p-2 rounded-lg bg-white hover:bg-blue-50 transition-colors duration-300 group shadow-sm"
               aria-label="Toggle theme"
             >
               {isDarkMode ? (
                 <Sun className="w-5 h-5 text-yellow-500 group-hover:scale-110 transition-transform" />
               ) : (
-                <Moon className="w-5 h-5 text-gray-600 group-hover:scale-110 transition-transform" />
+                <Moon className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" />
               )}
             </button>
 
             {/* Cart */}
-            <Link to="/cart" className="relative p-2 rounded-xl bg-gray-100 dark:bg-dark-border hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 group">
-              <ShoppingCart className="w-5 h-5 text-gray-700 dark:text-dark-text group-hover:scale-110 transition-transform" />
+            <Link to="/cart" className="relative p-2 rounded-lg bg-white hover:bg-blue-50 transition-colors duration-300 group shadow-sm">
+              <ShoppingCart className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-red text-white text-xs rounded-full flex items-center justify-center font-semibold animate-scale-in">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
                   {cartItemCount}
                 </span>
               )}
@@ -104,40 +88,40 @@ export function Header() {
             <div className="relative">
               <button
                 onClick={toggleProfile}
-                className="p-2 rounded-xl bg-gray-100 dark:bg-dark-border hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300 group"
+                className="p-2 rounded-lg bg-white hover:bg-blue-50 transition-colors duration-300 group shadow-sm"
               >
-                <User className="w-5 h-5 text-gray-700 dark:text-dark-text group-hover:scale-110 transition-transform" />
+                <User className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" />
               </button>
-              
+
               {isProfileOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-dark-card rounded-xl shadow-strong border border-gray-200 dark:border-dark-border animate-scale-in">
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-blue-200">
                   <div className="py-2">
                     {isAuthenticated ? (
                       <>
-                        <div className="px-4 py-2 border-b border-gray-200 dark:border-dark-border">
-                          <p className="text-sm font-semibold text-gray-900 dark:text-dark-text">
+                        <div className="px-4 py-2 border-b border-blue-200">
+                          <p className="text-sm font-semibold text-blue-800">
                             {user?.name || 'Kullanıcı'}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-dark-text-secondary">
+                          <p className="text-xs text-blue-600">
                             {user?.email}
                           </p>
                         </div>
-                        <Link to="/profile" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
+                        <Link to="/profile" className="block px-4 py-2 text-blue-700 hover:bg-blue-50 transition-colors">
                           Profil
                         </Link>
-                        <Link to="/orders" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
+                        <Link to="/orders" className="block px-4 py-2 text-blue-700 hover:bg-blue-50 transition-colors">
                           Siparişlerim
                         </Link>
-                        <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                        <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors">
                           Çıkış Yap
                         </button>
                       </>
                     ) : (
                       <>
-                        <Link to="/login" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
+                        <Link to="/login" className="block px-4 py-2 text-blue-700 hover:bg-blue-50 transition-colors">
                           Giriş Yap
                         </Link>
-                        <Link to="/register" className="block px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border transition-colors">
+                        <Link to="/register" className="block px-4 py-2 text-blue-700 hover:bg-blue-50 transition-colors">
                           Kayıt Ol
                         </Link>
                       </>
@@ -150,12 +134,12 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={toggleMenu}
-              className="lg:hidden p-2 rounded-xl bg-gray-100 dark:bg-dark-border hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
+              className="lg:hidden p-2 rounded-lg bg-white hover:bg-blue-50 transition-colors duration-300 shadow-sm"
             >
               {isMenuOpen ? (
-                <X className="w-5 h-5 text-gray-700 dark:text-dark-text" />
+                <X className="w-5 h-5 text-blue-600" />
               ) : (
-                <Menu className="w-5 h-5 text-gray-700 dark:text-dark-text" />
+                <Menu className="w-5 h-5 text-blue-600" />
               )}
             </button>
           </div>
@@ -163,19 +147,22 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-200 dark:border-dark-border animate-slide-up">
+          <div className="lg:hidden py-4 border-t border-blue-200 bg-white">
             <nav className="flex flex-col space-y-2">
-              <Link to="/" className="nav-link py-2" onClick={toggleMenu}>
-                Ana Sayfa
+              <Link to="/" className="px-4 py-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors" onClick={toggleMenu}>
+                ANA SAYFA
               </Link>
-              <Link to="/menu" className="nav-link py-2" onClick={toggleMenu}>
-                Menü
+              <Link to="/menu" className="px-4 py-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors" onClick={toggleMenu}>
+                MENÜ
               </Link>
-              <Link to="/about" className="nav-link py-2" onClick={toggleMenu}>
-                Hakkımızda
+              <Link to="/about" className="px-4 py-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors" onClick={toggleMenu}>
+                HAKKIMIZDA
               </Link>
-              <Link to="/contact" className="nav-link py-2" onClick={toggleMenu}>
-                İletişim
+              <Link to="/contact" className="px-4 py-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors" onClick={toggleMenu}>
+                İLETİŞİM
+              </Link>
+              <Link to="/specials" className="px-4 py-2 text-blue-800 hover:bg-blue-50 rounded-lg transition-colors" onClick={toggleMenu}>
+                KAMPANYALAR
               </Link>
             </nav>
           </div>

@@ -35,6 +35,39 @@ export const menuData: MenuItem[] = [
         ingredients: ['Tavuk eti', 'Dana eti', 'Marul', 'Domates', 'Soğan'],
         preparationTime: 9
     },
+    {
+        id: '13',
+        name: 'Pilav Üstü Döner',
+        description: 'Tereyağlı pilav üzerinde bol döner eti',
+        price: 60,
+        category: 'doner',
+        imageWebp: '/images/pilav-ustu-doner.webp',
+        isAvailable: true,
+        ingredients: ['Pilav', 'Döner eti', 'Tereyağı', 'Domates'],
+        preparationTime: 12
+    },
+    {
+        id: '14',
+        name: 'Dürüm Döner',
+        description: 'Lavaş ekmeğinde bol malzemeli döner',
+        price: 48,
+        category: 'doner',
+        imageWebp: '/images/durum-doner.webp',
+        isAvailable: true,
+        ingredients: ['Lavaş', 'Döner eti', 'Marul', 'Domates', 'Soğan'],
+        preparationTime: 7
+    },
+    {
+        id: '15',
+        name: 'Kaşarlı Döner',
+        description: 'Dönerin en lezzetli hali, eriyen kaşar ile',
+        price: 52,
+        category: 'doner',
+        imageWebp: '/images/kasarli-doner.webp',
+        isAvailable: true,
+        ingredients: ['Döner eti', 'Kaşar', 'Domates', 'Marul'],
+        preparationTime: 9
+    },
 
     // Makarna Kategorisi
     {
@@ -69,6 +102,39 @@ export const menuData: MenuItem[] = [
         isAvailable: true,
         ingredients: ['Makarna', 'Fesleğen', 'Çam fıstığı', 'Parmesan', 'Zeytinyağı'],
         preparationTime: 10
+    },
+    {
+        id: '16',
+        name: 'Napoliten Makarna',
+        description: 'Domates soslu, zeytinli ve fesleğenli makarna',
+        price: 46,
+        category: 'makarna',
+        imageWebp: '/images/napoliten.webp',
+        isAvailable: true,
+        ingredients: ['Makarna', 'Domates', 'Zeytin', 'Fesleğen'],
+        preparationTime: 11
+    },
+    {
+        id: '17',
+        name: 'Mantarlı Kremalı Makarna',
+        description: 'Taze mantar ve krema ile hazırlanan makarna',
+        price: 52,
+        category: 'makarna',
+        imageWebp: '/images/mantarli-makarna.webp',
+        isAvailable: true,
+        ingredients: ['Makarna', 'Mantar', 'Krema', 'Peynir'],
+        preparationTime: 13
+    },
+    {
+        id: '18',
+        name: 'Penne Arrabbiata',
+        description: 'Acılı domates soslu penne makarna',
+        price: 49,
+        category: 'makarna',
+        imageWebp: '/images/arrabbiata.webp',
+        isAvailable: true,
+        ingredients: ['Penne', 'Domates', 'Biber', 'Sarımsak'],
+        preparationTime: 12
     },
 
     // Salata Kategorisi
@@ -105,6 +171,39 @@ export const menuData: MenuItem[] = [
         ingredients: ['Havuç', 'Mısır', 'Bezelye', 'Domates', 'Salatalık'],
         preparationTime: 7
     },
+    {
+        id: '19',
+        name: 'Akdeniz Salata',
+        description: 'Zeytinyağlı, peynirli ve yeşillikli Akdeniz salatası',
+        price: 32,
+        category: 'salata',
+        imageWebp: '/images/akdeniz-salata.webp',
+        isAvailable: true,
+        ingredients: ['Yeşillik', 'Beyaz peynir', 'Zeytin', 'Domates'],
+        preparationTime: 6
+    },
+    {
+        id: '20',
+        name: 'Ton Balıklı Salata',
+        description: 'Ton balığı, mısır ve yeşilliklerle hazırlanan salata',
+        price: 38,
+        category: 'salata',
+        imageWebp: '/images/tonbalikli-salata.webp',
+        isAvailable: true,
+        ingredients: ['Ton balığı', 'Mısır', 'Yeşillik', 'Domates'],
+        preparationTime: 8
+    },
+    {
+        id: '21',
+        name: 'Kinoalı Salata',
+        description: 'Kinoa, avokado ve taze sebzelerle sağlıklı salata',
+        price: 36,
+        category: 'salata',
+        imageWebp: '/images/kinoali-salata.webp',
+        isAvailable: true,
+        ingredients: ['Kinoa', 'Avokado', 'Domates', 'Salatalık'],
+        preparationTime: 9
+    },
 
     // İçecek Kategorisi
     {
@@ -139,6 +238,39 @@ export const menuData: MenuItem[] = [
         isAvailable: true,
         ingredients: ['Çay', 'Su'],
         preparationTime: 2
+    },
+    {
+        id: '22',
+        name: 'Türk Kahvesi',
+        description: 'Közde pişmiş geleneksel Türk kahvesi',
+        price: 15,
+        category: 'icecek',
+        imageWebp: '/images/turk-kahvesi.webp',
+        isAvailable: true,
+        ingredients: ['Kahve', 'Su'],
+        preparationTime: 4
+    },
+    {
+        id: '23',
+        name: 'Portakal Suyu',
+        description: 'Taze sıkılmış portakal suyu',
+        price: 14,
+        category: 'icecek',
+        imageWebp: '/images/portakal-suyu.webp',
+        isAvailable: true,
+        ingredients: ['Portakal'],
+        preparationTime: 2
+    },
+    {
+        id: '24',
+        name: 'Soda',
+        description: 'Doğal maden suyu',
+        price: 7,
+        category: 'icecek',
+        imageWebp: '/images/soda.webp',
+        isAvailable: true,
+        ingredients: ['Maden suyu'],
+        preparationTime: 1
     }
 ];
 
@@ -147,5 +279,5 @@ export const getMenuByCategory = (category: string): MenuItem[] => {
 };
 
 export const getFeaturedItems = (): MenuItem[] => {
-    return menuData.filter(item => ['1', '4', '7'].includes(item.id));
+    return menuData.slice(0, 6);
 }; 

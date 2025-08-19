@@ -1,164 +1,403 @@
-# Lezzet Durağı – Kodlama Standartları & Proje Yapısı
+# Lezzet Durağı – Modern Web Uygulaması Geliştirme Standartları
 
-## 1. Genel Yaklaşım
+## 1. Proje Vizyonu
 
-- **Dil:** Tüm kod TypeScript ile yazılmalı.
-- **Framework:** React.js, Shadcn UI, Radix UI, Tailwind CSS, Redux Toolkit.
-- **Programlama Tarzı:** Fonksiyonel ve deklaratif. Sınıflardan kaçınılmalı.
-- **Dosya Yapısı:** Her dosyada önce ana bileşen, ardından alt bileşenler, yardımcı fonksiyonlar, statik içerik ve tipler yer almalı.
+**Lezzet Durağı** - Kapsamlı, modern ve profesyonel bir yemek sipariş platformu. Sadece bir web sitesi değil, tam özellikli bir dijital deneyim.
 
----
-
-## 2. Dosya ve Dizin Yapısı
-
-- **Dizinler:** Küçük harf ve tire ile (`components/menu-category`).
-- **Bileşenler:** Her bileşen kendi dosyasında, named export ile.
-- **Yardımcılar:** `helpers/` dizininde saf fonksiyonlar.
-- **Tipler:** `interfaces/` dizininde, sadece interface kullan.
+### Hedefler:
+- **Kullanıcı Deneyimi:** Seamless, intuitive ve engaging
+- **Teknoloji:** Cutting-edge, scalable ve maintainable
+- **Tasarım:** Modern, responsive ve accessible
+- **Performans:** Fast, optimized ve reliable
 
 ---
 
-## 3. Adlandırma Kuralları
+## 2. Teknik Altyapı & Mimari
 
-- **Değişkenler:** Anlamlı, yardımcı fiil içeren isimler (`isLoading`, `hasError`).
-- **Dizinler:** Küçük harf, tireli (`menu-list`).
-- **Bileşenler:** Named export, PascalCase (`export function MenuList()`).
+### Frontend Stack:
+- **Framework:** React 18+ (Concurrent Features)
+- **Language:** TypeScript (Strict Mode)
+- **Build Tool:** Vite (Ultra Fast)
+- **Styling:** Tailwind CSS + CSS Modules
+- **State Management:** Redux Toolkit + RTK Query
+- **Routing:** React Router v6 (Data Router)
+- **UI Library:** Radix UI + Shadcn/ui
+- **Forms:** React Hook Form + Zod
+- **Animations:** Framer Motion
+- **Icons:** Lucide React
+- **Charts:** Recharts
+- **Maps:** Mapbox GL JS
 
----
+### Backend Stack:
+- **Runtime:** Node.js 18+ (LTS)
+- **Framework:** Express.js + TypeScript
+- **Database:** MongoDB + Mongoose
+- **Cache:** Redis
+- **Search:** Elasticsearch
+- **File Storage:** AWS S3 / Cloudinary
+- **Email:** SendGrid / Nodemailer
+- **SMS:** Twilio
+- **Payment:** Stripe / Iyzico
+- **Authentication:** JWT + Refresh Tokens
+- **Validation:** Joi / Zod
+- **Testing:** Jest + Supertest
 
-## 4. TypeScript Kullanımı
-
-- **interface** kullan, **type** ve **enum**'dan kaçın.
-- **Map** ile sabitler oluştur.
-- **Fonksiyonel Bileşenler:** Her zaman fonksiyon bildirimi ile:
-  ```tsx
-  export function MenuList(props: MenuListProps) { ... }
-  ```
-- **Props ve State:** Her zaman interface ile tiplenmeli.
-
----
-
-## 5. Söz Dizimi ve Biçimlendirme
-
-- **Fonksiyonlar:** Saf fonksiyonlar için `function` anahtar kelimesi.
-- **Kısa Koşullar:** Gereksiz süslü parantezlerden kaçın.
-- **JSX:** Deklaratif ve okunabilir olmalı.
-
----
-
-## 6. UI ve Stil
-
-- **Bileşenler:** Shadcn UI ve Radix UI ile oluştur.
-- **Stil:** Tailwind CSS, mobile-first yaklaşım.
-- **Responsive:** Her bileşen mobilde düzgün çalışmalı.
-- **Renk Paleti:** Kırmızı (#D62828), Sarı (#F77F00), Beyaz (#FFFFFF).
-- **Yazı Tipleri:** Poppins (başlıklar), Open Sans (gövde).
-
----
-
-## 7. Performans ve Optimizasyon
-
-- **React Hooks:** Verimli kullanım, gereksiz re-render'lardan kaçın.
-- **Lazy Loading:** Menü görselleri ve büyük bileşenler için.
-- **Görseller:** WebP formatı, boyut bilgisi, lazy loading.
-- **Web Vitals:** LCP, CLS, FID optimize edilmeli.
+### DevOps & Infrastructure:
+- **Hosting:** Vercel (Frontend) + Railway/Render (Backend)
+- **Database:** MongoDB Atlas
+- **CDN:** Cloudflare
+- **Monitoring:** Sentry
+- **CI/CD:** GitHub Actions
+- **Containerization:** Docker
+- **Environment:** Nx Monorepo (Future)
 
 ---
 
-## 8. State ve URL Yönetimi
+## 3. Modern Tasarım Sistemi
 
-- **URL Parametreleri:** React Router ile yönet.
-- **State:** Redux Toolkit ile global state yönetimi.
-- **Local State:** useState ve useReducer ile component state'i.
+### Design Principles:
+- **Atomic Design:** Atoms → Molecules → Organisms → Templates → Pages
+- **Mobile First:** Progressive enhancement
+- **Accessibility:** WCAG 2.1 AA Compliance
+- **Performance:** Core Web Vitals optimization
+- **Brand Consistency:** Unified visual language
+
+### Color System:
+```css
+/* Primary Palette */
+--primary-50: #eff6ff;
+--primary-100: #dbeafe;
+--primary-500: #3b82f6;
+--primary-600: #2563eb;
+--primary-700: #1d4ed8;
+--primary-900: #1e3a8a;
+
+/* Secondary Palette */
+--secondary-50: #fef3c7;
+--secondary-100: #fde68a;
+--secondary-500: #f59e0b;
+--secondary-600: #d97706;
+--secondary-700: #b45309;
+
+/* Semantic Colors */
+--success: #10b981;
+--warning: #f59e0b;
+--error: #ef4444;
+--info: #3b82f6;
+
+/* Neutral Palette */
+--gray-50: #f9fafb;
+--gray-100: #f3f4f6;
+--gray-900: #111827;
+```
+
+### Typography Scale:
+```css
+/* Display */
+--display-2xl: 4.5rem; /* 72px */
+--display-xl: 3.75rem;  /* 60px */
+--display-lg: 3rem;     /* 48px */
+
+/* Headings */
+--heading-2xl: 1.875rem; /* 30px */
+--heading-xl: 1.5rem;    /* 24px */
+--heading-lg: 1.25rem;   /* 20px */
+
+/* Body */
+--body-lg: 1.125rem;     /* 18px */
+--body-base: 1rem;       /* 16px */
+--body-sm: 0.875rem;     /* 14px */
+```
+
+### Component Library:
+- **Buttons:** Primary, Secondary, Ghost, Destructive variants
+- **Cards:** Product, Feature, Testimonial, Pricing
+- **Forms:** Input, Select, Checkbox, Radio, Toggle
+- **Navigation:** Header, Footer, Sidebar, Breadcrumbs
+- **Feedback:** Toast, Alert, Modal, Drawer
+- **Data Display:** Table, List, Badge, Avatar
+- **Layout:** Container, Grid, Stack, Divider
 
 ---
 
-## 9. React Standartları
+## 4. Gelişmiş Özellikler
 
-- **Veri Çekme:** Axios veya fetch ile API çağrıları.
-- **Yönlendirme:** React Router kullan.
-- **Error Handling:** Try-catch blokları ve error boundary'ler.
+### Core Features:
+1. **Advanced Menu System**
+   - Real-time inventory management
+   - Dynamic pricing
+   - Nutritional information
+   - Allergen warnings
+   - Customization options
+   - Recommendations engine
+
+2. **Smart Ordering System**
+   - Real-time order tracking
+   - Estimated delivery times
+   - Order history & reordering
+   - Scheduled orders
+   - Group ordering
+   - Split payment
+
+3. **User Management**
+   - Social login (Google, Facebook)
+   - Two-factor authentication
+   - Profile management
+   - Address book
+   - Payment methods
+   - Loyalty program
+
+4. **Admin Dashboard**
+   - Real-time analytics
+   - Order management
+   - Inventory control
+   - Customer management
+   - Marketing tools
+   - Financial reports
+
+### Advanced Features:
+1. **AI-Powered Recommendations**
+   - Personalized menu suggestions
+   - Seasonal recommendations
+   - Dietary preferences
+   - Order pattern analysis
+
+2. **Location Services**
+   - GPS-based delivery tracking
+   - Store locator
+   - Delivery radius management
+   - Real-time driver tracking
+
+3. **Marketing & Engagement**
+   - Push notifications
+   - Email campaigns
+   - SMS marketing
+   - Loyalty rewards
+   - Referral program
+
+4. **Analytics & Insights**
+   - Customer behavior analysis
+   - Sales performance metrics
+   - Popular items tracking
+   - Peak hours analysis
 
 ---
 
-## 10. Örnek Bileşen
+## 5. Performance & Optimization
 
-```tsx
-// components/menu-list/menu-list.tsx
-import { Card } from "@/components/ui/card";
-import { MenuItem } from "@/interfaces/menu-item";
+### Frontend Optimization:
+- **Code Splitting:** Route-based and component-based
+- **Lazy Loading:** Images, components, and routes
+- **Bundle Analysis:** Webpack Bundle Analyzer
+- **Tree Shaking:** Unused code elimination
+- **Service Worker:** Offline functionality
+- **PWA:** Progressive Web App features
 
-export interface MenuListProps {
-  menuItems: MenuItem[];
-  isLoading: boolean;
-  category: string;
-}
+### Backend Optimization:
+- **Database Indexing:** Strategic query optimization
+- **Caching Strategy:** Redis for session and data
+- **API Rate Limiting:** Protection against abuse
+- **Compression:** Gzip/Brotli compression
+- **CDN:** Global content delivery
+- **Load Balancing:** Horizontal scaling
 
-export function MenuList({ menuItems, isLoading, category }: MenuListProps) {
-  if (isLoading) return <div>Menü yükleniyor...</div>;
-  
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {menuItems.map(item =>
-        <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-          <img
-            src={item.imageWebp}
-            alt={item.name}
-            width={400}
-            height={300}
-            loading="lazy"
-            className="w-full h-48 object-cover"
-          />
-          <div className="p-4">
-            <h3 className="font-poppins font-semibold text-lg text-gray-800">{item.name}</h3>
-            <p className="text-gray-600 text-sm mt-2">{item.description}</p>
-            <div className="flex justify-between items-center mt-4">
-              <span className="font-bold text-red-600">{item.price}₺</span>
-              <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
-                Sepete Ekle
-              </button>
-            </div>
-          </div>
-        </Card>
-      )}
-    </div>
-  );
+### Monitoring & Analytics:
+- **Error Tracking:** Sentry integration
+- **Performance Monitoring:** Core Web Vitals
+- **User Analytics:** Google Analytics 4
+- **A/B Testing:** Feature flags and experiments
+- **Uptime Monitoring:** Health checks and alerts
+
+---
+
+## 6. Security & Compliance
+
+### Security Measures:
+- **Authentication:** JWT with refresh tokens
+- **Authorization:** Role-based access control
+- **Data Encryption:** HTTPS, database encryption
+- **Input Validation:** Server-side validation
+- **XSS Protection:** Content Security Policy
+- **CSRF Protection:** Token-based protection
+- **Rate Limiting:** API abuse prevention
+
+### Compliance:
+- **GDPR:** Data protection compliance
+- **PCI DSS:** Payment card security
+- **Accessibility:** WCAG 2.1 AA standards
+- **Privacy:** Cookie consent and data handling
+
+---
+
+## 7. Development Workflow
+
+### Code Quality:
+- **Linting:** ESLint + Prettier
+- **Type Checking:** TypeScript strict mode
+- **Testing:** Unit, Integration, E2E tests
+- **Code Review:** Pull request workflow
+- **Documentation:** JSDoc + Storybook
+
+### Git Workflow:
+```bash
+# Feature Development
+git checkout -b feature/advanced-menu-system
+git add .
+git commit -m "feat: implement advanced menu system with real-time updates"
+git push origin feature/advanced-menu-system
+
+# Commit Message Convention
+feat: new feature
+fix: bug fix
+docs: documentation
+style: formatting
+refactor: code restructuring
+test: adding tests
+chore: maintenance tasks
+```
+
+### Environment Management:
+```bash
+# Development
+npm run dev
+
+# Staging
+npm run build:staging
+npm run deploy:staging
+
+# Production
+npm run build:production
+npm run deploy:production
+```
+
+---
+
+## 8. Modern UI/UX Patterns
+
+### Design Patterns:
+1. **Glassmorphism:** Modern glass effects
+2. **Neumorphism:** Soft UI elements
+3. **Micro-interactions:** Subtle animations
+4. **Skeleton Loading:** Content placeholders
+5. **Infinite Scroll:** Pagination alternative
+6. **Virtual Scrolling:** Large list optimization
+7. **Drag & Drop:** Interactive elements
+8. **Voice Search:** Accessibility feature
+
+### Animation System:
+```typescript
+// Framer Motion Variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5
+    }
+  }
+};
+```
+
+---
+
+## 9. Testing Strategy
+
+### Testing Pyramid:
+- **Unit Tests:** 70% - Component and utility functions
+- **Integration Tests:** 20% - API and data flow
+- **E2E Tests:** 10% - Critical user journeys
+
+### Testing Tools:
+- **Jest:** Unit and integration testing
+- **React Testing Library:** Component testing
+- **Cypress:** E2E testing
+- **MSW:** API mocking
+- **Storybook:** Component documentation
+
+---
+
+## 10. Deployment & CI/CD
+
+### Deployment Pipeline:
+```yaml
+# GitHub Actions Workflow
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
+      - name: Build
+        run: npm run build
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Vercel
+        run: npx vercel --prod
+```
+
+### Environment Configuration:
+```typescript
+// Environment Variables
+interface Environment {
+  NODE_ENV: 'development' | 'staging' | 'production';
+  API_URL: string;
+  DATABASE_URL: string;
+  REDIS_URL: string;
+  JWT_SECRET: string;
+  STRIPE_SECRET_KEY: string;
+  SENDGRID_API_KEY: string;
+  CLOUDINARY_URL: string;
 }
 ```
 
 ---
 
-## 11. Proje Özellikleri
+## 11. Future Roadmap
 
-### Lezzet Durağı Web Sitesi – Yemek Restoranı Projesi
+### Phase 1 (Current): Foundation
+- ✅ Basic menu system
+- ✅ User authentication
+- ✅ Order management
+- ✅ Payment integration
 
-**1. Proje Kapsamı ve Hedef Kitle:**
-- **Projenin Amacı:** Döner, makarna, salata ve içecek satışı yapan bir yemek restoranı için kullanıcı dostu web platformu.
-- **Hedef Kitle:** Hızlı, lezzetli ve uygun fiyatlı yemek arayan gençler, çalışanlar ve öğrenciler.
+### Phase 2 (Next): Enhancement
+- 🔄 Advanced menu features
+- 🔄 Real-time tracking
+- 🔄 AI recommendations
+- 🔄 Mobile app development
 
-**2. Temel Özellikler:**
-- **Ana Sayfa:** Kampanyalar, öne çıkan ürünler, samimi ve iştah açıcı içerikler
-- **Menü Sayfaları:** Döner, makarna, salata, içecek kategorileri
-- **Sipariş Sistemi:** Dükkanda teslim ve online teslimat seçenekleri
-- **Ödeme Entegrasyonu:** Stripe veya Iyzico ile güvenli ödeme
-- **Kullanıcı Yönetimi:** Kayıt, giriş, sipariş geçmişi
-- **Admin Paneli:** Ürün, kullanıcı, sipariş ve kampanya yönetimi
+### Phase 3 (Future): Scale
+- 📋 Multi-location support
+- 📋 Franchise management
+- 📋 Advanced analytics
+- 📋 IoT integration
 
-**3. Tasarım Yönergeleri:**
-- **Marka Kimliği:** Lezzet Durağı markası ile uyumlu
-- **Renk Paleti:** Kırmızı (#D62828), Sarı (#F77F00), Beyaz (#FFFFFF)
-- **Yazı Tipleri:** Poppins (başlıklar), Open Sans (gövde)
-- **Görsel Stil:** Sıcak renkler, sade arka planlar, gerçek ürün görselleri
+### Phase 4 (Vision): Innovation
+- 🚀 Voice ordering
+- 🚀 AR menu visualization
+- 🚀 Drone delivery
+- 🚀 Blockchain loyalty
 
-**4. Teknik Altyapı:**
-- **Frontend:** React.js, TypeScript, Tailwind CSS
-- **Backend:** Node.js + Express
-- **Veritabanı:** MongoDB
-- **Hosting:** Frontend (Vercel), Backend (Render.com)
-- **API:** RESTful API ile iletişim
+---
 
-**5. Terminal Komutları:**
-- Terminal'de && kullanmadan, komutları tek tek yazın
-- Her adımı ayrı ayrı çalıştırın
-
-Bu standartlar, Lezzet Durağı yemek restoranı web sitesinin tutarlı, performanslı ve kullanıcı dostu bir şekilde geliştirilmesini sağlar.
+Bu standartlar, Lezzet Durağı'nı sadece bir web sitesi değil, **modern, kapsamlı ve ölçeklenebilir bir dijital platform** haline getirmeyi hedefler.

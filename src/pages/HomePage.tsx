@@ -104,7 +104,7 @@ export function HomePage() {
   // Otomatik slider
   useEffect(() => {
     const timer = setInterval(() => {
-      setReviewIndex((prev) => (prev + 3) % allReviews.length);
+      setReviewIndex((prev: number) => (prev + 3) % allReviews.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [allReviews.length]);
@@ -114,10 +114,10 @@ export function HomePage() {
     allReviews[(reviewIndex + 2) % allReviews.length],
   ];
   const handlePrev = () => {
-    setReviewIndex((prev) => (prev - 3 + allReviews.length) % allReviews.length);
+    setReviewIndex((prev: number) => (prev - 3 + allReviews.length) % allReviews.length);
   };
   const handleNext = () => {
-    setReviewIndex((prev) => (prev + 3) % allReviews.length);
+    setReviewIndex((prev: number) => (prev + 3) % allReviews.length);
   };
 
   return (

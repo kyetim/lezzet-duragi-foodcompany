@@ -5,7 +5,6 @@ import {
     Phone,
     Mail,
     Clock,
-    MessageSquare,
     Send,
     Instagram,
     Facebook,
@@ -13,7 +12,9 @@ import {
     Youtube,
     Navigation,
     CheckCircle,
-    AlertCircle
+    AlertCircle,
+    Zap,
+    ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getRandomFoodImage, optimizeImageUrl } from '@/helpers/foodImages';
@@ -34,7 +35,7 @@ export function ContactPage() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
+        setFormData((prev: typeof formData) => ({
             ...prev,
             [name]: value
         }));
@@ -502,8 +503,10 @@ export function ContactPage() {
                             bizi ziyaret edin. Size en iyi hizmeti sunmaya hazırız.
                         </p>
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button size="lg" className="btn-secondary bg-white text-secondary-600 hover:bg-gray-100">
-                                Sipariş Ver
+                            <Button size="lg" className="btn-secondary text-lg px-8 py-4">
+                                <Zap className="mr-2 w-5 h-5" />
+                                SİPARİŞ VER
+                                <ArrowRight className="ml-2 w-6 h-6" />
                             </Button>
                         </motion.div>
                     </motion.div>

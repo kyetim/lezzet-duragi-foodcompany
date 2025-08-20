@@ -8,20 +8,19 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "cookie": path.resolve(__dirname, "./src/lib/empty-module.js")
     },
   },
   define: {
     global: 'globalThis',
   },
   optimizeDeps: {
-    exclude: ['cookie']
+    force: true,
+    include: ['cookie']
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
-      external: ['cookie'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],

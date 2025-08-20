@@ -10,16 +10,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  optimizeDeps: {
-    include: ['cookie'],
-    esbuildOptions: {
-      target: 'es2020'
-    }
+  define: {
+    global: 'globalThis',
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
+      external: ['cookie'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],

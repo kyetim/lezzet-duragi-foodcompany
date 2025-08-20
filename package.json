@@ -2,6 +2,7 @@
   "name": "lezzet-duragi",
   "version": "1.0.0",
   "description": "Lezzet Duragi Frontend",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -9,7 +10,7 @@
     "preview": "vite preview"
   },
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   },
   "keywords": [],
   "author": "",

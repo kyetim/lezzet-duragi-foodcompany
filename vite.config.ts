@@ -13,19 +13,21 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
-  ssr: {
-    noExternal: ['cookie']
-  },
   build: {
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
-      external: ['cookie'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           ui: ['framer-motion', 'lucide-react']
+        },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith('.woff2')) {
+            return 'assets/fonts/[name]-[hash][extname]'
+          }
+          return 'assets/[name]-[hash][extname]'
         }
       }
     }

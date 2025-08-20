@@ -8,19 +8,17 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "cookie": path.resolve(__dirname, "./src/lib/cookie-mock.ts"),
+      "set-cookie-parser": path.resolve(__dirname, "./src/lib/cookie-mock.ts")
     },
   },
   define: {
     global: 'globalThis',
   },
-  optimizeDeps: {
-    exclude: ['cookie', 'set-cookie-parser']
-  },
   build: {
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
-      external: ['cookie', 'set-cookie-parser'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],

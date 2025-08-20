@@ -13,10 +13,6 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
-  optimizeDeps: {
-    force: true,
-    include: ['cookie']
-  },
   build: {
     outDir: 'dist',
     sourcemap: false,

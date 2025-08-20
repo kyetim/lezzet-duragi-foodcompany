@@ -167,13 +167,13 @@ export function HomePage() {
         </div>
         <div className="relative z-10 w-full px-4">
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-screen py-20"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center justify-center min-h-screen py-20 max-w-6xl mx-auto"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
             {/* Left Content */}
-            <motion.div className="flex flex-col items-center justify-center text-center gap-6" variants={heroVariants}>
+            <motion.div className="flex flex-col items-center justify-center text-center gap-6 w-full lg:max-w-lg mx-auto" variants={heroVariants}>
               <motion.div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 text-white/90 border border-white/20 mx-auto" whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 300 }}>
                 <Sparkles className="w-4 h-4 text-secondary-400" />
                 <span className="text-sm font-medium">Mersin'in En Lezzetli Noktası</span>
@@ -229,7 +229,7 @@ export function HomePage() {
 
             {/* Right Content - Gerçek Yemek Görseli */}
             <motion.div
-              className="hidden lg:flex items-center justify-center"
+              className="hidden lg:flex items-center justify-center w-full lg:max-w-lg mx-auto"
               variants={heroVariants}
             >
               <div className="relative">

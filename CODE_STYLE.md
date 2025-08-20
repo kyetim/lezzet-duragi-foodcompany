@@ -38,7 +38,7 @@
 - **Email:** SendGrid / Nodemailer
 - **SMS:** Twilio
 - **Payment:** Stripe / Iyzico
-- **Authentication:** JWT + Refresh Tokens
+- **Authentication:** Firebase
 - **Validation:** Joi / Zod
 - **Testing:** Jest + Supertest
 

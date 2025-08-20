@@ -127,7 +127,7 @@
   }
 
   body {
-    @apply font-open-sans text-gray-900 bg-food-cream transition-colors duration-300;
+    @apply font-poppins text-gray-900 bg-food-cream transition-colors duration-300;
     font-feature-settings: 'rlig' 1, 'calt' 1;
     padding: 0;
     margin: 0;
@@ -140,6 +140,15 @@
   h5,
   h6 {
     @apply font-poppins font-semibold tracking-tight;
+  }
+
+  p {
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    color: #222;
   }
 
   /* Custom Scrollbar */
@@ -170,23 +179,43 @@
 
   /* Modern Button System */
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-poppins;
   }
 
   .btn-primary {
     @apply btn bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg hover:from-primary-700 hover:to-primary-800 hover:shadow-xl hover:-translate-y-0.5 focus:ring-primary-500 active:translate-y-0;
   }
 
+  .btn-primary:disabled {
+    background: #b91c1c !important;
+    color: #fff !important;
+  }
+
   .btn-secondary {
     @apply btn bg-gradient-to-r from-secondary-500 to-secondary-600 text-white shadow-lg hover:from-secondary-600 hover:to-secondary-700 hover:shadow-xl hover:-translate-y-0.5 focus:ring-secondary-500 active:translate-y-0;
+  }
+
+  .btn-secondary:disabled {
+    background: #c2410c !important;
+    color: #fff !important;
   }
 
   .btn-ghost {
     @apply btn bg-transparent text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500;
   }
 
+  .btn-ghost:disabled {
+    background: #fff !important;
+    color: #9ca3af !important;
+  }
+
   .btn-outline {
     @apply btn border-2 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white focus:ring-primary-500;
+  }
+
+  .btn-outline:disabled {
+    background: #fff !important;
+    color: #b91c1c !important;
   }
 
   .btn-neumorphic {
@@ -262,6 +291,16 @@
 
   .nav-link.active::after {
     @apply w-full;
+  }
+
+  .nav-link,
+  button,
+  [type=button],
+  [type=submit],
+  [type=reset] {
+    font-family: 'Poppins', Arial, Helvetica, sans-serif !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   /* Hero Section */

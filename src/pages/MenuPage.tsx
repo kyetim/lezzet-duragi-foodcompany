@@ -168,10 +168,10 @@ export function MenuPage() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
-                            <button className="btn-primary bg-white text-secondary-600 hover:bg-gray-100">
+                            <button className="btn-primary px-8 py-4 text-lg font-poppins shadow-lg rounded-lg bg-gradient-to-r from-primary-600 to-primary-700 text-white hover:from-primary-700 hover:to-primary-800 hover:scale-105 transition-all duration-200">
                                 Günlük Menüyü Görüntüle
                             </button>
-                            <button className="btn-outline border-white text-white hover:bg-white hover:text-secondary-600">
+                            <button className="btn-outline px-8 py-4 text-lg font-poppins border-2 border-white text-white hover:bg-white hover:text-primary-700 hover:scale-105 rounded-lg shadow-lg transition-all duration-200">
                                 Kampanyaları İncele
                             </button>
                         </motion.div>

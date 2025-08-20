@@ -13,10 +13,14 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
+  optimizeDeps: {
+    exclude: ['cookie', 'set-cookie-parser']
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
+      external: ['cookie', 'set-cookie-parser'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],

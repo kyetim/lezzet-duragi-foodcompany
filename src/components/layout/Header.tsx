@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '@/store';
 import { toggleCart } from '@/store/slices/cartSlice';
-// import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Header() {
@@ -14,8 +14,7 @@ export function Header() {
 
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const user = useSelector((state: RootState) => state.auth.user);
+  const { currentUser, logout } = useAuth();
 
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -29,6 +28,15 @@ export function Header() {
 
   const toggleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsProfileOpen(false);
+    } catch (error) {
+      console.error('Çıkış yapılırken hata:', error);
+    }
   };
 
   return (
@@ -128,43 +136,44 @@ export function Header() {
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                   >
-                    {isAuthenticated ? (
+                    {currentUser ? (
                       <>
                         <div className="px-4 py-2 border-b border-gray-100">
                           <p className="text-sm font-medium text-gray-900">
-                            {user?.name || 'Kullanıcı'}
+                            {currentUser.displayName || 'Kullanıcı'}
                           </p>
-                          <p className="text-xs text-gray-500">{user?.email}</p>
+                          <p className="text-xs text-gray-500">{currentUser.email}</p>
                         </div>
                         <Link
                           to="/profile"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
                         >
                           Profilim
                         </Link>
                         <Link
                           to="/orders"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
                         >
                           Siparişlerim
                         </Link>
-                        <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
                           Çıkış Yap
                         </button>
                       </>
                     ) : (
                       <>
                         <Link
-                          to="/login"
+                          to="/auth"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
                         >
                           Giriş Yap
-                        </Link>
-                        <Link
-                          to="/register"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        >
-                          Kayıt Ol
                         </Link>
                       </>
                     )}

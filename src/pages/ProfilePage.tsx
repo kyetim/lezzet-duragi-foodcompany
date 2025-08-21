@@ -3,100 +3,29 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
 import { AddressManager } from '../components/profile/AddressManager';
-import { OrderHistory } from '../components/profile/OrderHistory';
-import { UserAddress } from '../interfaces/user';
-import { Order } from '../interfaces/order';
+import { AddressFormModal } from '../components/profile/AddressFormModal';
+import { userAddressService } from '../services/userService';
+import type { UserAddress } from '../interfaces/user';
 
 export const ProfilePage: React.FC = () => {
   const { currentUser, loading } = useAuth();
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
 
-  // Mock data - gerçek uygulamada Firebase'den gelecek
+  // Firebase'den gerçek verileri çek
   useEffect(() => {
     if (currentUser) {
-      // Mock addresses
-      setAddresses([
-        {
-          id: '1',
-          title: 'Ev',
-          fullName: 'John Doe',
-          phone: '+90 555 123 4567',
-          address: 'Atatürk Mahallesi, Cumhuriyet Caddesi No: 123',
-          district: 'Kadıköy',
-          city: 'İstanbul',
-          postalCode: '34710',
-          isDefault: true,
-          createdAt: new Date()
-        },
-        {
-          id: '2',
-          title: 'İş',
-          fullName: 'John Doe',
-          phone: '+90 555 123 4567',
-          address: 'İş Merkezi, Ofis Sokak No: 45',
-          district: 'Levent',
-          city: 'İstanbul',
-          postalCode: '34330',
-          isDefault: false,
-          createdAt: new Date()
+      const fetchAddresses = async () => {
+        try {
+          const userAddresses = await userAddressService.getUserAddresses(currentUser.uid);
+          setAddresses(userAddresses);
+        } catch (error) {
+          console.error('Error fetching addresses:', error);
         }
-      ]);
-
-      // Mock orders
-      setOrders([
-        {
-          id: '1',
-          userId: currentUser.uid,
-          orderNumber: 'LD-2024-001',
-          items: [
-            {
-              menuItemId: '1',
-              name: 'Döner Porsiyon',
-              quantity: 2,
-              price: 45.00,
-              image: '/api/placeholder/40/40'
-            },
-            {
-              menuItemId: '2',
-              name: 'Ayran',
-              quantity: 2,
-              price: 8.00,
-              image: '/api/placeholder/40/40'
-            }
-          ],
-          totalAmount: 106.00,
-          status: 'delivered',
-          deliveryType: 'delivery',
-          deliveryAddress: {
-            street: 'Atatürk Mahallesi, Cumhuriyet Caddesi No: 123',
-            city: 'İstanbul',
-            postalCode: '34710',
-            country: 'Türkiye'
-          },
-          createdAt: new Date(Date.now() - 86400000), // 1 gün önce
-          paymentMethod: 'cash'
-        },
-        {
-          id: '2',
-          userId: currentUser.uid,
-          orderNumber: 'LD-2024-002',
-          items: [
-            {
-              menuItemId: '3',
-              name: 'Mantı',
-              quantity: 1,
-              price: 35.00,
-              image: '/api/placeholder/40/40'
-            }
-          ],
-          totalAmount: 35.00,
-          status: 'preparing',
-          deliveryType: 'pickup',
-          createdAt: new Date(Date.now() - 3600000), // 1 saat önce
-          paymentMethod: 'card'
-        }
-      ]);
+      };
+      
+      fetchAddresses();
     }
   }, [currentUser]);
 
@@ -106,36 +35,62 @@ export const ProfilePage: React.FC = () => {
   };
 
   const handleAddAddress = () => {
-    // TODO: Adres ekleme modal'ını aç
-    console.log('Add address clicked');
+    setEditingAddress(null);
+    setIsAddressModalOpen(true);
   };
 
   const handleEditAddress = (address: UserAddress) => {
-    // TODO: Adres düzenleme modal'ını aç
-    console.log('Edit address clicked:', address);
+    setEditingAddress(address);
+    setIsAddressModalOpen(true);
   };
 
-  const handleDeleteAddress = (addressId: string) => {
-    // TODO: Adres silme onayı ve işlemi
-    setAddresses(addresses.filter(addr => addr.id !== addressId));
+  const handleSaveAddress = async (addressData: Omit<UserAddress, 'id' | 'createdAt'>) => {
+    try {
+      if (editingAddress) {
+        // Güncelleme
+        await userAddressService.updateUserAddress(editingAddress.id, addressData);
+        setAddresses(addresses.map(addr => 
+          addr.id === editingAddress.id 
+            ? { ...addr, ...addressData }
+            : addr
+        ));
+      } else {
+        // Yeni ekleme
+        const newAddressId = await userAddressService.addUserAddress(currentUser!.uid, addressData);
+        const newAddress: UserAddress = {
+          id: newAddressId,
+          ...addressData,
+          createdAt: new Date()
+        };
+        setAddresses([newAddress, ...addresses]);
+      }
+    } catch (error) {
+      console.error('Error saving address:', error);
+    }
   };
 
-  const handleSetDefaultAddress = (addressId: string) => {
-    setAddresses(addresses.map(addr => ({
-      ...addr,
-      isDefault: addr.id === addressId
-    })));
+  const handleDeleteAddress = async (addressId: string) => {
+    try {
+      await userAddressService.deleteUserAddress(addressId);
+      setAddresses(addresses.filter(addr => addr.id !== addressId));
+    } catch (error) {
+      console.error('Error deleting address:', error);
+    }
   };
 
-  const handleViewOrder = (orderId: string) => {
-    // TODO: Sipariş detay sayfasına yönlendir
-    console.log('View order clicked:', orderId);
+  const handleSetDefaultAddress = async (addressId: string) => {
+    try {
+      await userAddressService.setDefaultAddress(currentUser!.uid, addressId);
+      setAddresses(addresses.map(addr => ({
+        ...addr,
+        isDefault: addr.id === addressId
+      })));
+    } catch (error) {
+      console.error('Error setting default address:', error);
+    }
   };
 
-  const handleReorder = (orderId: string) => {
-    // TODO: Sipariş yenileme işlemi
-    console.log('Reorder clicked:', orderId);
-  };
+
 
   if (loading) {
     return (
@@ -149,9 +104,9 @@ export const ProfilePage: React.FC = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="space-y-8">
           {/* Profile Header */}
           <ProfileHeader onEditProfile={handleEditProfile} />
@@ -164,15 +119,16 @@ export const ProfilePage: React.FC = () => {
             onDeleteAddress={handleDeleteAddress}
             onSetDefault={handleSetDefaultAddress}
           />
-          
-          {/* Order History */}
-          <OrderHistory
-            orders={orders}
-            onViewOrder={handleViewOrder}
-            onReorder={handleReorder}
-          />
         </div>
       </div>
+
+      {/* Address Form Modal */}
+      <AddressFormModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+        onSave={handleSaveAddress}
+        address={editingAddress}
+      />
     </div>
   );
 };

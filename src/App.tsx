@@ -10,6 +10,7 @@ import { ContactPage } from '@/pages/ContactPage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { AuthPage } from '@/pages/AuthPage';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { OrdersPage } from '@/pages/OrdersPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import './App.css';
@@ -52,6 +53,13 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <ProfilePage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/orders" element={
+              <ProtectedRoute>
+                <Layout>
+                  <OrdersPage />
                 </Layout>
               </ProtectedRoute>
             } />

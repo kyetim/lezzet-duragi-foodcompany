@@ -2,7 +2,7 @@ import React from 'react';
 import { Clock, Package, CheckCircle, XCircle, Truck, MapPin } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { Order, OrderStatus } from '../../interfaces/order';
+import type { Order, OrderStatus } from '../../interfaces/order';
 
 interface OrderHistoryProps {
   orders: Order[];
@@ -96,7 +96,7 @@ export const OrderHistory: React.FC<OrderHistoryProps> = ({
           Önceki siparişlerinizi görüntüleyin ve yeniden sipariş verin
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent>
         {orders.length === 0 ? (
           <div className="text-center py-8">
@@ -132,7 +132,7 @@ export const OrderHistory: React.FC<OrderHistoryProps> = ({
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="text-right">
                     <p className="text-lg font-semibold text-gray-900">
                       ₺{order.totalAmount.toFixed(2)}
@@ -142,7 +142,7 @@ export const OrderHistory: React.FC<OrderHistoryProps> = ({
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Order Items Preview */}
                 <div className="space-y-2 mb-4">
                   {order.items.slice(0, 2).map((item, index) => (
@@ -168,7 +168,7 @@ export const OrderHistory: React.FC<OrderHistoryProps> = ({
                     </p>
                   )}
                 </div>
-                
+
                 {/* Action Buttons */}
                 <div className="flex items-center space-x-3">
                   <Button

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus, MapPin, Edit, Trash2, Home, Building, MoreHorizontal } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { UserAddress } from '../../interfaces/user';
+import type { UserAddress } from '../../interfaces/user';
 
 interface AddressManagerProps {
   addresses: UserAddress[];
@@ -44,7 +44,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
           Yeni Adres
         </Button>
       </CardHeader>
-      
+
       <CardContent>
         {addresses.length === 0 ? (
           <div className="text-center py-8">
@@ -59,9 +59,8 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
             {addresses.map((address) => (
               <div
                 key={address.id}
-                className={`border rounded-lg p-4 ${
-                  address.isDefault ? 'border-primary-200 bg-primary-50' : 'border-gray-200'
-                }`}
+                className={`border rounded-lg p-4 ${address.isDefault ? 'border-primary-200 bg-primary-50' : 'border-gray-200'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3">
@@ -89,7 +88,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     {!address.isDefault && (
                       <Button

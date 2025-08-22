@@ -11,6 +11,7 @@ import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { AuthPage } from '@/pages/AuthPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { OrdersPage } from '@/pages/OrdersPage';
+import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import './App.css';
@@ -60,6 +61,13 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <OrdersPage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/orders/:orderId" element={
+              <ProtectedRoute>
+                <Layout>
+                  <OrderDetailPage />
                 </Layout>
               </ProtectedRoute>
             } />

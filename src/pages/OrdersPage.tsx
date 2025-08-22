@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { OrderHistory } from '../components/profile/OrderHistory';
 import { orderService } from '../services/orderService';
@@ -8,6 +8,7 @@ import type { Order } from '../interfaces/order';
 export const OrdersPage: React.FC = () => {
     const { currentUser, loading } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
+    const navigate = useNavigate();
 
       // Firebase'den gerçek verileri çek
   useEffect(() => {
@@ -26,8 +27,7 @@ export const OrdersPage: React.FC = () => {
   }, [currentUser]);
 
     const handleViewOrder = (orderId: string) => {
-        // TODO: Sipariş detay sayfasına yönlendir
-        console.log('View order clicked:', orderId);
+        navigate(`/orders/${orderId}`);
     };
 
     const handleReorder = (orderId: string) => {

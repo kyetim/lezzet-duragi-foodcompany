@@ -25,6 +25,11 @@ export const profileService = {
     // Profil bilgilerini güncelle
     async updateProfile(user: User, profileData: ProfileData): Promise<void> {
         try {
+            // E-posta değişikliği varsa önce güncelle
+            if (profileData.email !== user.email) {
+                await updateEmail(user, profileData.email);
+            }
+
             // Firebase Auth profilini güncelle
             await updateProfile(user, {
                 displayName: profileData.displayName,
@@ -40,11 +45,6 @@ export const profileService = {
                 photoURL: profileData.photoURL,
                 updatedAt: new Date()
             });
-
-            // E-posta değişikliği varsa güncelle
-            if (profileData.email !== user.email) {
-                await updateEmail(user, profileData.email);
-            }
         } catch (error) {
             console.error('Error updating profile:', error);
             throw error;

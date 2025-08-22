@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 // Firebase configuration
 // Bu bilgileri Firebase Console'dan alacaksınız
@@ -22,5 +22,22 @@ export const auth = getAuth(app);
 
 // Initialize Firestore and get a reference to the service
 export const db = getFirestore(app);
+
+// Development ortamında emulator'ları kullan
+if (import.meta.env.DEV) {
+  // Firestore emulator'ını bağla (eğer çalışıyorsa)
+  try {
+    connectFirestoreEmulator(db, 'localhost', 8080);
+  } catch (error) {
+    console.log('Firestore emulator zaten bağlı veya çalışmıyor');
+  }
+  
+  // Auth emulator'ını bağla (eğer çalışıyorsa)
+  try {
+    connectAuthEmulator(auth, 'http://localhost:9099');
+  } catch (error) {
+    console.log('Auth emulator zaten bağlı veya çalışmıyor');
+  }
+}
 
 export default app;

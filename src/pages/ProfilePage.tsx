@@ -49,6 +49,19 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
+  const handlePasswordChange = async (passwordData: any) => {
+    try {
+      if (currentUser) {
+        await profileService.changePassword(currentUser, passwordData);
+        // Başarılı şifre değişikliği sonrası kullanıcıyı bilgilendir
+        alert('Şifreniz başarıyla değiştirildi!');
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      throw error;
+    }
+  };
+
   const handleAddAddress = () => {
     setEditingAddress(null);
     setIsAddressModalOpen(true);
@@ -150,6 +163,7 @@ export const ProfilePage: React.FC = () => {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         onSave={handleSaveProfile}
+        onPasswordChange={handlePasswordChange}
         user={currentUser}
       />
     </div>

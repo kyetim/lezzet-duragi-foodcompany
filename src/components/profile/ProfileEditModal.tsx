@@ -7,7 +7,13 @@ interface ProfileEditModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (profileData: ProfileData) => Promise<void>;
+    onPasswordChange: (passwordData: PasswordChangeData) => Promise<void>;
     user: FirebaseUser | null;
+}
+
+interface PasswordChangeData {
+    currentPassword: string;
+    newPassword: string;
 }
 
 interface ProfileData {
@@ -21,6 +27,7 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
     isOpen,
     onClose,
     onSave,
+    onPasswordChange,
     user
 }) => {
     const [formData, setFormData] = useState<ProfileData>({
@@ -118,12 +125,16 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
 
         setIsLoading(true);
         try {
-            // TODO: Implement password change logic
-            console.log('Password change:', passwordData);
+            await onPasswordChange({
+                currentPassword: passwordData.currentPassword,
+                newPassword: passwordData.newPassword
+            });
             setShowPasswordForm(false);
             setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
         } catch (error) {
             console.error('Error changing password:', error);
+            // Hata mesajını kullanıcıya göster
+            setErrors(prev => ({ ...prev, passwordChange: 'Şifre değiştirme işlemi başarısız oldu. Lütfen tekrar deneyin.' }));
         } finally {
             setIsLoading(false);
         }

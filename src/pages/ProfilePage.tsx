@@ -4,13 +4,16 @@ import { useAuth } from '../contexts/AuthContext';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
 import { AddressManager } from '../components/profile/AddressManager';
 import { AddressFormModal } from '../components/profile/AddressFormModal';
+import { ProfileEditModal } from '../components/profile/ProfileEditModal';
 import { userAddressService } from '../services/userService';
+import { profileService } from '../services/profileService';
 import type { UserAddress } from '../interfaces/user';
 
 export const ProfilePage: React.FC = () => {
   const { currentUser, loading } = useAuth();
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
 
   // Firebase'den gerçek verileri çek
@@ -30,8 +33,20 @@ export const ProfilePage: React.FC = () => {
   }, [currentUser]);
 
   const handleEditProfile = () => {
-    // TODO: Profil düzenleme modal'ını aç
-    console.log('Edit profile clicked');
+    setIsProfileModalOpen(true);
+  };
+
+  const handleSaveProfile = async (profileData: any) => {
+    try {
+      if (currentUser) {
+        await profileService.updateProfile(currentUser, profileData);
+        // AuthContext'teki currentUser'ı güncellemek için sayfayı yenile
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      throw error;
+    }
   };
 
   const handleAddAddress = () => {
@@ -128,6 +143,14 @@ export const ProfilePage: React.FC = () => {
         onClose={() => setIsAddressModalOpen(false)}
         onSave={handleSaveAddress}
         address={editingAddress}
+      />
+
+      {/* Profile Edit Modal */}
+      <ProfileEditModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onSave={handleSaveProfile}
+        user={currentUser}
       />
     </div>
   );

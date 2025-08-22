@@ -12,6 +12,7 @@ import type { UserAddress } from '../interfaces/user';
 export const ProfilePage: React.FC = () => {
   const { currentUser, loading } = useAuth();
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
@@ -19,16 +20,26 @@ export const ProfilePage: React.FC = () => {
   // Firebase'den gerçek verileri çek
   useEffect(() => {
     if (currentUser) {
-      const fetchAddresses = async () => {
+      const fetchData = async () => {
         try {
+          // Adresleri getir
           const userAddresses = await userAddressService.getUserAddresses(currentUser.uid);
           setAddresses(userAddresses);
+          
+          // Kullanıcı profil bilgilerini getir
+          try {
+            const profile = await profileService.getUserProfile(currentUser.uid);
+            setUserProfile(profile);
+          } catch (error) {
+            console.log('User profile not found, using Auth data');
+            setUserProfile(null);
+          }
         } catch (error) {
-          console.error('Error fetching addresses:', error);
+          console.error('Error fetching data:', error);
         }
       };
       
-      fetchAddresses();
+      fetchData();
     }
   }, [currentUser]);
 
@@ -40,8 +51,12 @@ export const ProfilePage: React.FC = () => {
     try {
       if (currentUser) {
         await profileService.updateProfile(currentUser, profileData);
-        // AuthContext'teki currentUser'ı güncellemek için sayfayı yenile
-        window.location.reload();
+        // Profil bilgilerini güncelle
+        setUserProfile(prev => ({
+          ...prev,
+          ...profileData,
+          updatedAt: new Date()
+        }));
       }
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -137,7 +152,7 @@ export const ProfilePage: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           {/* Profile Header */}
-          <ProfileHeader onEditProfile={handleEditProfile} />
+          <ProfileHeader onEditProfile={handleEditProfile} userProfile={userProfile} />
           
           {/* Address Management */}
           <AddressManager

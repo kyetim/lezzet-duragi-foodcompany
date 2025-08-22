@@ -6,9 +6,10 @@ import { useAuth } from '../../contexts/AuthContext';
 
 interface ProfileHeaderProps {
   onEditProfile: () => void;
+  userProfile?: any;
 }
 
-export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ onEditProfile }) => {
+export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ onEditProfile, userProfile }) => {
   const { currentUser } = useAuth();
 
   if (!currentUser) return null;
@@ -39,17 +40,17 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ onEditProfile }) =
             {/* User Info */}
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                {currentUser.displayName || 'Kullanıcı'}
+                {userProfile?.displayName || currentUser.displayName || 'Kullanıcı'}
               </h1>
               <div className="space-y-2 mt-2">
                 <div className="flex items-center text-gray-600">
                   <Mail className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{currentUser.email}</span>
+                  <span className="text-sm">{userProfile?.email || currentUser.email}</span>
                 </div>
-                {currentUser.phoneNumber && (
+                {(userProfile?.phoneNumber || currentUser.phoneNumber) && (
                   <div className="flex items-center text-gray-600">
                     <Phone className="w-4 h-4 mr-2" />
-                    <span className="text-sm">{currentUser.phoneNumber}</span>
+                    <span className="text-sm">{userProfile?.phoneNumber || currentUser.phoneNumber}</span>
                   </div>
                 )}
                 <div className="flex items-center text-gray-600">

@@ -10,7 +10,8 @@ import {
   updateProfile,
   type User
 } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 
 // Sepet verilerini localStorage'a kaydet
 const saveCartToStorage = (items: any[]): void => {
@@ -29,6 +30,41 @@ const loadCartFromStorage = (): any[] => {
   } catch (error) {
     console.error('Error loading cart from localStorage:', error);
     return [];
+  }
+};
+
+// Firestore'da kullanıcı dokümanı oluştur veya güncelle
+const createOrUpdateUserDocument = async (user: User) => {
+  try {
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
+    
+    if (!userSnap.exists()) {
+      // Kullanıcı dokümanı yoksa oluştur
+      await setDoc(userRef, {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        phoneNumber: user.phoneNumber || '',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      console.log('User document created in Firestore');
+    } else {
+      // Kullanıcı dokümanı varsa güncelle
+      await setDoc(userRef, {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || userSnap.data().displayName || '',
+        photoURL: user.photoURL || userSnap.data().photoURL || '',
+        phoneNumber: user.phoneNumber || userSnap.data().phoneNumber || '',
+        updatedAt: new Date()
+      }, { merge: true });
+      console.log('User document updated in Firestore');
+    }
+  } catch (error) {
+    console.error('Error creating/updating user document:', error);
   }
 };
 
@@ -61,11 +97,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       
-      // Kullanıcı login olduğunda sepet verilerini koru
+      // Kullanıcı login olduğunda sepet verilerini koru ve Firestore dokümanı oluştur
       if (user) {
+        // Firestore'da kullanıcı dokümanı oluştur/güncelle
+        await createOrUpdateUserDocument(user);
+        
         // Kullanıcıya özel sepet anahtarı oluştur
         const userCartKey = `cart_${user.uid}`;
         const currentCart = loadCartFromStorage();

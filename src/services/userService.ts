@@ -20,10 +20,10 @@ export const userAddressService = {
   // Kullanıcının tüm adreslerini getir
   async getUserAddresses(userId: string): Promise<UserAddress[]> {
     try {
+      // Önce sadece userId ile filtrele, sonra client-side'da sırala
       const q = query(
         collection(db, ADDRESSES_COLLECTION),
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
+        where('userId', '==', userId)
       );
       
       const querySnapshot = await getDocs(q);
@@ -38,7 +38,10 @@ export const userAddressService = {
         } as UserAddress);
       });
       
-      return addresses;
+      // Client-side'da createdAt'e göre sırala
+      return addresses.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     } catch (error) {
       console.error('Error fetching user addresses:', error);
       // Firestore henüz oluşturulmamışsa boş array döndür

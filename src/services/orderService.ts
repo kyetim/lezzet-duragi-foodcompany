@@ -20,10 +20,10 @@ export const orderService = {
   // Kullanıcının tüm siparişlerini getir
   async getUserOrders(userId: string): Promise<Order[]> {
     try {
+      // Önce sadece userId ile filtrele, sonra client-side'da sırala
       const q = query(
         collection(db, ORDERS_COLLECTION),
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
+        where('userId', '==', userId)
       );
       
       const querySnapshot = await getDocs(q);
@@ -40,9 +40,17 @@ export const orderService = {
         } as Order);
       });
       
-      return orders;
+      // Client-side'da createdAt'e göre sırala
+      return orders.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     } catch (error) {
       console.error('Error fetching user orders:', error);
+      // Firestore henüz oluşturulmamışsa boş array döndür
+      if (error.code === 'unavailable' || error.code === 'permission-denied') {
+        console.warn('Firestore not available, returning empty orders array');
+        return [];
+      }
       throw error;
     }
   },

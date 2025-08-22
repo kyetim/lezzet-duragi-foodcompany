@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
 import { getFoodImagesByCategory, optimizeImageUrl } from '@/helpers/foodImages';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface CartSidebarProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ interface CartSidebarProps {
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     const { state, removeItem, updateQuantity } = useCart();
     const [isProcessing, setIsProcessing] = useState(false);
+    const navigate = useNavigate();
 
     if (!isOpen) return null;
 
@@ -50,7 +52,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             <div key={item.id} className="flex items-center gap-4 border-b last:border-b-0 pb-4">
                                 {/* Ürün Görseli */}
                                 <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center bg-gray-100 shadow">
-                                    {item.image ? (
+                                    {item.image && item.image.trim() !== '' ? (
                                         <img
                                             src={optimizeImageUrl(item.image, 100, 100)}
                                             alt={item.name}
@@ -58,7 +60,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                                            Resim
+                                            🍽️
                                         </div>
                                     )}
                                 </div>
@@ -110,21 +112,16 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             <span className="text-lg font-semibold text-gray-800">Toplam:</span>
                             <span className="text-2xl font-bold text-primary-red">₺{state.total}</span>
                         </div>
-                        <Button
-                            className="w-full btn-primary text-lg py-3 rounded-xl shadow-xl"
+                                                <Button 
+                            className="w-full btn-primary text-lg py-3 rounded-xl shadow-xl" 
                             variant="default"
                             onClick={() => {
-                                setIsProcessing(true);
-                                // TODO: Sipariş tamamlama sayfasına yönlendir
-                                console.log('Sipariş tamamlanıyor:', state.items);
-                                setTimeout(() => {
-                                    setIsProcessing(false);
-                                    onClose();
-                                }, 1000);
+                                onClose();
+                                navigate('/checkout');
                             }}
                             disabled={isProcessing}
                         >
-                            {isProcessing ? 'İşleniyor...' : 'Siparişi Tamamla'}
+                            Siparişi Tamamla
                         </Button>
                     </div>
                 )}

@@ -5,13 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Star, ArrowRight, ThumbsUp } from 'lucide-react';
 import { useState } from 'react';
 import { ProductCard } from '@/components/ui/ProductCard';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '@/store/slices/cartSlice';
+import { useCart } from '@/contexts/CartContext';
 
 export function ProductDetailPage() {
     const { id } = useParams<{ id: string }>();
     const product = menuData.find((item) => item.id === id);
-    const dispatch = useDispatch();
+    const { addItem } = useCart();
 
     // Yorum ve puan state'i
     const [comments, setComments] = useState([
@@ -87,7 +86,19 @@ export function ProductDetailPage() {
         <div className="min-h-screen w-full bg-food-cream pt-24 pb-16 px-2 sm:px-4 md:px-8">
             <div className="w-full flex justify-center mb-12 px-0 sm:px-2 md:px-0">
                 <div className="w-full max-w-xl">
-                    <ProductCard item={product} onAddToCart={() => dispatch(addToCart(product))} showDetailsButton={false} className="shadow-2xl border border-gray-100" />
+                    <ProductCard
+                        item={product}
+                        onAddToCart={() => addItem({
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            quantity: 1,
+                            image: product.image,
+                            description: product.description
+                        })}
+                        showDetailsButton={false}
+                        className="shadow-2xl border border-gray-100"
+                    />
                 </div>
             </div>
             {/* Ortalama Puan ve Yorum Ekleme */}
@@ -175,7 +186,19 @@ export function ProductDetailPage() {
                     <h2 className="text-xl font-bold text-primary-700 mb-6">Önerilen Ürünler</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                         {recommended.map((item) => (
-                            <ProductCard key={item.id} item={item} showDetailsButton={true} />
+                            <ProductCard 
+                                key={item.id} 
+                                item={item} 
+                                onAddToCart={() => addItem({
+                                    id: item.id,
+                                    name: item.name,
+                                    price: item.price,
+                                    quantity: 1,
+                                    image: item.image,
+                                    description: item.description
+                                })}
+                                showDetailsButton={true} 
+                            />
                         ))}
                     </div>
                 </div>

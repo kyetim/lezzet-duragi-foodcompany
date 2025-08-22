@@ -1,26 +1,23 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '@/store';
-import { toggleCart } from '@/store/slices/cartSlice';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export function Header() {
+interface HeaderProps {
+  onCartClick: () => void;
+}
+
+export function Header({ onCartClick }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   // const { isDarkMode, toggleTheme } = useTheme();
 
-  const dispatch = useDispatch();
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const { state } = useCart();
   const { currentUser, logout } = useAuth();
 
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-
-  const handleCartToggle = () => {
-    dispatch(toggleCart());
-  };
+  const cartItemCount = state.itemCount;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -98,7 +95,7 @@ export function Header() {
 
             {/* Cart */}
             <motion.button
-              onClick={handleCartToggle}
+              onClick={onCartClick}
               className="relative p-2 rounded-lg bg-primary-100 hover:bg-primary-200 transition-colors duration-200"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

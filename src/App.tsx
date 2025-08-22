@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CartProvider } from '@/contexts/CartContext';
 import { Layout } from '@/components/layout/Layout';
 import { HomePage } from '@/pages/HomePage';
 import { MenuPage } from '@/pages/MenuPage';
@@ -20,9 +21,10 @@ function App() {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <Router>
-          <ScrollToTop />
-          <Routes>
+        <CartProvider>
+          <Router>
+            <ScrollToTop />
+            <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/" element={
               <Layout>
@@ -73,6 +75,7 @@ function App() {
             } />
           </Routes>
         </Router>
+      </CartProvider>
       </AuthProvider>
     </Provider>
   );

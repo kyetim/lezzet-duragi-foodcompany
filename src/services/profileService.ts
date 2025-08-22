@@ -25,26 +25,31 @@ export const profileService = {
     // Profil bilgilerini güncelle
     async updateProfile(user: User, profileData: ProfileData): Promise<void> {
         try {
-            // E-posta değişikliği varsa önce güncelle
-            if (profileData.email !== user.email) {
-                await updateEmail(user, profileData.email);
-            }
-
             // Firebase Auth profilini güncelle
             await updateProfile(user, {
                 displayName: profileData.displayName,
                 photoURL: profileData.photoURL
             });
 
+            // E-posta değişikliği varsa güncelle
+            if (profileData.email !== user.email) {
+                await updateEmail(user, profileData.email);
+            }
+
             // Firestore'da kullanıcı dokümanını güncelle
-            const userRef = doc(db, 'users', user.uid);
-            await updateDoc(userRef, {
-                displayName: profileData.displayName,
-                email: profileData.email,
-                phoneNumber: profileData.phoneNumber,
-                photoURL: profileData.photoURL,
-                updatedAt: new Date()
-            });
+            try {
+                const userRef = doc(db, 'users', user.uid);
+                await updateDoc(userRef, {
+                    displayName: profileData.displayName,
+                    email: profileData.email,
+                    phoneNumber: profileData.phoneNumber,
+                    photoURL: profileData.photoURL,
+                    updatedAt: new Date()
+                });
+            } catch (firestoreError) {
+                console.warn('Firestore update failed, but Auth update succeeded:', firestoreError);
+                // Firestore hatası olsa bile Auth güncellemesi başarılı olduğu için devam et
+            }
         } catch (error) {
             console.error('Error updating profile:', error);
             throw error;

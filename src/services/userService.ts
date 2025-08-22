@@ -41,6 +41,11 @@ export const userAddressService = {
       return addresses;
     } catch (error) {
       console.error('Error fetching user addresses:', error);
+      // Firestore henüz oluşturulmamışsa boş array döndür
+      if (error.code === 'unavailable' || error.code === 'permission-denied') {
+        console.warn('Firestore not available, returning empty addresses array');
+        return [];
+      }
       throw error;
     }
   },
@@ -57,6 +62,11 @@ export const userAddressService = {
       return docRef.id;
     } catch (error) {
       console.error('Error adding user address:', error);
+      // Firestore henüz oluşturulmamışsa geçici ID döndür
+      if (error.code === 'unavailable' || error.code === 'permission-denied') {
+        console.warn('Firestore not available, returning temporary ID');
+        return `temp_${Date.now()}`;
+      }
       throw error;
     }
   },

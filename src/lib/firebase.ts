@@ -23,7 +23,9 @@ export const auth = getAuth(app);
 // Initialize Firestore and get a reference to the service
 export const db = getFirestore(app);
 
-// Development ortamında emulator'ları kullan
+// Emulator'ları devre dışı bırak - gerçek Firebase servislerini kullan
+// Development ortamında emulator'ları kullanmak isterseniz aşağıdaki kodu aktif edin:
+/*
 if (import.meta.env.DEV) {
   // Firestore emulator'ını bağla (eğer çalışıyorsa)
   try {
@@ -39,5 +41,6 @@ if (import.meta.env.DEV) {
     console.log('Auth emulator zaten bağlı veya çalışmıyor');
   }
 }
+*/
 
 export default app;

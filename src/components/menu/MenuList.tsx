@@ -1,5 +1,4 @@
-import { useDispatch } from 'react-redux';
-import { addToCart } from '@/store/slices/cartSlice';
+import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { getFoodImagesByCategory, getRandomFoodImage, optimizeImageUrl } from '@/helpers/foodImages';
@@ -12,10 +11,17 @@ interface MenuListProps {
 }
 
 export function MenuList({ items }: MenuListProps) {
-    const dispatch = useDispatch();
+    const { addItem } = useCart();
 
     const handleAddToCart = (menuItem: MenuItem) => {
-        dispatch(addToCart({ menuItem, quantity: 1 }));
+        addItem({
+            id: menuItem.id,
+            name: menuItem.name,
+            price: menuItem.price,
+            quantity: 1,
+            image: menuItem.image,
+            description: menuItem.description
+        });
     };
 
     // Kategori ikonları

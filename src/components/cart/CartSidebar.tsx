@@ -50,11 +50,17 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             <div key={item.id} className="flex items-center gap-4 border-b last:border-b-0 pb-4">
                                 {/* Ürün Görseli */}
                                 <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center bg-gray-100 shadow">
-                                    <img
-                                        src={optimizeImageUrl(item.image || '', 100, 100)}
-                                        alt={item.name}
-                                        className="w-full h-full object-cover"
-                                    />
+                                    {item.image ? (
+                                        <img
+                                            src={optimizeImageUrl(item.image, 100, 100)}
+                                            alt={item.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                                            Resim
+                                        </div>
+                                    )}
                                 </div>
                                 {/* Ürün Bilgileri */}
                                 <div className="flex-1 min-w-0">

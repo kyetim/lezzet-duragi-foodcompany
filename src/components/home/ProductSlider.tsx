@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Star, Clock, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '@/store/slices/cartSlice';
+import { useCart } from '@/contexts/CartContext';
 import { getFoodImagesByCategory, optimizeImageUrl } from '@/helpers/foodImages';
 import { getFeaturedItems } from '@/helpers/menuData';
 import { ProductCard } from '@/components/ui/ProductCard';
@@ -23,13 +22,20 @@ export function ProductSlider({
 }: ProductSliderProps) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(autoPlay);
-    const dispatch = useDispatch();
+    const { addItem } = useCart();
 
     const featuredItems = getFeaturedItems();
     const slides = featuredItems.slice(0, 6); // İlk 6 ürünü göster
 
     const handleAddToCart = (menuItem: any) => {
-        dispatch(addToCart({ menuItem, quantity: 1 }));
+        addItem({
+            id: menuItem.id,
+            name: menuItem.name,
+            price: menuItem.price,
+            quantity: 1,
+            image: menuItem.image,
+            description: menuItem.description
+        });
     };
 
     const nextSlide = () => {

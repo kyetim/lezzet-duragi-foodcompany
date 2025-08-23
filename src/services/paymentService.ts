@@ -9,7 +9,7 @@ export const paymentService = {
   // Ödeme niyeti oluştur
   async createPaymentIntent(amount: number): Promise<PaymentIntent> {
     try {
-      const response = await fetch('/api/create-payment-intent', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -26,6 +26,7 @@ import {
   Banknote
 } from 'lucide-react';
 import type { Order, OrderStatus, UserAddress } from '../interfaces/order';
+import { PaymentModal } from '../components/payment/PaymentModal';
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ export const CheckoutPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
@@ -94,12 +96,20 @@ export const CheckoutPage: React.FC = () => {
       return;
     }
 
+    if (paymentMethod === 'card') {
+      setShowPaymentModal(true);
+      return;
+    }
+
+    await processOrder();
+  };
+
+  const processOrder = async () => {
     setIsProcessing(true);
 
     try {
-      // Firestore için undefined değerleri temizle
       const cleanOrderData: Omit<Order, 'id' | 'createdAt' | 'status' | 'paymentStatus'> = {
-        userId: currentUser.uid,
+        userId: currentUser!.uid,
         items: cartState.items.map(item => ({
           id: item.id,
           name: item.name,
@@ -112,13 +122,12 @@ export const CheckoutPage: React.FC = () => {
         deliveryFee: calculateDeliveryFee(),
         tax: calculateTax(),
         totalAmount: calculateTotal(),
-        deliveryAddress: selectedAddress,
+        deliveryAddress: selectedAddress!,
         paymentMethod: paymentMethod === 'cash' ? 'Nakit' : 'Kredi Kartı',
         notes: notes.trim() || null,
         estimatedDeliveryTime: new Date(Date.now() + 45 * 60000)
       };
 
-      // undefined değerleri temizle
       const orderData = Object.fromEntries(
         Object.entries(cleanOrderData).filter(([_, value]) => value !== undefined)
       );
@@ -132,6 +141,14 @@ export const CheckoutPage: React.FC = () => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handlePaymentSuccess = async (paymentIntent: any) => {
+    await processOrder();
+  };
+
+  const handlePaymentError = (error: string) => {
+    alert(`Ödeme hatası: ${error}`);
   };
 
   if (loading) {
@@ -545,10 +562,19 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                 )}
               </Button>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+                         </motion.div>
+           </div>
+         </div>
+       </div>
+
+       {/* Payment Modal */}
+       <PaymentModal
+         isOpen={showPaymentModal}
+         onClose={() => setShowPaymentModal(false)}
+         amount={calculateTotal()}
+         onPaymentSuccess={handlePaymentSuccess}
+         onPaymentError={handlePaymentError}
+       />
+     </div>
+   );
+ };

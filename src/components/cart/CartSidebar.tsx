@@ -112,8 +112,8 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             <span className="text-lg font-semibold text-gray-800">Toplam:</span>
                             <span className="text-2xl font-bold text-primary-red">₺{state.total}</span>
                         </div>
-                                                <Button 
-                            className="w-full btn-primary text-lg py-3 rounded-xl shadow-xl" 
+                        <Button
+                            className="w-full btn-primary text-lg py-3 rounded-xl shadow-xl"
                             variant="default"
                             onClick={() => {
                                 onClose();

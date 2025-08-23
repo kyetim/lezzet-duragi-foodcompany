@@ -5,19 +5,19 @@ import { orderService } from '../services/orderService';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { 
-  ArrowLeft, 
-  Clock, 
-  MapPin, 
-  Phone, 
-  CreditCard, 
-  Truck, 
-  CheckCircle, 
+import {
+  ArrowLeft,
+  Clock,
+  MapPin,
+  Phone,
+  CreditCard,
+  Truck,
+  CheckCircle,
   AlertCircle,
   RefreshCw,
   ShoppingCart
 } from 'lucide-react';
-import type { Order, OrderStatus } from '../interfaces/order';
+import type { Order, OrderStatus, UserAddress } from '../interfaces/order';
 
 const getStatusColor = (status: OrderStatus) => {
   switch (status) {
@@ -90,7 +90,7 @@ export const OrderDetailPage: React.FC = () => {
       try {
         setLoadingOrder(true);
         const orderData = await orderService.getOrderById(orderId);
-        
+
         if (!orderData) {
           setError('Sipariş bulunamadı');
           return;
@@ -203,7 +203,7 @@ export const OrderDetailPage: React.FC = () => {
               <p className="text-gray-600">{formatDate(order.createdAt)}</p>
             </div>
           </div>
-          
+
           <div className="flex space-x-2">
             <Button onClick={handleReorder} variant="outline">
               <RefreshCw className="w-4 h-4 mr-2" />

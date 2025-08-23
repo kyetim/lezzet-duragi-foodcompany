@@ -25,8 +25,7 @@ import {
   CreditCard as CreditCardIcon,
   Banknote
 } from 'lucide-react';
-import type { UserAddress } from '../interfaces/user';
-import type { Order, OrderStatus } from '../interfaces/order';
+import type { Order, OrderStatus, UserAddress } from '../interfaces/order';
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -98,15 +97,16 @@ export const CheckoutPage: React.FC = () => {
     setIsProcessing(true);
 
     try {
-      const orderData: Omit<Order, 'id' | 'createdAt' | 'status' | 'paymentStatus'> = {
+      // Firestore için undefined değerleri temizle
+      const cleanOrderData: Omit<Order, 'id' | 'createdAt' | 'status' | 'paymentStatus'> = {
         userId: currentUser.uid,
         items: cartState.items.map(item => ({
           id: item.id,
           name: item.name,
           price: item.price,
           quantity: item.quantity,
-          image: item.image,
-          description: item.description
+          image: item.image || null,
+          description: item.description || null
         })),
         subtotal: calculateSubtotal(),
         deliveryFee: calculateDeliveryFee(),
@@ -114,9 +114,14 @@ export const CheckoutPage: React.FC = () => {
         totalAmount: calculateTotal(),
         deliveryAddress: selectedAddress,
         paymentMethod: paymentMethod === 'cash' ? 'Nakit' : 'Kredi Kartı',
-        notes: notes.trim() || undefined,
+        notes: notes.trim() || null,
         estimatedDeliveryTime: new Date(Date.now() + 45 * 60000)
       };
+
+      // undefined değerleri temizle
+      const orderData = Object.fromEntries(
+        Object.entries(cleanOrderData).filter(([_, value]) => value !== undefined)
+      );
 
       const orderId = await orderService.createOrder(orderData);
       clearCart();

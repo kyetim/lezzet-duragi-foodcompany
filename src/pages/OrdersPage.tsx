@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { OrderHistory } from '../components/profile/OrderHistory';
 import { orderService } from '../services/orderService';
-import type { Order } from '../interfaces/order';
+import type { Order, UserAddress } from '../interfaces/order';
 
 export const OrdersPage: React.FC = () => {
     const { currentUser, loading } = useAuth();

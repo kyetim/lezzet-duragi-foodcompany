@@ -2,7 +2,7 @@ import React from 'react';
 import { Clock, Package, CheckCircle, XCircle, Truck, MapPin } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import type { Order, OrderStatus } from '../../interfaces/order';
+import type { Order, OrderStatus, UserAddress } from '../../interfaces/order';
 
 interface OrderHistoryProps {
   orders: Order[];

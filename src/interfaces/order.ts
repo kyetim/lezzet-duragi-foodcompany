@@ -2,26 +2,29 @@ export interface Order {
     id: string;
     userId: string;
     items: OrderItem[];
+    subtotal: number;
+    deliveryFee: number;
+    tax: number;
     totalAmount: number;
     status: OrderStatus;
-    deliveryType: 'pickup' | 'delivery';
-    deliveryAddress?: Address;
-    deliveryAddressId?: string;
+    paymentStatus: 'pending' | 'paid' | 'failed';
+    deliveryAddress: UserAddress;
+    paymentMethod: string;
+    notes?: string | null;
     createdAt: Date;
     updatedAt?: Date;
     estimatedDeliveryTime?: Date;
-    notes?: string;
-    orderNumber: string;
-    paymentMethod: PaymentMethod;
+    orderNumber?: string;
 }
 
 export interface OrderItem {
-    menuItemId: string;
+    id: string;
     name: string;
     quantity: number;
     price: number;
+    image?: string | null;
+    description?: string | null;
     specialInstructions?: string;
-    image?: string;
     size?: string;
 }
 
@@ -36,9 +39,12 @@ export type OrderStatus =
 
 export type PaymentMethod = 'cash' | 'card' | 'online';
 
-export interface Address {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
+// UserAddress interface'ini import etmek yerine burada tanımlayalım
+export interface UserAddress {
+    id: string;
+    title: string;
+    fullAddress: string;
+    phone: string;
+    isDefault?: boolean;
+    createdAt?: Date;
 } 

@@ -75,6 +75,14 @@ export function Header({ onCartClick }: HeaderProps) {
             >
               İletişim
             </Link>
+            {import.meta.env.DEV && (
+              <Link
+                to="/payment-test"
+                className="nav-link text-blue-600 hover:text-blue-700 transition-colors duration-200 text-sm font-medium"
+              >
+                💳 Payment Test
+              </Link>
+            )}
           </nav>
 
           {/* Right Side Actions */}
@@ -232,6 +240,15 @@ export function Header({ onCartClick }: HeaderProps) {
                 >
                   İletişim
                 </Link>
+                {import.meta.env.DEV && (
+                  <Link
+                    to="/payment-test"
+                    className="block px-4 py-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    💳 Payment Test
+                  </Link>
+                )}
               </nav>
             </motion.div>
           )}

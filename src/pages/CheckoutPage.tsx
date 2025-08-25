@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
+import { useToast } from '../hooks/useToast';
+import { useLoading } from '../hooks/useLoading';
 import { userAddressService } from '../services/userService';
 import { orderService } from '../services/orderService';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
+import { PageLoading, ButtonLoading } from '../components/ui/LoadingSpinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, 
@@ -25,19 +28,20 @@ import {
   CreditCard as CreditCardIcon,
   Banknote
 } from 'lucide-react';
-import type { Order, OrderStatus, UserAddress } from '../interfaces/order';
+import type { Order, OrderStatus } from '../interfaces/order';
+import type { UserAddress } from '../interfaces/user';
 import { PaymentModal } from '../components/payment/PaymentModal';
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { state: cartState, clearCart } = useCart();
+  const toast = useToast();
+  const { isLoading, setLoading, withLoading } = useLoading();
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
   const [notes, setNotes] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
@@ -54,15 +58,22 @@ export const CheckoutPage: React.FC = () => {
 
     const fetchAddresses = async () => {
       try {
+        setLoading(true, 'page');
         const userAddresses = await userAddressService.getUserAddresses(currentUser.uid);
-        setAddresses(userAddresses);
-        if (userAddresses.length > 0) {
-          setSelectedAddress(userAddresses[0]);
+        // fullAddress alanını oluşturarak tip uyumluluğunu sağla
+        const compatibleAddresses = userAddresses.map(addr => ({
+          ...addr,
+          fullAddress: `${addr.address}, ${addr.district}, ${addr.city}`
+        }));
+        setAddresses(compatibleAddresses);
+        if (compatibleAddresses.length > 0) {
+          setSelectedAddress(compatibleAddresses[0]);
         }
       } catch (error) {
         console.error('Error fetching addresses:', error);
+        toast.error('Adres Yükleme Hatası', 'Adresleriniz yüklenirken bir hata oluştu.');
       } finally {
-        setLoading(false);
+        setLoading(false, 'page');
       }
     };
 
@@ -92,7 +103,7 @@ export const CheckoutPage: React.FC = () => {
 
   const handlePlaceOrder = async () => {
     if (!selectedAddress || !currentUser) {
-      alert('Lütfen teslimat adresi seçin');
+      toast.warning('Eksik Bilgi', 'Lütfen teslimat adresi seçin');
       return;
     }
 
@@ -104,11 +115,9 @@ export const CheckoutPage: React.FC = () => {
     await processOrder();
   };
 
-  const processOrder = async () => {
-    setIsProcessing(true);
-
+  const processOrder = withLoading(async () => {
     try {
-      const cleanOrderData: Omit<Order, 'id' | 'createdAt' | 'status' | 'paymentStatus'> = {
+      const cleanOrderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'> = {
         userId: currentUser!.uid,
         items: cartState.items.map(item => ({
           id: item.id,
@@ -122,48 +131,44 @@ export const CheckoutPage: React.FC = () => {
         deliveryFee: calculateDeliveryFee(),
         tax: calculateTax(),
         totalAmount: calculateTotal(),
-        deliveryAddress: selectedAddress!,
+        deliveryAddress: {
+          ...selectedAddress!,
+          fullAddress: selectedAddress!.fullAddress || `${selectedAddress!.address}, ${selectedAddress!.district}, ${selectedAddress!.city}`
+        },
         paymentMethod: paymentMethod === 'cash' ? 'Nakit' : 'Kredi Kartı',
         notes: notes.trim() || null,
-        estimatedDeliveryTime: new Date(Date.now() + 45 * 60000)
+        estimatedDeliveryTime: new Date(Date.now() + 45 * 60000),
+        // Eksik alanları ekliyoruz
+        status: 'pending' as OrderStatus,
+        paymentStatus: 'pending' as const
       };
 
+      // undefined değerlerini filtrele
       const orderData = Object.fromEntries(
         Object.entries(cleanOrderData).filter(([_, value]) => value !== undefined)
-      );
+      ) as Omit<Order, 'id' | 'createdAt' | 'updatedAt'>;
 
       const orderId = await orderService.createOrder(orderData);
       clearCart();
+      toast.success('Sipariş Alındı', 'Siparişiniz başarıyla oluşturuldu!');
       navigate(`/orders/${orderId}?success=true`);
     } catch (error) {
       console.error('Error placing order:', error);
-      alert('Sipariş verilirken bir hata oluştu. Lütfen tekrar deneyin.');
-    } finally {
-      setIsProcessing(false);
+      toast.error('Sipariş Hatası', 'Sipariş verilirken bir hata oluştu. Lütfen tekrar deneyin.');
+      throw error;
     }
-  };
+  }, 'order');
 
   const handlePaymentSuccess = async (paymentIntent: any) => {
     await processOrder();
   };
 
   const handlePaymentError = (error: string) => {
-    alert(`Ödeme hatası: ${error}`);
+    toast.error('Ödeme Hatası', error);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-yellow-50">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Sipariş bilgileriniz yükleniyor...</p>
-        </motion.div>
-      </div>
-    );
+  if (isLoading('page')) {
+    return <PageLoading text="Sipariş bilgileriniz hazırlanıyor..." />;
   }
 
   return (
@@ -288,7 +293,9 @@ export const CheckoutPage: React.FC = () => {
                                     </motion.div>
                                   )}
                                 </div>
-                                <p className="text-gray-600 mb-3 leading-relaxed">{address.fullAddress}</p>
+                                <p className="text-gray-600 mb-3 leading-relaxed">
+                                  {address.address}, {address.district}, {address.city}
+                                </p>
                                 <div className="flex items-center text-sm text-gray-500">
                                   <Phone className="w-4 h-4 mr-2" />
                                   {address.phone}
@@ -548,13 +555,10 @@ export const CheckoutPage: React.FC = () => {
               <Button
                 className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-lg py-4 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
                 onClick={handlePlaceOrder}
-                disabled={isProcessing || !selectedAddress || cartState.items.length === 0}
+                disabled={isLoading('order') || !selectedAddress || cartState.items.length === 0}
               >
-                {isProcessing ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Sipariş Veriliyor...
-                  </div>
+                {isLoading('order') ? (
+                  <ButtonLoading text="Sipariş Veriliyor..." />
                 ) : (
                   <div className="flex items-center">
                     <Truck className="w-5 h-5 mr-2" />

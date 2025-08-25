@@ -1,3 +1,6 @@
+// UserAddress'i user.ts'den import edelim
+import type { UserAddress } from './user';
+
 export interface Order {
     id: string;
     userId: string;
@@ -37,14 +40,4 @@ export type OrderStatus =
     | 'delivered'
     | 'cancelled';
 
-export type PaymentMethod = 'cash' | 'card' | 'online';
-
-// UserAddress interface'ini import etmek yerine burada tanımlayalım
-export interface UserAddress {
-    id: string;
-    title: string;
-    fullAddress: string;
-    phone: string;
-    isDefault?: boolean;
-    createdAt?: Date;
-} 
+export type PaymentMethod = 'cash' | 'card' | 'online'; 

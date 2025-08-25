@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../hooks/useToast';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
 import { AddressManager } from '../components/profile/AddressManager';
 import { AddressFormModal } from '../components/profile/AddressFormModal';
@@ -11,6 +12,7 @@ import type { UserAddress } from '../interfaces/user';
 
 export const ProfilePage: React.FC = () => {
   const { currentUser, loading } = useAuth();
+  const toast = useToast();
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
@@ -52,7 +54,7 @@ export const ProfilePage: React.FC = () => {
       if (currentUser) {
         await profileService.updateProfile(currentUser, profileData);
         // Profil bilgilerini güncelle
-        setUserProfile(prev => ({
+        setUserProfile((prev: any) => ({
           ...prev,
           ...profileData,
           updatedAt: new Date()
@@ -69,10 +71,11 @@ export const ProfilePage: React.FC = () => {
       if (currentUser) {
         await profileService.changePassword(currentUser, passwordData);
         // Başarılı şifre değişikliği sonrası kullanıcıyı bilgilendir
-        alert('Şifreniz başarıyla değiştirildi!');
+        toast.success('Şifre Değiştirildi', 'Şifreniz başarıyla değiştirildi!');
       }
     } catch (error) {
       console.error('Error changing password:', error);
+      toast.error('Şifre Değiştirme Hatası', 'Şifre değiştirilirken bir hata oluştu.');
       throw error;
     }
   };
@@ -109,6 +112,7 @@ export const ProfilePage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error saving address:', error);
+      toast.error('Adres Kaydetme Hatası', 'Adres kaydedilirken bir hata oluştu.');
     }
   };
 
@@ -118,6 +122,7 @@ export const ProfilePage: React.FC = () => {
       setAddresses(addresses.filter(addr => addr.id !== addressId));
     } catch (error) {
       console.error('Error deleting address:', error);
+      toast.error('Adres Silme Hatası', 'Adres silinirken bir hata oluştu.');
     }
   };
 
@@ -130,6 +135,7 @@ export const ProfilePage: React.FC = () => {
       })));
     } catch (error) {
       console.error('Error setting default address:', error);
+      toast.error('Varsayılan Adres Hatası', 'Varsayılan adres ayarlanırken bir hata oluştu.');
     }
   };
 

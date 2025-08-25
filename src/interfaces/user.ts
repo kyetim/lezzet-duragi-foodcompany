@@ -26,6 +26,8 @@ export interface UserAddress {
     postalCode?: string;
     isDefault: boolean;
     createdAt: Date;
+    // CheckoutPage ile uyumluluk için eklenen alan
+    fullAddress?: string;
 }
 
 export interface UserProfile {
@@ -49,5 +51,4 @@ export interface RegisterData extends LoginCredentials {
     phone?: string;
 }
 
-// Explicit export to ensure UserAddress is available
-export type { UserAddress }; 
+// Explicit export to ensure UserAddress is available 

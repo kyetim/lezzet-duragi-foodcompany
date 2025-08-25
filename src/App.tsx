@@ -3,6 +3,9 @@ import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
+import { ToastProvider } from '@/contexts/ToastContext';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { ErrorFallback } from '@/components/ui/ErrorFallback';
 import { Layout } from '@/components/layout/Layout';
 import { HomePage } from '@/pages/HomePage';
 import { MenuPage } from '@/pages/MenuPage';
@@ -14,17 +17,22 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
+import { PaymentTestPage } from '@/pages/PaymentTestPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
+import { ToastContainer } from '@/components/ui/ToastContainer';
 import './App.css';
 
 function App() {
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <CartProvider>
-          <Router>
-            <ScrollToTop />
+    <ErrorBoundary fallback={ErrorFallback}>
+      <Provider store={store}>
+        <ToastProvider>
+          <AuthProvider>
+            <CartProvider>
+              <Router>
+                <ScrollToTop />
+                <ToastContainer />
             <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/" element={
@@ -50,6 +58,11 @@ function App() {
             <Route path="/product/:id" element={
               <Layout>
                 <ProductDetailPage />
+              </Layout>
+            } />
+            <Route path="/payment-test" element={
+              <Layout>
+                <PaymentTestPage />
               </Layout>
             } />
             {/* Protected routes */}
@@ -81,11 +94,13 @@ function App() {
                 </Layout>
               </ProtectedRoute>
             } />
-          </Routes>
-        </Router>
-      </CartProvider>
-      </AuthProvider>
-    </Provider>
+              </Routes>
+            </Router>
+          </CartProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { CreditCard, Lock, AlertCircle } from 'lucide-react';
+import { CreditCard, Lock, AlertCircle, TestTube } from 'lucide-react';
 
 interface CreditCardFormProps {
   amount: number;
@@ -21,21 +21,43 @@ export const CreditCardForm: React.FC<CreditCardFormProps> = ({
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isMockMode = import.meta.env.VITE_USE_MOCK_PAYMENTS === 'true';
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-
     setProcessing(true);
     setError(null);
 
     try {
+      // If in mock mode, simulate payment without Stripe
+      if (isMockMode) {
+        console.log('🔧 Mock modu: Ödeme yöntemi oluşturma simüle ediliyor');
+        
+        // Create a mock payment method
+        const mockPaymentMethod = {
+          id: `pm_mock_${Math.random().toString(36).substr(2, 9)}`,
+          type: 'card',
+          card: {
+            brand: 'visa',
+            last4: '4242'
+          }
+        };
+        
+        // Simulate processing delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        onPaymentSuccess(mockPaymentMethod);
+        return;
+      }
+
+      // Real Stripe implementation
+      if (!stripe || !elements) {
+        throw new Error('Stripe not loaded. Please refresh the page.');
+      }
+
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) {
-        throw new Error('Kart bilgileri bulunamadı');
+        throw new Error('Card information not found');
       }
 
       const { error: paymentError, paymentMethod } = await stripe.createPaymentMethod({
@@ -44,10 +66,9 @@ export const CreditCardForm: React.FC<CreditCardFormProps> = ({
       });
 
       if (paymentError) {
-        throw new Error(paymentError.message || 'Ödeme hatası');
+        throw new Error(paymentError.message || 'Payment error');
       }
 
-      // Ödeme başarılı
       onPaymentSuccess(paymentMethod);
     } catch (err: any) {
       setError(err.message);
@@ -75,21 +96,45 @@ export const CreditCardForm: React.FC<CreditCardFormProps> = ({
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <CreditCard className="w-5 h-5 mr-2" />
-          Kredi Kartı ile Ödeme
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center">
+            <CreditCard className="w-5 h-5 mr-2" />
+            Kredi Kartı ile Ödeme
+          </div>
+          {isMockMode && (
+            <div className="flex items-center text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+              <TestTube className="w-3 h-3 mr-1" />
+              Test Mode
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Kart Bilgileri
-            </label>
-            <div className="border border-gray-300 rounded-lg p-3">
-              <CardElement options={cardElementOptions} />
+          {isMockMode ? (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Test Mode - Simulated Payment
+              </label>
+              <div className="border border-blue-300 rounded-lg p-4 bg-blue-50">
+                <div className="text-sm text-blue-800">
+                  <p className="font-medium mb-2">🔧 Mock Payment Mode Active</p>
+                  <p>• No real payment will be processed</p>
+                  <p>• Payment will be simulated successfully</p>
+                  <p>• Use this for testing the payment flow</p>
+                </div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Kart Bilgileri
+              </label>
+              <div className="border border-gray-300 rounded-lg p-3">
+                <CardElement options={cardElementOptions} />
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="flex items-center p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -107,7 +152,7 @@ export const CreditCardForm: React.FC<CreditCardFormProps> = ({
 
           <Button
             type="submit"
-            disabled={!stripe || processing || isLoading}
+            disabled={(!stripe && !isMockMode) || processing || isLoading}
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
             {processing ? (

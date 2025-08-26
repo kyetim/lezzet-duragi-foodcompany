@@ -17,7 +17,7 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
-import { PaymentTestPage } from '@/pages/PaymentTestPage';
+
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { ToastContainer } from '@/components/ui/ToastContainer';
@@ -60,11 +60,7 @@ function App() {
                 <ProductDetailPage />
               </Layout>
             } />
-            <Route path="/payment-test" element={
-              <Layout>
-                <PaymentTestPage />
-              </Layout>
-            } />
+
             {/* Protected routes */}
             <Route path="/profile" element={
               <ProtectedRoute>

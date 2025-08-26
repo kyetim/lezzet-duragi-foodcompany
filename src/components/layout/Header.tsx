@@ -75,14 +75,7 @@ export function Header({ onCartClick }: HeaderProps) {
             >
               İletişim
             </Link>
-            {import.meta.env.DEV && (
-              <Link
-                to="/payment-test"
-                className="nav-link text-blue-600 hover:text-blue-700 transition-colors duration-200 text-sm font-medium"
-              >
-                💳 Payment Test
-              </Link>
-            )}
+
           </nav>
 
           {/* Right Side Actions */}

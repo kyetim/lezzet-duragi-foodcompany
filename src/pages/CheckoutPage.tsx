@@ -8,7 +8,6 @@ import { userAddressService } from '../services/userService';
 import { orderService } from '../services/orderService';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
 import { PageLoading, ButtonLoading } from '../components/ui/LoadingSpinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -20,7 +19,6 @@ import {
   CheckCircle,
   AlertCircle,
   Plus,
-  Trash2,
   Clock,
   Shield,
   Star,
@@ -31,6 +29,7 @@ import {
 import type { Order, OrderStatus } from '../interfaces/order';
 import type { UserAddress } from '../interfaces/user';
 import { PaymentModal } from '../components/payment/PaymentModal';
+import { PaymentSuccessModal } from '../components/ui/PaymentSuccessModal';
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -42,8 +41,9 @@ export const CheckoutPage: React.FC = () => {
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
   const [notes, setNotes] = useState('');
-  const [currentStep, setCurrentStep] = useState(1);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!currentUser) {
@@ -112,6 +112,8 @@ export const CheckoutPage: React.FC = () => {
       return;
     }
 
+    // Nakit ödeme için bilgilendirme
+    toast.info('Sipariş Hazırlanıyor', 'Nakit ödemeli siparişiniz hazırlanıyor...');
     await processOrder();
   };
 
@@ -150,8 +152,16 @@ export const CheckoutPage: React.FC = () => {
 
       const orderId = await orderService.createOrder(orderData);
       clearCart();
-      toast.success('Sipariş Alındı', 'Siparişiniz başarıyla oluşturuldu!');
-      navigate(`/orders/${orderId}?success=true`);
+      setCompletedOrderId(orderId);
+      setShowSuccessModal(true);
+      
+      // Başarı bildirimi göster
+      toast.success(
+        'Sipariş Tamamlandı! 🎉',
+        `Sipariş numarası: #${orderId.slice(-8).toUpperCase()}`
+      );
+      
+      console.log('✅ Sipariş başarıyla oluşturuldu:', orderId);
     } catch (error) {
       console.error('Error placing order:', error);
       toast.error('Sipariş Hatası', 'Sipariş verilirken bir hata oluştu. Lütfen tekrar deneyin.');
@@ -159,12 +169,17 @@ export const CheckoutPage: React.FC = () => {
     }
   }, 'order');
 
-  const handlePaymentSuccess = async (paymentIntent: any) => {
+  const handlePaymentSuccess = async () => {
     await processOrder();
   };
 
   const handlePaymentError = (error: string) => {
     toast.error('Ödeme Hatası', error);
+  };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    navigate('/orders');
   };
 
   if (isLoading('page')) {
@@ -578,6 +593,22 @@ export const CheckoutPage: React.FC = () => {
          amount={calculateTotal()}
          onPaymentSuccess={handlePaymentSuccess}
          onPaymentError={handlePaymentError}
+       />
+
+       {/* Payment Success Modal */}
+       <PaymentSuccessModal
+         isOpen={showSuccessModal}
+         onClose={handleSuccessModalClose}
+         orderNumber={completedOrderId || undefined}
+         totalAmount={calculateTotal()}
+         paymentMethod={paymentMethod === 'cash' ? 'Nakit' : 'Kredi Kartı'}
+         estimatedDeliveryTime={new Date(Date.now() + 45 * 60000)}
+         deliveryAddress={selectedAddress ? {
+           fullName: selectedAddress.fullName,
+           address: selectedAddress.address,
+           district: selectedAddress.district,
+           city: selectedAddress.city
+         } : undefined}
        />
      </div>
    );

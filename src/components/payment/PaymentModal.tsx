@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { StripeProvider } from './StripeProvider';
 import { CreditCardForm } from './CreditCardForm';
 import { paymentService } from '../../services/paymentService';
+import { useToast } from '../../hooks/useToast';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -21,10 +22,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onPaymentError
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
 
   const handlePaymentSuccess = async (paymentMethod: any) => {
     setIsLoading(true);
+    
     try {
+      // Ödeme işlemi başladığında bildir
+      toast.info('Ödeme İşleniyor', 'Ödemeniz güvenli bir şekilde işleniyor...');
+      
       // Ödeme niyeti oluştur
       const paymentIntent = await paymentService.createPaymentIntent(amount);
       
@@ -34,9 +40,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         paymentMethod
       );
 
+      // Başarılı ödeme bildirimi
+      toast.success(
+        'Ödeme Başarılı! 💳',
+        'Kredi kartı ödemesi başarıyla tamamlandı'
+      );
+
       onPaymentSuccess(result);
       onClose();
     } catch (error: any) {
+      toast.error('Ödeme Başarısız', error.message);
       onPaymentError(error.message);
     } finally {
       setIsLoading(false);

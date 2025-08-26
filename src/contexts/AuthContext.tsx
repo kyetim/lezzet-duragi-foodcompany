@@ -13,15 +13,6 @@ import {
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 
-// Sepet verilerini localStorage'a kaydet
-const saveCartToStorage = (items: any[]): void => {
-  try {
-    localStorage.setItem('cart', JSON.stringify(items));
-  } catch (error) {
-    console.error('Error saving cart to localStorage:', error);
-  }
-};
-
 // Sepet verilerini localStorage'dan yükle
 const loadCartFromStorage = (): any[] => {
   try {

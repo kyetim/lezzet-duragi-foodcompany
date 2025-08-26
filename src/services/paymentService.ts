@@ -8,26 +8,50 @@ export interface PaymentIntent {
 
 export const paymentService = {
   // Create payment intent - requires backend implementation
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/create-payment-intent`, {
+>>>>>>> ebe05264ba901deb1e052f52fb8932ab58d32bcc
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: Math.round(amount * 100), // Stripe works with cents
+          currency: 'try'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Ödeme niyeti oluşturulamadı');
+      }
+
+      const data = await response.json();
+      return data;
+      */
   async createPaymentIntent(amount: number): Promise<PaymentIntent> {
     try {
       console.log('🔄 Ödeme niyeti oluşturuluyor:', amount, 'TRY');
       
-      // TODO: Replace with your actual backend endpoint
-      // For now, using a mock response - in production, implement your backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock payment intent - replace with real backend call
-      const mockPaymentIntent = {
-        clientSecret: `pi_test_${Math.random().toString(36).substr(2, 9)}_secret_${Math.random().toString(36).substr(2, 9)}`,
-        amount: Math.round(amount * 100),
-        id: `pi_test_${Math.random().toString(36).substr(2, 9)}`
-      };
-      
-      console.log('✅ Ödeme niyeti oluşturuldu:', mockPaymentIntent);
-      return mockPaymentIntent;
-      
-      /* Production implementation:
-      const response = await fetch('/api/create-payment-intent', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/create-payment-intent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: Math.round(amount * 100), // Stripe works with cents
+          currency: 'try'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Ödeme niyeti oluşturulamadı');
+      }
+
+      const data = await response.json();
+      console.log('✅ Ödeme niyeti oluşturuldu:', data);
+      return data;
+=======
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/create-payment-intent`, {
+>>>>>>> ebe05264ba901deb1e052f52fb8932ab58d32bcc
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

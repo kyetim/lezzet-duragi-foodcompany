@@ -28,17 +28,23 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     setIsLoading(true);
     
     try {
+      console.log('🟢 Payment process starting for amount:', amount);
+      
       // Ödeme işlemi başladığında bildir
       toast.info('Ödeme İşleniyor', 'Ödemeniz güvenli bir şekilde işleniyor...');
       
       // Ödeme niyeti oluştur
+      console.log('🟢 Creating payment intent...');
       const paymentIntent = await paymentService.createPaymentIntent(amount);
+      console.log('🟢 Payment intent created:', paymentIntent);
       
       // Ödemeyi onayla
+      console.log('🟢 Confirming payment...');
       const result = await paymentService.confirmPayment(
         paymentIntent.clientSecret,
         paymentMethod
       );
+      console.log('🟢 Payment confirmed:', result);
 
       // Başarılı ödeme bildirimi
       toast.success(
@@ -46,9 +52,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         'Kredi kartı ödemesi başarıyla tamamlandı'
       );
 
-      onPaymentSuccess(result);
-      onClose();
+      console.log('🟢 Calling onPaymentSuccess...');
+      await onPaymentSuccess(result);
+      console.log('🟢 onPaymentSuccess completed');
     } catch (error: any) {
+      console.error('🔴 Payment error:', error);
       toast.error('Ödeme Başarısız', error.message);
       onPaymentError(error.message);
     } finally {

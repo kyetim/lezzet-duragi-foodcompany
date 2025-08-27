@@ -46,15 +46,24 @@ export const CheckoutPage: React.FC = () => {
   const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('🔍 CheckoutPage useEffect: Checking auth and cart state', {
+      currentUser: !!currentUser,
+      cartItemsCount: cartState.items.length
+    });
+
     if (!currentUser) {
+      console.log('🔴 No user found, redirecting to auth');
       navigate('/auth');
       return;
     }
 
     if (cartState.items.length === 0) {
+      console.log('🔴 Cart is empty, redirecting to menu');
       navigate('/menu');
       return;
     }
+
+    console.log('🟢 Auth and cart checks passed, fetching addresses');
 
     const fetchAddresses = async () => {
       try {
@@ -69,6 +78,7 @@ export const CheckoutPage: React.FC = () => {
         if (compatibleAddresses.length > 0) {
           setSelectedAddress(compatibleAddresses[0]);
         }
+        console.log('🟢 Addresses loaded:', compatibleAddresses.length);
       } catch (error) {
         console.error('Error fetching addresses:', error);
         toast.error('Adres Yükleme Hatası', 'Adresleriniz yüklenirken bir hata oluştu.');
@@ -170,10 +180,22 @@ export const CheckoutPage: React.FC = () => {
   }, 'order');
 
   const handlePaymentSuccess = async () => {
-    await processOrder();
+    console.log('🟢 Payment success handler called');
+    
+    // Modal'ı kapat
+    setShowPaymentModal(false);
+    
+    try {
+      await processOrder();
+      console.log('🟢 Order processing completed successfully');
+    } catch (error) {
+      console.error('🔴 Error in payment success handler:', error);
+      toast.error('Sipariş Hatası', 'Sipariş kaydedilirken bir hata oluştu.');
+    }
   };
 
   const handlePaymentError = (error: string) => {
+    console.error('🔴 Payment error received:', error);
     toast.error('Ödeme Hatası', error);
   };
 

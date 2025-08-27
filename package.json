@@ -14,7 +14,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "engines": {
-    "node": "22.x"
+    "node": ">=18.0.0"
   },
   "keywords": [],
   "author": "",

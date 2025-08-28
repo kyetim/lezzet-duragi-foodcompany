@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, LogOut, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface HeaderProps {
@@ -12,7 +13,7 @@ interface HeaderProps {
 export function Header({ onCartClick }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  // const { isDarkMode, toggleTheme } = useTheme();
+  const { isDark, setTheme } = useTheme();
 
   const { state } = useCart();
   const { currentUser, logout } = useAuth();
@@ -34,6 +35,10 @@ export function Header({ onCartClick }: HeaderProps) {
     } catch (error) {
       console.error('Çıkış yapılırken hata:', error);
     }
+  };
+
+  const toggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark');
   };
 
   return (
@@ -81,18 +86,19 @@ export function Header({ onCartClick }: HeaderProps) {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 ml-1 sm:ml-2">
             {/* Theme Toggle */}
-            {/* <motion.button
+            <motion.button
               onClick={toggleTheme}
-              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              title={isDark ? 'Açık Tema' : 'Koyu Tema'}
             >
-              {isDarkMode ? (
+              {isDark ? (
                 <Sun className="w-5 h-5 text-yellow-500" />
               ) : (
-                <Moon className="w-5 h-5 text-gray-600" />
+                <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               )}
-            </motion.button> */}
+            </motion.button>
 
             {/* Cart */}
             <motion.button

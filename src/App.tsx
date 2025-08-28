@@ -18,6 +18,8 @@ import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
 
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { SEO } from '@/components/seo/SEO';
 import { PWATestPage } from '@/pages/PWATestPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
@@ -30,12 +32,14 @@ function App() {
   return (
     <ErrorBoundary fallback={ErrorFallback}>
       <Provider store={store}>
-        <ToastProvider>
-          <AuthProvider>
-            <CartProvider>
-              <Router>
-                <ScrollToTop />
-                <ToastContainer />
+        <ThemeProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <CartProvider>
+                <Router>
+                  <SEO />
+                  <ScrollToTop />
+                  <ToastContainer />
                 
                 {/* PWA Components */}
                 <PWAInstallPrompt />
@@ -110,6 +114,7 @@ function App() {
           </CartProvider>
           </AuthProvider>
         </ToastProvider>
+        </ThemeProvider>
       </Provider>
     </ErrorBoundary>
   );

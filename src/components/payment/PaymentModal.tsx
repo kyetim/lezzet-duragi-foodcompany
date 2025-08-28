@@ -46,7 +46,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       );
       console.log('🟢 Payment confirmed:', result);
 
-      // Başarılı ödeme bildirimi
+      // Başarılı ödeme bildirimi (önceki toast'lar otomatik temizlenecek)
       toast.success(
         'Ödeme Başarılı! 💳',
         'Kredi kartı ödemesi başarıyla tamamlandı'
@@ -57,7 +57,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       console.log('🟢 onPaymentSuccess completed');
     } catch (error: any) {
       console.error('🔴 Payment error:', error);
-      toast.error('Ödeme Başarısız', error.message);
+      
+      // Tüm toast'ları temizle ve hata mesajı göster
+      toast.clear();
+      setTimeout(() => {
+        toast.error('Ödeme Başarısız', error.message);
+      }, 100); // Kısa bir gecikme ile hata mesajını göster
+      
       onPaymentError(error.message);
     } finally {
       setIsLoading(false);

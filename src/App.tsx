@@ -18,9 +18,12 @@ import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
 
+import { PWATestPage } from '@/pages/PWATestPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { ToastContainer } from '@/components/ui/ToastContainer';
+import { PWAInstallPrompt } from '@/components/ui/PWAInstallPrompt';
+import { PWAStatusIndicator } from '@/components/ui/PWAStatusIndicator';
 import './App.css';
 
 function App() {
@@ -33,6 +36,11 @@ function App() {
               <Router>
                 <ScrollToTop />
                 <ToastContainer />
+                
+                {/* PWA Components */}
+                <PWAInstallPrompt />
+                <PWAStatusIndicator position="bottom-right" />
+                
             <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/" element={
@@ -58,6 +66,13 @@ function App() {
             <Route path="/product/:id" element={
               <Layout>
                 <ProductDetailPage />
+              </Layout>
+            } />
+            
+            {/* PWA Test Page (Development Only) */}
+            <Route path="/pwa-test" element={
+              <Layout>
+                <PWATestPage />
               </Layout>
             } />
 

@@ -50,7 +50,7 @@ self.addEventListener('activate', (event) => {
         );
       })
       .then(() => {
-        console.log('✅ Service Worker aktif ve eski cache'ler temizlendi');
+        console.log('✅ Service Worker aktif ve eski cacheler temizlendi');
         return self.clients.claim();
       })
   );

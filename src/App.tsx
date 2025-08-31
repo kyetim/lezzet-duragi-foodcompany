@@ -18,7 +18,7 @@ import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
 
-import { ThemeProvider } from '@/contexts/ThemeContext';
+
 import { SEO } from '@/components/seo/SEO';
 import { PWATestPage } from '@/pages/PWATestPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -32,7 +32,6 @@ function App() {
   return (
     <ErrorBoundary fallback={ErrorFallback}>
       <Provider store={store}>
-        <ThemeProvider>
           <ToastProvider>
             <AuthProvider>
               <CartProvider>
@@ -114,7 +113,6 @@ function App() {
           </CartProvider>
           </AuthProvider>
         </ToastProvider>
-        </ThemeProvider>
       </Provider>
     </ErrorBoundary>
   );

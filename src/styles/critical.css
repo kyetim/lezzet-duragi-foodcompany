@@ -1,0 +1,105 @@
+/* Critical CSS - Above the fold styles */
+/* This should be inlined in HTML head for fastest rendering */
+
+/* Essential layout and typography */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  background-color: #fefae0;
+  color: #111827;
+}
+
+/* Critical header styles */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Critical hero section */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 80px;
+}
+
+/* Critical button styles */
+.btn-primary {
+  background: linear-gradient(to right, #dc2626, #b91c1c);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, #b91c1c, #991b1b);
+  transform: translateY(-1px);
+}
+
+/* Critical loading spinner */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  border: 2px solid #f3f4f6;
+  border-top: 2px solid #dc2626;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Critical grid and flex utilities */
+.flex { display: flex; }
+.grid { display: grid; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.text-center { text-align: center; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.min-h-screen { min-height: 100vh; }
+
+/* Critical responsive utilities */
+@media (min-width: 768px) {
+  .md\\:flex { display: flex; }
+  .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .lg\\:flex { display: flex; }
+  .lg\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Critical text styles */
+.text-primary { color: #dc2626; }
+.text-gray-900 { color: #111827; }
+.text-gray-600 { color: #4b5563; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+
+/* Critical spacing */
+.p-4 { padding: 1rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-8 { margin-top: 2rem; }
+
+/* Critical background */
+.bg-white { background-color: white; }
+.bg-primary-600 { background-color: #dc2626; }
+
+/* Critical border radius */
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-full { border-radius: 9999px; }

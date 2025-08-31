@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { lazy, Suspense } from 'react';
 import { store } from '@/store';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
@@ -7,20 +8,24 @@ import { ToastProvider } from '@/contexts/ToastContext';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { ErrorFallback } from '@/components/ui/ErrorFallback';
 import { Layout } from '@/components/layout/Layout';
+
+// Critical pages - loaded immediately
 import { HomePage } from '@/pages/HomePage';
 import { MenuPage } from '@/pages/MenuPage';
-import { AboutPage } from '@/pages/AboutPage';
-import { ContactPage } from '@/pages/ContactPage';
-import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { AuthPage } from '@/pages/AuthPage';
-import { ProfilePage } from '@/pages/ProfilePage';
-import { OrdersPage } from '@/pages/OrdersPage';
-import { OrderDetailPage } from '@/pages/OrderDetailPage';
-import { CheckoutPage } from '@/pages/CheckoutPage';
+
+// Non-critical pages - lazy loaded for performance
+const AboutPage = lazy(() => import('@/pages/AboutPage').then(module => ({ default: module.AboutPage })));
+const ContactPage = lazy(() => import('@/pages/ContactPage').then(module => ({ default: module.ContactPage })));
+const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage').then(module => ({ default: module.ProductDetailPage })));
+const ProfilePage = lazy(() => import('@/pages/ProfilePage').then(module => ({ default: module.ProfilePage })));
+const OrdersPage = lazy(() => import('@/pages/OrdersPage').then(module => ({ default: module.OrdersPage })));
+const OrderDetailPage = lazy(() => import('@/pages/OrderDetailPage').then(module => ({ default: module.OrderDetailPage })));
+const CheckoutPage = lazy(() => import('@/pages/CheckoutPage').then(module => ({ default: module.CheckoutPage })));
+const PWATestPage = lazy(() => import('@/pages/PWATestPage').then(module => ({ default: module.PWATestPage })));
 
 
 import { SEO } from '@/components/seo/SEO';
-import { PWATestPage } from '@/pages/PWATestPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { ToastContainer } from '@/components/ui/ToastContainer';
@@ -58,17 +63,23 @@ function App() {
             } />
             <Route path="/about" element={
               <Layout>
-                <AboutPage />
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div></div>}>
+                  <AboutPage />
+                </Suspense>
               </Layout>
             } />
             <Route path="/contact" element={
               <Layout>
-                <ContactPage />
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div></div>}>
+                  <ContactPage />
+                </Suspense>
               </Layout>
             } />
             <Route path="/product/:id" element={
               <Layout>
-                <ProductDetailPage />
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div></div>}>
+                  <ProductDetailPage />
+                </Suspense>
               </Layout>
             } />
             

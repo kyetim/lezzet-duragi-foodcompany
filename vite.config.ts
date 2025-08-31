@@ -39,11 +39,24 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['framer-motion', 'lucide-react'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-          stripe: ['@stripe/stripe-js', '@stripe/react-stripe-js']
+          // Critical path - smallest bundles first
+          'vendor-core': ['react', 'react-dom'],
+          'vendor-router': ['react-router-dom'],
+          
+          // UI Libraries - split by usage frequency
+          'ui-icons': ['lucide-react'],
+          'ui-animation': ['framer-motion'],
+          
+          // Third-party services - separate chunks
+          'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          'stripe': ['@stripe/stripe-js', '@stripe/react-stripe-js']
+        },
+        // Optimize chunk loading order
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId
+            ? chunkInfo.facadeModuleId.split('/').pop().replace('.tsx', '').replace('.ts', '')
+            : 'chunk';
+          return `assets/[name]-[hash].js`;
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.woff2')) {
@@ -52,6 +65,9 @@ export default defineConfig({
           if (assetInfo.name && /\.(jpg|jpeg|png|gif|svg|webp)$/.test(assetInfo.name)) {
             return 'assets/images/[name]-[hash][extname]'
           }
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+            return 'assets/styles/[name]-[hash][extname]'
+          }
           return 'assets/[name]-[hash][extname]'
         }
       }
@@ -59,8 +75,19 @@ export default defineConfig({
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        reduce_vars: true,
+        reduce_funcs: true
+      },
+      mangle: {
+        safari10: true
+      },
+      format: {
+        comments: false
       }
-    }
+    },
+    // Increase chunk size warning limit for better splitting
+    chunkSizeWarningLimit: 1000
   }
 })

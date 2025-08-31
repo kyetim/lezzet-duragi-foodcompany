@@ -1,15 +1,25 @@
-const CACHE_NAME = 'lezzet-duragi-v1';
+const CACHE_NAME = 'lezzet-duragi-v2';
 const STATIC_CACHE_URLS = [
   '/',
-  '/manifest.json',
-  '/src/main.tsx',
-  '/src/App.tsx',
-  '/src/index.css',
-  '/src/App.css'
+  '/manifest.json'
 ];
 
-const API_CACHE_NAME = 'lezzet-duragi-api-v1';
-const MENU_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 saat
+// Separate caches for different content types
+const API_CACHE_NAME = 'lezzet-duragi-api-v2';
+const IMAGE_CACHE_NAME = 'lezzet-duragi-images-v1';
+const FONT_CACHE_NAME = 'lezzet-duragi-fonts-v1';
+
+// Cache duration constants
+const MENU_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+const IMAGE_CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+const FONT_CACHE_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+// Critical resources to precache immediately
+const CRITICAL_RESOURCES = [
+  '/src/main.tsx',
+  '/src/index.css',
+  '/src/App.tsx'
+];
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {

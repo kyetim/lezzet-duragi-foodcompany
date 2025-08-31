@@ -34,19 +34,32 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    minify: 'terser',
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          ui: ['framer-motion', 'lucide-react']
+          ui: ['framer-motion', 'lucide-react'],
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          stripe: ['@stripe/stripe-js', '@stripe/react-stripe-js']
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.woff2')) {
             return 'assets/fonts/[name]-[hash][extname]'
           }
+          if (assetInfo.name && /\.(jpg|jpeg|png|gif|svg|webp)$/.test(assetInfo.name)) {
+            return 'assets/images/[name]-[hash][extname]'
+          }
           return 'assets/[name]-[hash][extname]'
         }
+      }
+    },
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
       }
     }
   }

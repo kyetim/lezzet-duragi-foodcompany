@@ -13,28 +13,24 @@ const MENU_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 saat
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('🔧 Service Worker yükleniyor...');
-  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('📦 Static dosyalar cache ediliyor');
         return cache.addAll(STATIC_CACHE_URLS);
       })
       .then(() => {
-        console.log('✅ Service Worker yüklendi ve static cache hazır');
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('❌ Service Worker yükleme hatası:', error);
+        if (typeof importScripts === 'undefined') {
+          console.error('Service Worker yükleme hatası:', error);
+        }
       })
   );
 });
 
 // Activate event - cleanup old caches
 self.addEventListener('activate', (event) => {
-  console.log('🚀 Service Worker aktifleştiriliyor...');
-  
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -44,13 +40,11 @@ self.addEventListener('activate', (event) => {
               return cacheName !== CACHE_NAME && cacheName !== API_CACHE_NAME;
             })
             .map((cacheName) => {
-              console.log('🗑️ Eski cache siliniyor:', cacheName);
               return caches.delete(cacheName);
             })
         );
       })
       .then(() => {
-        console.log('✅ Service Worker aktif ve eski cacheler temizlendi');
         return self.clients.claim();
       })
   );

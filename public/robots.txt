@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://lezzet-duragi.vercel.app/sitemap.xml
+
+# PWA Files
+Allow: /manifest.json
+Allow: /sw.js
+Allow: /icons/
+
+# Static Assets
+Allow: /assets/
+Allow: /images/
+
+# API Routes (if any)
+Disallow: /api/private/
+Disallow: /admin/
+
+# Development files
+Disallow: /_next/
+Disallow: /node_modules/

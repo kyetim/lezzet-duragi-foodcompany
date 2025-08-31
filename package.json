@@ -58,6 +58,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "jsdom": "^26.1.0",
+    "terser": "^5.43.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }

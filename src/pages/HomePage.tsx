@@ -257,6 +257,8 @@ export function HomePage() {
                     alt={heroImage.alt}
                     className="w-full h-full object-cover"
                     loading="lazy"
+                    width="800"
+                    height="800"
                   />
 
                   {/* Glassmorphism Overlay */}
@@ -286,6 +288,8 @@ export function HomePage() {
                     src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=100&h=100&fit=crop"
                     alt="Taze Yeşillik"
                     className="w-full h-full object-cover"
+                    width="100"
+                    height="100"
                   />
                 </motion.div>
 
@@ -306,6 +310,8 @@ export function HomePage() {
                     src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=100&h=100&fit=crop"
                     alt="Taze Domates"
                     className="w-full h-full object-cover"
+                    width="100"
+                    height="100"
                   />
                 </motion.div>
 
@@ -326,6 +332,8 @@ export function HomePage() {
                     src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=100&h=100&fit=crop"
                     alt="Baharat"
                     className="w-full h-full object-cover"
+                    width="100"
+                    height="100"
                   />
                 </motion.div>
               </div>

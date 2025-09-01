@@ -35,9 +35,10 @@ export const usePWA = (): PWAState & PWAActions => {
   }, []);
 
   const registerServiceWorker = async () => {
-    // Development modunda Service Worker'ı devre dışı bırak
+    // Development modunda Service Worker'ı devre dışı bırak ve mevcut olanları temizle
     if (import.meta.env.DEV) {
       console.log('🔧 Development modunda Service Worker devre dışı');
+      await unregisterServiceWorker();
       return;
     }
     
@@ -77,6 +78,29 @@ export const usePWA = (): PWAState & PWAActions => {
       }
     } else {
       console.warn('⚠️ Service Worker desteklenmiyor');
+    }
+  };
+
+  const unregisterServiceWorker = async () => {
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          console.log('🗑️ Service Worker kaydı siliniyor:', registration.scope);
+          await registration.unregister();
+        }
+        
+        // Cache'leri de temizle
+        const cacheNames = await caches.keys();
+        for (const cacheName of cacheNames) {
+          console.log('🗑️ Cache siliniyor:', cacheName);
+          await caches.delete(cacheName);
+        }
+        
+        console.log('✅ Tüm Service Worker kayıtları ve cache\'ler temizlendi');
+      } catch (error) {
+        console.error('❌ Service Worker temizleme hatası:', error);
+      }
     }
   };
 

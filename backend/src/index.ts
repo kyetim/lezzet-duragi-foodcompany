@@ -51,29 +51,28 @@ app.get('/', (req, res) => {
 // 🗄️ Import models to ensure they're registered
 import './models';
 
-// 📱 API Routes - Buraya ileride auth, menu, order route'larını ekleyeceğiz
+// 📱 Import routes
+import menuRoutes from './routes/menuRoutes';
+
+// 🔧 Import middleware
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { sanitizeInput } from './middleware/validation';
+
+// 🧹 Global middleware
+app.use(sanitizeInput);
+
+// 📱 API Routes
+app.use('/api/menu', menuRoutes);
+
+// 📱 API Routes - Buraya ileride diğer route'ları ekleyeceğiz
 // app.use('/api/auth', authRoutes);
-// app.use('/api/menu', menuRoutes);
 // app.use('/api/orders', orderRoutes);
 
-// 🔥 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Route bulunamadı',
-    message: `${req.method} ${req.originalUrl} endpoint'i mevcut değil`
-  });
-});
+// 🔥 404 handler - Must come after all routes
+app.use(notFoundHandler);
 
-// 🚨 Error handler
-app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('❌ Server Error:', error);
-
-  res.status(error.status || 500).json({
-    error: 'Sunucu hatası',
-    message: process.env.NODE_ENV === 'development' ? error.message : 'Bir hata oluştu',
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
-  });
-});
+// 🚨 Global Error handler - Must be last
+app.use(errorHandler);
 
 // 🔌 Server'ı başlat
 const startServer = async () => {

@@ -35,6 +35,12 @@ export const usePWA = (): PWAState & PWAActions => {
   }, []);
 
   const registerServiceWorker = async () => {
+    // Development modunda Service Worker'ı devre dışı bırak
+    if (import.meta.env.DEV) {
+      console.log('🔧 Development modunda Service Worker devre dışı');
+      return;
+    }
+    
     if ('serviceWorker' in navigator) {
       try {
         console.log('🔧 Service Worker kaydediliyor...');

@@ -20,7 +20,7 @@ export const foodImages: FoodImage[] = [
     },
     {
         id: 'doner-2',
-        url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+        url: 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=800&h=600&fit=crop',
         alt: 'Döner Porsiyon',
         category: 'doner'
     },
@@ -108,7 +108,7 @@ export const foodImages: FoodImage[] = [
     // About Section için
     {
         id: 'about-food',
-        url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+        url: 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=800&h=600&fit=crop',
         alt: 'Lezzetli Yemekler',
         category: 'about'
     },

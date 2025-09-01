@@ -34,7 +34,7 @@ export const foodImages: FoodImage[] = [
     // Makarna Kategorisi
     {
         id: 'makarna-1',
-        url: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=800&h=600&fit=crop',
+        url: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=800&h=600&fit=crop',
         alt: 'İtalyan Makarna',
         category: 'makarna'
     },
@@ -100,7 +100,7 @@ export const foodImages: FoodImage[] = [
     },
     {
         id: 'hero-makarna',
-        url: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=1200&h=800&fit=crop',
+        url: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=1200&h=800&fit=crop',
         alt: 'İtalyan Makarna',
         category: 'hero'
     },

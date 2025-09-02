@@ -53,6 +53,7 @@ import './models';
 
 // 📱 Import routes
 import menuRoutes from './routes/menuRoutes';
+import orderRoutes from './routes/orderRoutes';
 
 // 🔧 Import middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -63,10 +64,10 @@ app.use(sanitizeInput);
 
 // 📱 API Routes
 app.use('/api/menu', menuRoutes);
+app.use('/api/orders', orderRoutes);
 
 // 📱 API Routes - Buraya ileride diğer route'ları ekleyeceğiz
 // app.use('/api/auth', authRoutes);
-// app.use('/api/orders', orderRoutes);
 
 // 🔥 404 handler - Must come after all routes
 app.use(notFoundHandler);

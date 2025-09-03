@@ -1,5 +1,28 @@
 // Performance monitoring utility for Core Web Vitals
 
+// TypeScript interface for Navigation Timing API
+interface PerformanceNavigationTiming extends PerformanceEntry {
+  unloadEventStart: number;
+  unloadEventEnd: number;
+  domInteractive: number;
+  domContentLoadedEventStart: number;
+  domContentLoadedEventEnd: number;
+  domComplete: number;
+  loadEventStart: number;
+  loadEventEnd: number;
+  type: string;
+  redirectCount: number;
+  requestStart: number;
+  responseStart: number;
+  responseEnd: number;
+  fetchStart: number;
+  domainLookupStart: number;
+  domainLookupEnd: number;
+  connectStart: number;
+  connectEnd: number;
+  secureConnectionStart: number;
+}
+
 export interface PerformanceMetrics {
   FCP?: number; // First Contentful Paint
   LCP?: number; // Largest Contentful Paint
@@ -23,6 +46,21 @@ class PerformanceMonitor {
     }
 
     try {
+      // Check which entry types are supported
+      const supportedEntryTypes = [];
+      const testTypes = ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'];
+      
+      for (const type of testTypes) {
+        if (PerformanceObserver.supportedEntryTypes?.includes(type)) {
+          supportedEntryTypes.push(type);
+        }
+      }
+
+      if (supportedEntryTypes.length === 0) {
+        // Fallback: try to observe all types anyway
+        supportedEntryTypes.push(...testTypes);
+      }
+
       // Observe paint metrics (FCP, LCP)
       this.observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
@@ -40,37 +78,56 @@ class PerformanceMonitor {
               break;
               
             case 'first-input':
-              this.metrics.FID = (entry as any).processingStart - entry.startTime;
-              this.reportMetric('FID', this.metrics.FID);
+              const fidValue = (entry as any).processingStart - entry.startTime;
+              if (fidValue >= 0) {
+                this.metrics.FID = fidValue;
+                this.reportMetric('FID', this.metrics.FID);
+              }
               break;
               
             case 'layout-shift':
               if (!(entry as any).hadRecentInput) {
-                this.metrics.CLS = (this.metrics.CLS || 0) + (entry as any).value;
-                this.reportMetric('CLS', this.metrics.CLS);
+                const currentCLS = this.metrics.CLS || 0;
+                const newCLS = currentCLS + (entry as any).value;
+                this.metrics.CLS = newCLS;
+                this.reportMetric('CLS', newCLS);
               }
               break;
           }
         }
       });
 
-      // Observe different entry types
-      this.observer.observe({ entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'] });
+      // Observe supported entry types
+      this.observer.observe({ entryTypes: supportedEntryTypes });
     } catch (error) {
       // Fallback for browsers that don't support all entry types
       if (typeof console !== 'undefined') {
-        console.warn('Performance Observer initialization failed:', error);
+        console.warn('Performance Observer başlatılamadı:', error);
       }
     }
   }
 
   private measureTTFB() {
-    if (typeof window === 'undefined' || !window.performance || !window.performance.timing) {
+    if (typeof window === 'undefined' || !window.performance) {
       return;
     }
 
+    // Modern navigation timing API
+    if (window.performance.getEntriesByType) {
+      const navEntries = window.performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+      if (navEntries.length > 0) {
+        const navEntry = navEntries[0];
+        if (navEntry.responseStart && navEntry.requestStart) {
+          this.metrics.TTFB = navEntry.responseStart - navEntry.requestStart;
+          this.reportMetric('TTFB', this.metrics.TTFB);
+          return;
+        }
+      }
+    }
+
+    // Fallback to legacy timing API
     const timing = window.performance.timing;
-    if (timing.responseStart && timing.requestStart) {
+    if (timing && timing.responseStart && timing.requestStart) {
       this.metrics.TTFB = timing.responseStart - timing.requestStart;
       this.reportMetric('TTFB', this.metrics.TTFB);
     }
@@ -118,7 +175,7 @@ class PerformanceMonitor {
       }
     } catch (error) {
       if (typeof console !== 'undefined') {
-        console.warn(`Custom metric measurement failed for ${name}:`, error);
+        console.warn(`Özel metrik ölçümü başarısız oldu: ${name}:`, error);
       }
     }
   }

@@ -12,7 +12,7 @@ import {
 } from '../controllers/menuController';
 
 // Auth middleware imports
-import { requireAuth, requireManager, requireAdmin } from '../middleware/auth';
+import { verifyFirebaseToken, requireFirebaseManager, requireFirebaseAdmin } from '../middleware/firebaseAuth';
 
 // Create router instance
 const router = express.Router();
@@ -68,29 +68,29 @@ router.get('/products/:id', getProductById);
 
 // POST /api/menu/products - Yeni ürün oluştur
 router.post('/products', 
-  requireAuth,
-  requireManager,
+  verifyFirebaseToken,
+  requireFirebaseManager,
   createNewProduct
 );
 
 // PUT /api/menu/products/:id - Ürün güncelle
 router.put('/products/:id',
-  requireAuth,
-  requireManager,
+  verifyFirebaseToken,
+  requireFirebaseManager,
   updateProduct
 );
 
 // DELETE /api/menu/products/:id - Ürün sil
 router.delete('/products/:id',
-  requireAuth,
-  requireAdmin,
+  verifyFirebaseToken,
+  requireFirebaseAdmin,
   deleteProduct
 );
 
 // GET /api/menu/products/:id/analytics - Ürün analytics (Admin only)
 router.get('/products/:id/analytics',
-  requireAuth,
-  requireManager,
+  verifyFirebaseToken,
+  requireFirebaseManager,
   getProductAnalytics
 );
 

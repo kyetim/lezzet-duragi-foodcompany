@@ -52,7 +52,6 @@ app.get('/', (req, res) => {
 import './models';
 
 // 📱 Import routes
-import authRoutes from './routes/authRoutes';
 import menuRoutes from './routes/menuRoutes';
 import orderRoutes from './routes/orderRoutes';
 
@@ -66,7 +65,6 @@ app.use(generalRateLimit); // Rate limiting
 app.use(sanitizeInput);
 
 // 📱 API Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 

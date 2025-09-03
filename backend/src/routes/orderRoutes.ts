@@ -19,7 +19,7 @@ import {
 } from '../middleware/validation';
 
 // Auth middleware imports
-import { requireAuth, requireStaff, requireManager, optionalAuth } from '../middleware/auth';
+import { verifyFirebaseToken, requireFirebaseStaff, requireFirebaseManager, optionalFirebaseAuth } from '../middleware/firebaseAuth';
 
 // Create router instance
 const router = express.Router();
@@ -62,42 +62,42 @@ const router = express.Router();
 // POST /api/orders - Yeni sipariş oluştur
 router.post('/', 
   sanitizeInput,
-  requireAuth,
+  verifyFirebaseToken,
   createNewOrder
 );
 
 // GET /api/orders - Siparişleri listele (customer kendi siparişlerini, admin hepsini görebilir)
 router.get('/', 
   validateQueryParams,
-  requireAuth,
+  verifyFirebaseToken,
   getAllOrders
 );
 
 // GET /api/orders/active - Aktif siparişler (Staff/Admin için)
 router.get('/active',
-  requireAuth,
-  requireStaff,
+  verifyFirebaseToken,
+  requireFirebaseStaff,
   getActiveOrders
 );
 
 // GET /api/orders/search - Sipariş arama (Admin için)
 router.get('/search',
-  requireAuth,
-  requireManager,
+  verifyFirebaseToken,
+  requireFirebaseManager,
   searchOrders
 );
 
 // GET /api/orders/analytics - Sipariş analytics (Admin için)
 router.get('/analytics',
-  requireAuth,
-  requireManager,
+  verifyFirebaseToken,
+  requireFirebaseManager,
   getOrderAnalytics
 );
 
 // GET /api/orders/:id - Tek sipariş detayı
 router.get('/:id', 
   validateObjectId('id'),
-  requireAuth,
+  verifyFirebaseToken,
   getOrderById
 );
 
@@ -107,8 +107,8 @@ router.get('/:id',
 router.put('/:id/status',
   validateObjectId('id'),
   sanitizeInput,
-  requireAuth,
-  requireStaff,
+  verifyFirebaseToken,
+  requireFirebaseStaff,
   updateOrderStatus
 );
 
@@ -116,8 +116,8 @@ router.put('/:id/status',
 router.put('/:id/payment',
   validateObjectId('id'),
   sanitizeInput,
-  requireAuth,
-  requireManager,
+  verifyFirebaseToken,
+  requireFirebaseManager,
   updatePaymentStatus
 );
 
@@ -125,7 +125,7 @@ router.put('/:id/payment',
 router.delete('/:id',
   validateObjectId('id'),
   sanitizeInput,
-  requireAuth,
+  verifyFirebaseToken,
   cancelOrder
 );
 

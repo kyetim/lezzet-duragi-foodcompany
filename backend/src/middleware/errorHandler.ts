@@ -50,8 +50,9 @@ const handleCastError = (error: mongoose.Error.CastError): ApiError => {
 
 // 🔍 MongoDB Duplicate Key Error Handler
 const handleDuplicateKeyError = (error: any): ApiError => {
-  const field = Object.keys(error.keyValue)[0];
-  const value = error.keyValue[field];
+  const keyValue = error.keyValue || {};
+  const field = Object.keys(keyValue)[0];
+  const value = field ? keyValue[field] : 'unknown';
   const message = `${field} zaten kullanımda: ${value}`;
   return new ApiError(400, message);
 };

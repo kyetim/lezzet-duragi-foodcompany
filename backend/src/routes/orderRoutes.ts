@@ -57,14 +57,14 @@ const router = express.Router();
 // 🌍 Public/Customer Routes
 
 // POST /api/orders - Yeni sipariş oluştur
-router.post('/', 
+router.post('/',
   sanitizeInput,
   // TODO: Add auth middleware: requireAuth, requireRole(['customer', 'admin'])
   createNewOrder
 );
 
 // GET /api/orders - Siparişleri listele (customer kendi siparişlerini, admin hepsini görebilir)
-router.get('/', 
+router.get('/',
   validateQueryParams,
   // TODO: Add auth middleware and customer filtering
   getAllOrders
@@ -89,7 +89,7 @@ router.get('/analytics',
 );
 
 // GET /api/orders/:id - Tek sipariş detayı
-router.get('/:id', 
+router.get('/:id',
   validateObjectId('id'),
   // TODO: Add auth middleware and ownership check
   getOrderById
@@ -148,23 +148,23 @@ router.get('/health', (req, res) => {
   });
 });
 
-// 🔍 Route not found handler for order routes
-router.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Order API endpoint bulunamadı',
-    availableEndpoints: [
-      'POST /api/orders',
-      'GET /api/orders',
-      'GET /api/orders/active',
-      'GET /api/orders/search',
-      'GET /api/orders/analytics',
-      'GET /api/orders/:id',
-      'PUT /api/orders/:id/status',
-      'PUT /api/orders/:id/payment',
-      'DELETE /api/orders/:id'
-    ]
-  });
-});
+// 🔍 Route not found handler for order routes (temporarily disabled)
+// router.use('/*', (req, res) => {
+//   res.status(404).json({
+//     success: false,
+//     message: 'Order API endpoint bulunamadı',
+//     availableEndpoints: [
+//       'POST /api/orders',
+//       'GET /api/orders',
+//       'GET /api/orders/active',
+//       'GET /api/orders/search',
+//       'GET /api/orders/analytics',
+//       'GET /api/orders/:id',
+//       'PUT /api/orders/:id/status',
+//       'PUT /api/orders/:id/payment',
+//       'DELETE /api/orders/:id'
+//     ]
+//   });
+// });
 
 export default router;

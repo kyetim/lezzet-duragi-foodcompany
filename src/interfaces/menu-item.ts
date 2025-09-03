@@ -3,10 +3,17 @@ export interface MenuItem {
     name: string;
     description: string;
     price: number;
-    category: 'doner' | 'makarna' | 'salata' | 'icecek';
-    imageWebp: string;
-    isAvailable: boolean;
+    category: string;
+    subcategory?: string;
+    image: string;
+    imageWebp?: string; // backward compatibility
+    isVegetarian?: boolean;
+    isAvailable?: boolean;
+    preparationTime?: number; // dakika cinsinden
+    calories?: number;
+    rating?: number;
+    reviewCount?: number;
+    tags?: string[];
     ingredients?: string[];
     allergens?: string[];
-    preparationTime?: number; // dakika cinsinden
 } 

@@ -1,29 +1,72 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { MenuList } from '@/components/menu/MenuList';
-import { menuData } from '@/helpers/menuData';
+import { API } from '@/services/apiService';
 import { motion } from 'framer-motion';
+import type { MenuItem } from '@/interfaces/menu-item';
 
 export function MenuPage() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [products, setProducts] = useState<MenuItem[]>([]);
+    const [categories, setCategories] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    // Kategori listesi
-    const categories = [
-        { id: 'all', name: 'Tümü', icon: '🍽️' },
-        { id: 'doner', name: 'Döner', icon: '🍖' },
-        { id: 'makarna', name: 'Makarna', icon: '🍝' },
-        { id: 'salata', name: 'Salata', icon: '🥗' },
-        { id: 'icecek', name: 'İçecek', icon: '🥤' }
-    ];
+    // Load products and categories from mock backend
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            try {
+                const [productsResponse, categoriesResponse] = await Promise.all([
+                    API.getProducts({
+                        category: selectedCategory !== 'all' ? selectedCategory : undefined,
+                        search: searchTerm || undefined
+                    }),
+                    API.getCategories()
+                ]);
 
-    // Filtreleme fonksiyonu
-    const filteredMenuData = menuData.filter(item => {
-        const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.description.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
+                setProducts(productsResponse.products);
+                setCategories(['all', ...categoriesResponse]);
+            } catch (error) {
+                console.error('Error loading menu data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [selectedCategory, searchTerm]);
+
+    // Category mapping for icons
+    const getCategoryIcon = (category: string) => {
+        switch (category.toLowerCase()) {
+            case 'all': return '🍽️';
+            case 'doner': return '🍖';
+            case 'makarna': return '🍝';
+            case 'salata': return '🥗';
+            case 'icecek': return '🥤';
+            case 'ana yemek': return '🍖';
+            case 'fast food': return '🍟';
+            case 'pizza': return '🍕';
+            case 'çorba': return '🍲';
+            case 'tatlı': return '🍰';
+            default: return '🍽️';
+        }
+    };
+
+    // Category display name formatting
+    const getCategoryDisplayName = (category: string) => {
+        switch (category.toLowerCase()) {
+            case 'all': return 'Tümü';
+            case 'doner': return 'Döner';
+            case 'makarna': return 'Makarna';
+            case 'salata': return 'Salata';
+            case 'icecek': return 'İçecek';
+            default: return category;
+        }
+    };
+
+    const filteredMenuData = products;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -32,7 +75,7 @@ export function MenuPage() {
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-black/10"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-600/20 to-transparent"></div>
-                
+
                 <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.div
                         className="text-center"
@@ -48,21 +91,21 @@ export function MenuPage() {
                         >
                             <span className="text-3xl">🍽️</span>
                         </motion.div>
-                        
+
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-poppins text-white mb-6 drop-shadow-lg tracking-tight">
                             MENÜMÜZ
                         </h1>
-                        
-                        <motion.p 
+
+                        <motion.p
                             className="text-lg sm:text-xl md:text-2xl text-white/95 max-w-3xl mx-auto font-medium leading-relaxed"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.4 }}
                         >
-                            Geleneksel tariflerle hazırlanan, taze malzemelerle sunulan lezzetli yemeklerimizi keşfedin. 
+                            Geleneksel tariflerle hazırlanan, taze malzemelerle sunulan lezzetli yemeklerimizi keşfedin.
                             Her kategori için özenle seçilmiş menülerimiz.
                         </motion.p>
-                        
+
                         <motion.div
                             className="flex flex-wrap justify-center gap-4 mt-8"
                             initial={{ opacity: 0, y: 20 }}
@@ -84,7 +127,7 @@ export function MenuPage() {
                         </motion.div>
                     </motion.div>
                 </div>
-                
+
                 {/* Smooth bottom gradient */}
                 <div className="absolute left-0 right-0 bottom-0 h-32 bg-gradient-to-b from-transparent via-transparent to-gray-50 pointer-events-none" />
             </section>
@@ -113,21 +156,20 @@ export function MenuPage() {
                         <div className="flex flex-wrap justify-center gap-3">
                             {categories.map((category, index) => (
                                 <motion.button
-                                    key={category.id}
-                                    onClick={() => setSelectedCategory(category.id)}
-                                    className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md ${
-                                        selectedCategory === category.id
+                                    key={category}
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md ${selectedCategory === category
                                             ? 'bg-primary-600 text-white shadow-lg transform scale-105'
                                             : 'bg-white text-gray-700 hover:bg-primary-50 hover:text-primary-600 border border-gray-200'
-                                    }`}
+                                        }`}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: index * 0.1 }}
                                 >
-                                    <span className="text-2xl">{category.icon}</span>
-                                    <span className="text-sm sm:text-base">{category.name}</span>
+                                    <span className="text-2xl">{getCategoryIcon(category)}</span>
+                                    <span className="text-sm sm:text-base">{getCategoryDisplayName(category)}</span>
                                 </motion.button>
                             ))}
                         </div>
@@ -155,7 +197,18 @@ export function MenuPage() {
                     </motion.div>
 
                     {/* Menu List */}
-                    {filteredMenuData.length > 0 ? (
+                    {loading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                            {[...Array(8)].map((_, i) => (
+                                <div key={i} className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
+                                    <div className="w-full h-48 bg-gray-200 rounded-lg mb-4"></div>
+                                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                                    <div className="h-3 bg-gray-200 rounded mb-4 w-2/3"></div>
+                                    <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : filteredMenuData.length > 0 ? (
                         <MenuList items={filteredMenuData} />
                     ) : (
                         <motion.div

@@ -64,7 +64,7 @@ router.get('/products/:id', getProductById);
 // 🔐 Admin Routes (İleride auth middleware eklenecek)
 
 // POST /api/menu/products - Yeni ürün oluştur
-router.post('/products', 
+router.post('/products',
   // TODO: Add auth middleware: requireAuth, requireRole(['admin', 'manager'])
   createNewProduct
 );
@@ -107,19 +107,19 @@ router.get('/health', (req, res) => {
   });
 });
 
-// 🔍 Route not found handler for menu routes
-router.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Menu API endpoint bulunamadı',
-    availableEndpoints: [
-      'GET /api/menu/products',
-      'GET /api/menu/products/featured',
-      'GET /api/menu/products/popular',
-      'GET /api/menu/products/search',
-      'GET /api/menu/products/:id'
-    ]
-  });
-});
+// 🔍 Route not found handler for menu routes (temporarily disabled)
+// router.use('/*', (req, res) => {
+//   res.status(404).json({
+//     success: false,
+//     message: 'Menu API endpoint bulunamadı',
+//     availableEndpoints: [
+//       'GET /api/menu/products',
+//       'GET /api/menu/products/featured',
+//       'GET /api/menu/products/popular',
+//       'GET /api/menu/products/search',
+//       'GET /api/menu/products/:id'
+//     ]
+//   });
+// });
 
 export default router;

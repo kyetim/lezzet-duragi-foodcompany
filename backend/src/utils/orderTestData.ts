@@ -211,28 +211,28 @@ export const analyticsTestParams = [
 // 🧪 Order API Test Functions
 export const testOrderAPI = async (): Promise<void> => {
   const baseURL = 'http://localhost:5000/api/orders';
-  
+
   try {
     console.log('🧪 Order API Testleri Başlatılıyor...\n');
-    
+
     // Test 1: Health Check
     console.log('1️⃣ Order API Health Check...');
     const healthResponse = await fetch(`${baseURL}/health`);
     const healthData = await healthResponse.json();
     console.log('✅ Health Check:', healthData.message);
-    
+
     // Test 2: Get All Orders (Empty initially)
     console.log('\n2️⃣ Get All Orders Test (Empty)...');
     const ordersResponse = await fetch(`${baseURL}`);
     const ordersData = await ordersResponse.json();
     console.log('✅ Orders Retrieved:', ordersData.data?.length || 0, 'items');
-    
+
     // Test 3: Get Active Orders
     console.log('\n3️⃣ Get Active Orders Test...');
     const activeResponse = await fetch(`${baseURL}/active`);
     const activeData = await activeResponse.json();
     console.log('✅ Active Orders:', activeData.data?.total || 0, 'items');
-    
+
     // Test 4: Analytics Test
     console.log('\n4️⃣ Analytics Test...');
     for (const analyticsParam of analyticsTestParams) {
@@ -240,7 +240,7 @@ export const testOrderAPI = async (): Promise<void> => {
         const analyticsResponse = await fetch(`${baseURL}/analytics?period=${analyticsParam.period}`);
         if (analyticsResponse.ok) {
           const analyticsData = await analyticsResponse.json();
-          console.log(`✅ ${analyticsParam.description}:`, 
+          console.log(`✅ ${analyticsParam.description}:`,
             `${analyticsData.data?.summary?.totalOrders || 0} orders,`,
             `${analyticsData.data?.summary?.totalRevenue || 0} TL revenue`
           );
@@ -251,14 +251,14 @@ export const testOrderAPI = async (): Promise<void> => {
         console.log(`❌ ${analyticsParam.description} error:`, error);
       }
     }
-    
+
     // Test 5: Search Test (without creating orders first)
     console.log('\n5️⃣ Search Test...');
     for (const searchTest of searchTestQueries) {
       try {
         const searchParams = new URLSearchParams(searchTest.query as any);
         const searchResponse = await fetch(`${baseURL}/search?${searchParams}`);
-        
+
         if (searchResponse.ok) {
           const searchData = await searchResponse.json();
           console.log(`✅ ${searchTest.description}:`, searchData.data?.length || 0, 'results');
@@ -269,7 +269,7 @@ export const testOrderAPI = async (): Promise<void> => {
         console.log(`❌ ${searchTest.description} error:`, error);
       }
     }
-    
+
     // Test 6: Create Order (will fail without real product IDs, but tests validation)
     console.log('\n6️⃣ Create Order Validation Test...');
     try {
@@ -280,9 +280,9 @@ export const testOrderAPI = async (): Promise<void> => {
         },
         body: JSON.stringify(sampleOrderData)
       });
-      
+
       const createData = await createResponse.json();
-      
+
       if (createResponse.ok) {
         console.log('✅ Order created successfully:', createData.data?.orderNumber);
       } else {
@@ -291,10 +291,10 @@ export const testOrderAPI = async (): Promise<void> => {
     } catch (error) {
       console.log('❌ Order creation error:', error);
     }
-    
+
     console.log('\n🎉 Order API testleri tamamlandı!');
     console.log('\n📝 Not: Gerçek order testi için önce Menu API\'den products oluşturulmalıdır.');
-    
+
   } catch (error) {
     console.error('❌ Order API Test Error:', error);
   }
@@ -304,23 +304,23 @@ export const testOrderAPI = async (): Promise<void> => {
 export const testOrderMenuIntegration = async (): Promise<void> => {
   const menuURL = 'http://localhost:5000/api/menu';
   const orderURL = 'http://localhost:5000/api/orders';
-  
+
   try {
     console.log('🔗 Order-Menu Integration Test...\n');
-    
+
     // Step 1: Get products from Menu API
     console.log('1️⃣ Getting products from Menu API...');
     const productsResponse = await fetch(`${menuURL}/products?limit=2`);
     const productsData = await productsResponse.json();
-    
+
     if (!productsData.success || !productsData.data || productsData.data.length === 0) {
       console.log('❌ No products found. Run Menu API seed data first.');
       return;
     }
-    
+
     const products = productsData.data;
     console.log(`✅ Found ${products.length} products`);
-    
+
     // Step 2: Create order with real product IDs
     console.log('\n2️⃣ Creating order with real product IDs...');
     const orderData = {
@@ -333,7 +333,7 @@ export const testOrderMenuIntegration = async (): Promise<void> => {
         specialInstructions: `Test order item ${index + 1}`
       }))
     };
-    
+
     const createResponse = await fetch(`${orderURL}`, {
       method: 'POST',
       headers: {
@@ -341,14 +341,14 @@ export const testOrderMenuIntegration = async (): Promise<void> => {
       },
       body: JSON.stringify(orderData)
     });
-    
+
     const createData = await createResponse.json();
-    
+
     if (createResponse.ok) {
       const order = createData.data;
       console.log(`✅ Order created: ${order.orderNumber}`);
       console.log(`💰 Total Amount: ${order.totalAmount} TL`);
-      
+
       // Step 3: Test status updates
       console.log('\n3️⃣ Testing status updates...');
       for (const statusTest of statusProgressionTests.slice(0, 3)) { // Test first 3 transitions
@@ -364,7 +364,7 @@ export const testOrderMenuIntegration = async (): Promise<void> => {
                 reason: statusTest.reason
               })
             });
-            
+
             if (statusResponse.ok) {
               console.log(`✅ Status updated: ${statusTest.from} → ${statusTest.to}`);
             } else {
@@ -375,7 +375,7 @@ export const testOrderMenuIntegration = async (): Promise<void> => {
           }
         }
       }
-      
+
       // Step 4: Test payment update
       console.log('\n4️⃣ Testing payment update...');
       const paymentTest = paymentStatusTests[0]; // Test successful payment
@@ -387,22 +387,22 @@ export const testOrderMenuIntegration = async (): Promise<void> => {
           },
           body: JSON.stringify(paymentTest)
         });
-        
+
         if (paymentResponse.ok) {
-          console.log(`✅ Payment updated: ${paymentTest.paymentStatus}`);
+          console.log(`✅ Payment updated: ${paymentTest?.paymentStatus || 'unknown'}`);
         } else {
           console.log(`❌ Payment update failed`);
         }
       } catch (error) {
         console.log('❌ Payment update error:', error);
       }
-      
+
       console.log('\n🎉 Integration test completed successfully!');
-      
+
     } else {
       console.log('❌ Order creation failed:', createData.message);
     }
-    
+
   } catch (error) {
     console.error('❌ Integration Test Error:', error);
   }

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { 
-  IProductDocument, 
-  IProductQuery, 
+import {
+  IProductDocument,
+  IProductQuery,
   IProductImage,
   IProductPortion,
   IProductCustomization,
@@ -16,7 +16,7 @@ const productImageSchema = new Schema<IProductImage>({
     type: String,
     required: [true, 'Resim URL\'si gereklidir'],
     validate: {
-      validator: function(v: string) {
+      validator: function (v: string) {
         return /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(v);
       },
       message: 'Geçerli bir resim URL\'si giriniz'
@@ -111,7 +111,7 @@ const productPortionSchema = new Schema<IProductPortion>({
     type: Number,
     default: 0,
     validate: {
-      validator: function(v: number) {
+      validator: function (v: number) {
         return v >= -1000 && v <= 1000; // Makul fiyat değişimi
       },
       message: 'Fiyat değişimi -1000 ile 1000 arasında olmalıdır'
@@ -144,7 +144,7 @@ const customizationOptionSchema = new Schema<ICustomizationOption>({
     type: Number,
     default: 0,
     validate: {
-      validator: function(v: number) {
+      validator: function (v: number) {
         return v >= -100 && v <= 500; // Eklenti fiyat aralığı
       },
       message: 'Eklenti fiyatı -100 ile 500 arasında olmalıdır'
@@ -198,7 +198,7 @@ const productCustomizationSchema = new Schema<IProductCustomization>({
     type: Number,
     min: [1, 'En az 1 seçim yapılabilmelidir'],
     validate: {
-      validator: function(this: IProductCustomization, v: number) {
+      validator: function (this: IProductCustomization, v: number) {
         return !this.allowMultiple || v > 0;
       },
       message: 'Çoklu seçimde maksimum seçim sayısı belirtilmelidir'
@@ -226,7 +226,7 @@ const productSchema = new Schema<IProductDocument>({
     lowercase: true,
     trim: true,
     validate: {
-      validator: function(v: string) {
+      validator: function (v: string) {
         return /^[a-z0-9-]+$/.test(v);
       },
       message: 'Slug sadece küçük harf, rakam ve tire içerebilir'
@@ -244,7 +244,7 @@ const productSchema = new Schema<IProductDocument>({
     trim: true,
     maxlength: [200, 'Kısa açıklama en fazla 200 karakter olabilir']
   },
-  
+
   // 🏷️ Category Information
   category: {
     type: Schema.Types.ObjectId,
@@ -256,7 +256,7 @@ const productSchema = new Schema<IProductDocument>({
     type: String,
     trim: true
   },
-  
+
   // 💰 Pricing
   price: {
     type: Number,
@@ -281,19 +281,19 @@ const productSchema = new Schema<IProductDocument>({
     },
     default: 'TRY'
   },
-  
+
   // 🖼️ Media
   images: [productImageSchema],
   thumbnail: {
     type: String,
     validate: {
-      validator: function(v: string) {
+      validator: function (v: string) {
         return !v || /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(v);
       },
       message: 'Geçerli bir thumbnail URL\'si giriniz'
     }
   },
-  
+
   // 📊 Product Details
   ingredients: [{
     type: String,
@@ -331,11 +331,11 @@ const productSchema = new Schema<IProductDocument>({
     default: 0,
     index: true
   },
-  
+
   // 📏 Portion & Customization
   portions: [productPortionSchema],
   customizations: [productCustomizationSchema],
-  
+
   // 🏷️ Tags & SEO
   tags: [{
     type: String,
@@ -357,7 +357,7 @@ const productSchema = new Schema<IProductDocument>({
     trim: true,
     lowercase: true
   }],
-  
+
   // 📊 Status & Availability
   isAvailable: {
     type: Boolean,
@@ -374,12 +374,12 @@ const productSchema = new Schema<IProductDocument>({
     default: false,
     index: true
   },
-  isNew: {
-    type: Boolean,
-    default: true,
-    index: true
-  },
-  
+  // isNew: {
+  //   type: Boolean,
+  //   default: true,
+  //   index: true
+  // },
+
   // 📊 Analytics
   viewCount: {
     type: Number,
@@ -412,7 +412,7 @@ const productSchema = new Schema<IProductDocument>({
       1: { type: Number, default: 0, min: 0 }
     }
   },
-  
+
   // 🎯 Business Rules
   minOrderQuantity: {
     type: Number,
@@ -431,13 +431,13 @@ const productSchema = new Schema<IProductDocument>({
     type: Boolean,
     default: false
   },
-  
+
   // ⏰ Availability Schedule
   availableHours: {
     start: {
       type: String,
       validate: {
-        validator: function(v: string) {
+        validator: function (v: string) {
           return !v || /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(v);
         },
         message: 'Geçerli bir saat formatı giriniz (HH:MM)'
@@ -446,7 +446,7 @@ const productSchema = new Schema<IProductDocument>({
     end: {
       type: String,
       validate: {
-        validator: function(v: string) {
+        validator: function (v: string) {
           return !v || /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(v);
         },
         message: 'Geçerli bir saat formatı giriniz (HH:MM)'
@@ -458,7 +458,7 @@ const productSchema = new Schema<IProductDocument>({
       max: [7, 'Gün 1-7 arasında olmalıdır']
     }]
   },
-  
+
   // 📈 Business Metrics (Admin only)
   cost: {
     type: Number,
@@ -471,7 +471,7 @@ const productSchema = new Schema<IProductDocument>({
     max: [100, 'Kar marjı 100\'den büyük olamaz'],
     select: false // Sadece admin görebilir
   },
-  
+
   isActive: {
     type: Boolean,
     default: true,
@@ -497,155 +497,155 @@ productSchema.index({ tags: 1 });
 productSchema.index({ createdAt: -1 });
 
 // 🔧 Pre-save middleware
-productSchema.pre('save', function(next) {
+productSchema.pre('save', function (next) {
   // Auto-generate slug if not provided
-  if (!this.slug && this.name) {
-    this.slug = this.name
+  if (!(this as any).slug && (this as any).name) {
+    (this as any).slug = (this as any).name
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '') // Özel karakterleri kaldır
       .replace(/\s+/g, '-') // Boşlukları tire ile değiştir
       .replace(/-+/g, '-') // Çoklu tireleri tek tire yap
       .trim('-'); // Baş ve sondaki tireleri kaldır
   }
-  
+
   // Ensure at least one image is marked as main
-  if (this.images && this.images.length > 0) {
-    const hasMain = this.images.some(img => img.isMain);
+  if ((this as any).images && (this as any).images.length > 0) {
+    const hasMain = (this as any).images.some((img: any) => img.isMain);
     if (!hasMain) {
-      this.images[0].isMain = true;
+      (this as any).images[0].isMain = true;
     }
   }
-  
+
   // Auto-set thumbnail from main image
-  if (!this.thumbnail && this.images && this.images.length > 0) {
-    const mainImage = this.images.find(img => img.isMain);
+  if (!(this as any).thumbnail && (this as any).images && (this as any).images.length > 0) {
+    const mainImage = (this as any).images.find((img: any) => img.isMain);
     if (mainImage) {
-      this.thumbnail = mainImage.url;
+      (this as any).thumbnail = mainImage.url;
     }
   }
-  
+
   // Ensure at least one portion is marked as default
-  if (this.portions && this.portions.length > 0) {
-    const hasDefault = this.portions.some(portion => portion.isDefault);
+  if ((this as any).portions && (this as any).portions.length > 0) {
+    const hasDefault = (this as any).portions.some((portion: any) => portion.isDefault);
     if (!hasDefault) {
-      this.portions[0].isDefault = true;
+      (this as any).portions[0].isDefault = true;
     }
   }
-  
+
   next();
 });
 
 // 🔧 Instance Methods
-productSchema.methods.calculateDiscountedPrice = function(): number {
+productSchema.methods.calculateDiscountedPrice = function (): number {
   if (this.originalPrice && this.discountPercentage) {
     return Math.round((this.originalPrice * (100 - this.discountPercentage)) / 100);
   }
   return this.price;
 };
 
-productSchema.methods.getAvailablePortions = function(): IProductPortion[] {
+productSchema.methods.getAvailablePortions = function (): IProductPortion[] {
   return this.portions || [];
 };
 
-productSchema.methods.isAvailableNow = function(): boolean {
+productSchema.methods.isAvailableNow = function (): boolean {
   if (!this.isAvailable || !this.isActive) return false;
-  
+
   if (!this.availableHours) return true;
-  
+
   const now = new Date();
   const currentDay = now.getDay() || 7; // Sunday = 7
   const currentTime = now.toTimeString().slice(0, 5); // HH:MM
-  
+
   // Check if current day is in available days
   if (!this.availableHours.days.includes(currentDay)) return false;
-  
+
   // Check if current time is in available hours
   const { start, end } = this.availableHours;
   if (start && end) {
     return currentTime >= start && currentTime <= end;
   }
-  
+
   return true;
 };
 
-productSchema.methods.incrementViewCount = async function(): Promise<void> {
+productSchema.methods.incrementViewCount = async function (): Promise<void> {
   this.viewCount += 1;
   await this.save();
 };
 
-productSchema.methods.updateRating = async function(newRating: number): Promise<void> {
+productSchema.methods.updateRating = async function (newRating: number): Promise<void> {
   // Add to distribution
   this.rating.distribution[newRating as keyof typeof this.rating.distribution] += 1;
   this.rating.count += 1;
-  
+
   // Recalculate average
-  const totalStars = 
+  const totalStars =
     (this.rating.distribution[5] * 5) +
     (this.rating.distribution[4] * 4) +
     (this.rating.distribution[3] * 3) +
     (this.rating.distribution[2] * 2) +
     (this.rating.distribution[1] * 1);
-  
+
   this.rating.average = Math.round((totalStars / this.rating.count) * 10) / 10;
-  
+
   await this.save();
 };
 
 // 🔍 Static Query Methods
-productSchema.statics.findByCategory = function(categoryId: string) {
-  return this.find({ 
-    category: categoryId, 
-    isActive: true, 
-    isAvailable: true 
+productSchema.statics.findByCategory = function (categoryId: string) {
+  return this.find({
+    category: categoryId,
+    isActive: true,
+    isAvailable: true
   }).populate('category');
 };
 
-productSchema.statics.findPopular = function(limit: number = 10) {
-  return this.find({ 
-    isPopular: true, 
-    isActive: true, 
-    isAvailable: true 
+productSchema.statics.findPopular = function (limit: number = 10) {
+  return this.find({
+    isPopular: true,
+    isActive: true,
+    isAvailable: true
   })
-  .sort({ orderCount: -1, rating: -1 })
-  .limit(limit);
+    .sort({ orderCount: -1, rating: -1 })
+    .limit(limit);
 };
 
-productSchema.statics.findFeatured = function() {
-  return this.find({ 
-    isFeatured: true, 
-    isActive: true, 
-    isAvailable: true 
+productSchema.statics.findFeatured = function () {
+  return this.find({
+    isFeatured: true,
+    isActive: true,
+    isAvailable: true
   })
-  .sort({ orderCount: -1 });
+    .sort({ orderCount: -1 });
 };
 
-productSchema.statics.searchByName = function(searchTerm: string) {
+productSchema.statics.searchByName = function (searchTerm: string) {
   return this.find({
     $text: { $search: searchTerm },
     isActive: true,
     isAvailable: true
   })
-  .sort({ score: { $meta: 'textScore' } });
+    .sort({ score: { $meta: 'textScore' } });
 };
 
-productSchema.statics.findAvailable = function() {
-  return this.find({ 
-    isActive: true, 
-    isAvailable: true 
+productSchema.statics.findAvailable = function () {
+  return this.find({
+    isActive: true,
+    isAvailable: true
   });
 };
 
-productSchema.statics.findBestSellers = function() {
-  return this.find({ 
-    isActive: true, 
-    isAvailable: true 
+productSchema.statics.findBestSellers = function () {
+  return this.find({
+    isActive: true,
+    isAvailable: true
   })
-  .sort({ orderCount: -1, rating: -1 })
-  .limit(20);
+    .sort({ orderCount: -1, rating: -1 })
+    .limit(20);
 };
 
 // 🌟 Create and export the model
-interface IProductModel extends Model<IProductDocument>, IProductQuery {}
+interface IProductModel extends Model<IProductDocument>, IProductQuery { }
 
 export const Product = mongoose.model<IProductDocument, IProductModel>('Product', productSchema);
 

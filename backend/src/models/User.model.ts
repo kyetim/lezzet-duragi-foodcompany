@@ -1,11 +1,11 @@
 import mongoose, { Schema, Model, CallbackError } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { 
-  IUserDocument, 
-  IUserQuery, 
-  IUserAddress, 
-  IUserCreateInput 
+import * as jwt from 'jsonwebtoken';
+import {
+  IUserDocument,
+  IUserQuery,
+  IUserAddress,
+  IUserCreateInput
 } from '../types/user.types';
 
 // 📍 User Address Schema
@@ -26,7 +26,7 @@ const userAddressSchema = new Schema<IUserAddress>({
     type: String,
     required: [true, 'Telefon numarası gereklidir'],
     validate: {
-      validator: function(v: string) {
+      validator: function (v: string) {
         return /^(\+90|0)?[5][0-9]{9}$/.test(v);
       },
       message: 'Geçerli bir Türkiye telefon numarası giriniz'
@@ -100,7 +100,7 @@ const userSchema = new Schema<IUserDocument>({
     lowercase: true,
     trim: true,
     validate: {
-      validator: function(v: string) {
+      validator: function (v: string) {
         return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v);
       },
       message: 'Geçerli bir e-posta adresi giriniz'
@@ -129,7 +129,7 @@ const userSchema = new Schema<IUserDocument>({
     type: String,
     trim: true,
     validate: {
-      validator: function(v: string) {
+      validator: function (v: string) {
         return !v || /^(\+90|0)?[5][0-9]{9}$/.test(v);
       },
       message: 'Geçerli bir Türkiye telefon numarası giriniz'
@@ -151,7 +151,7 @@ const userSchema = new Schema<IUserDocument>({
   avatar: {
     type: String,
     validate: {
-      validator: function(v: string) {
+      validator: function (v: string) {
         return !v || /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(v);
       },
       message: 'Geçerli bir resim URL\'si giriniz'
@@ -160,7 +160,7 @@ const userSchema = new Schema<IUserDocument>({
   dateOfBirth: {
     type: Date,
     validate: {
-      validator: function(v: Date) {
+      validator: function (v: Date) {
         return !v || v < new Date();
       },
       message: 'Doğum tarihi gelecekte olamaz'
@@ -173,7 +173,7 @@ const userSchema = new Schema<IUserDocument>({
       message: 'Geçersiz cinsiyet'
     }
   },
-  
+
   // 🎯 User Preferences
   preferences: {
     language: {
@@ -191,10 +191,10 @@ const userSchema = new Schema<IUserDocument>({
       enum: ['vegetarian', 'vegan', 'halal', 'gluten-free', 'keto', 'diabetic']
     }]
   },
-  
+
   // 📍 User Addresses
   addresses: [userAddressSchema],
-  
+
   // 📊 User Statistics
   loyaltyPoints: {
     type: Number,
@@ -211,7 +211,7 @@ const userSchema = new Schema<IUserDocument>({
     default: 0,
     min: [0, 'Toplam harcama negatif olamaz']
   },
-  
+
   // 🔐 Authentication fields
   refreshTokens: [String],
   passwordResetToken: String,
@@ -223,7 +223,7 @@ const userSchema = new Schema<IUserDocument>({
     default: 0
   },
   lockUntil: Date,
-  
+
   // 📊 User Analytics
   favoriteCategories: [String],
   averageOrderValue: {
@@ -244,7 +244,7 @@ const userSchema = new Schema<IUserDocument>({
       default: 0
     }
   }],
-  
+
   // 🕐 Timestamps
   lastLoginAt: Date,
   isActive: {
@@ -266,10 +266,10 @@ userSchema.index({ totalSpent: -1 });
 userSchema.index({ createdAt: -1 });
 
 // 🔐 Password hashing middleware
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   // Sadece password değiştirilmişse hash'le
   if (!this.isModified('password')) return next();
-  
+
   try {
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12');
     this.password = await bcrypt.hash(this.password, saltRounds);
@@ -280,7 +280,7 @@ userSchema.pre('save', async function(next) {
 });
 
 // 📧 Unique email index with custom error
-userSchema.post('save', function(error: any, doc: any, next: any) {
+userSchema.post('save', function (error: any, doc: any, next: any) {
   if (error.name === 'MongoServerError' && error.code === 11000) {
     if (error.keyPattern?.email) {
       next(new Error('Bu e-posta adresi zaten kullanımda'));
@@ -293,7 +293,7 @@ userSchema.post('save', function(error: any, doc: any, next: any) {
 });
 
 // 🔧 Instance Methods
-userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
@@ -301,38 +301,35 @@ userSchema.methods.comparePassword = async function(candidatePassword: string): 
   }
 };
 
-userSchema.methods.generateAuthTokens = async function(): Promise<{ accessToken: string; refreshToken: string }> {
+userSchema.methods.generateAuthTokens = async function (): Promise<{ accessToken: string; refreshToken: string }> {
+  const jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
+  const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key';
+
   const accessToken = jwt.sign(
-    { 
-      userId: this._id, 
-      email: this.email, 
-      role: this.role 
+    {
+      userId: this._id.toString(),
+      email: this.email,
+      role: this.role
     },
-    process.env.JWT_SECRET!,
-    { 
-      expiresIn: process.env.JWT_EXPIRES_IN || '15m' 
-    }
+    jwtSecret
   );
-  
+
   const refreshToken = jwt.sign(
-    { 
-      userId: this._id, 
-      type: 'refresh' 
+    {
+      userId: this._id.toString(),
+      type: 'refresh'
     },
-    process.env.JWT_REFRESH_SECRET!,
-    { 
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' 
-    }
+    jwtRefreshSecret
   );
-  
+
   // Refresh token'ı kaydet
   this.refreshTokens.push(refreshToken);
   await this.save();
-  
+
   return { accessToken, refreshToken };
 };
 
-userSchema.methods.incrementLoginAttempts = async function(): Promise<void> {
+userSchema.methods.incrementLoginAttempts = async function (): Promise<void> {
   // Lock süresi geçmişse reset et
   if (this.lockUntil && this.lockUntil < new Date()) {
     this.loginAttempts = 1;
@@ -340,38 +337,38 @@ userSchema.methods.incrementLoginAttempts = async function(): Promise<void> {
   } else {
     this.loginAttempts += 1;
   }
-  
+
   // 5 başarısız deneme sonrası 30 dakika kilitle
   if (this.loginAttempts >= 5 && !this.isLocked()) {
     this.lockUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 dakika
   }
-  
+
   await this.save();
 };
 
-userSchema.methods.isLocked = function(): boolean {
+userSchema.methods.isLocked = function (): boolean {
   return !!(this.lockUntil && this.lockUntil > new Date());
 };
 
-userSchema.methods.getFullName = function(): string {
+userSchema.methods.getFullName = function (): string {
   return `${this.firstName} ${this.lastName}`.trim();
 };
 
-userSchema.methods.getDefaultAddress = function(): IUserAddress | null {
+userSchema.methods.getDefaultAddress = function (): IUserAddress | null {
   return this.addresses.find((addr: IUserAddress) => addr.isDefault) || null;
 };
 
-userSchema.methods.updateStats = async function(orderData: any): Promise<void> {
+userSchema.methods.updateStats = async function (orderData: any): Promise<void> {
   this.totalOrders += 1;
   this.totalSpent += orderData.totalAmount;
   this.averageOrderValue = this.totalSpent / this.totalOrders;
-  
+
   // Frequent items güncelle
   orderData.items.forEach((item: any) => {
-    const existingItem = this.frequentItems.find((fi: any) => 
+    const existingItem = this.frequentItems.find((fi: any) =>
       fi.productId.toString() === item.productId.toString()
     );
-    
+
     if (existingItem) {
       existingItem.orderCount += item.quantity;
     } else {
@@ -381,29 +378,29 @@ userSchema.methods.updateStats = async function(orderData: any): Promise<void> {
       });
     }
   });
-  
+
   await this.save();
 };
 
-userSchema.methods.addLoyaltyPoints = async function(points: number): Promise<void> {
+userSchema.methods.addLoyaltyPoints = async function (points: number): Promise<void> {
   this.loyaltyPoints += points;
   await this.save();
 };
 
 // 🔍 Static Query Methods
-userSchema.statics.findByEmail = function(email: string) {
+userSchema.statics.findByEmail = function (email: string) {
   return this.findOne({ email: email.toLowerCase(), isActive: true });
 };
 
-userSchema.statics.findActive = function() {
+userSchema.statics.findActive = function () {
   return this.find({ isActive: true });
 };
 
-userSchema.statics.findByRole = function(role: string) {
+userSchema.statics.findByRole = function (role: string) {
   return this.find({ role, isActive: true });
 };
 
-userSchema.statics.searchByName = function(searchTerm: string) {
+userSchema.statics.searchByName = function (searchTerm: string) {
   const regex = new RegExp(searchTerm, 'i');
   return this.find({
     $or: [
@@ -416,7 +413,7 @@ userSchema.statics.searchByName = function(searchTerm: string) {
 };
 
 // 🌟 Create and export the model
-interface IUserModel extends Model<IUserDocument>, IUserQuery {}
+interface IUserModel extends Model<IUserDocument>, IUserQuery { }
 
 export const User = mongoose.model<IUserDocument, IUserModel>('User', userSchema);
 

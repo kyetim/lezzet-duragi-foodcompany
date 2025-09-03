@@ -13,15 +13,20 @@ interface ProductCardProps {
 
 export function ProductCard({ item, onAddToCart, showDetailsButton = true, className = '' }: ProductCardProps) {
     const getCategoryIcon = (category: string) => {
-        switch (category) {
+        switch (category.toLowerCase()) {
+            case 'ana yemek': return '🍖';
+            case 'fast food': return '🍟';
+            case 'pizza': return '🍕';
+            case 'çorba': return '🍲';
+            case 'salata': return '🥗';
+            case 'tatlı': return '🍰';
             case 'doner': return '🍖';
             case 'makarna': return '🍝';
-            case 'salata': return '🥗';
             case 'icecek': return '🥤';
             default: return '🍽️';
         }
     };
-    let itemImage = item.image || item.imageUrl || '';
+    let itemImage = item.image || '';
     if (!itemImage) {
         // Fallback: kategoriye göre bir görsel veya genel bir placeholder
         itemImage = getFoodImagesByCategory(item.category)[0]?.url || 'https://via.placeholder.com/400x300?text=Yemek';

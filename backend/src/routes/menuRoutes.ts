@@ -11,6 +11,9 @@ import {
   getProductAnalytics
 } from '../controllers/menuController';
 
+// Auth middleware imports
+import { requireAuth, requireManager, requireAdmin } from '../middleware/auth';
+
 // Create router instance
 const router = express.Router();
 
@@ -65,25 +68,29 @@ router.get('/products/:id', getProductById);
 
 // POST /api/menu/products - Yeni ürün oluştur
 router.post('/products', 
-  // TODO: Add auth middleware: requireAuth, requireRole(['admin', 'manager'])
+  requireAuth,
+  requireManager,
   createNewProduct
 );
 
 // PUT /api/menu/products/:id - Ürün güncelle
 router.put('/products/:id',
-  // TODO: Add auth middleware: requireAuth, requireRole(['admin', 'manager'])
+  requireAuth,
+  requireManager,
   updateProduct
 );
 
 // DELETE /api/menu/products/:id - Ürün sil
 router.delete('/products/:id',
-  // TODO: Add auth middleware: requireAuth, requireRole(['admin'])
+  requireAuth,
+  requireAdmin,
   deleteProduct
 );
 
 // GET /api/menu/products/:id/analytics - Ürün analytics (Admin only)
 router.get('/products/:id/analytics',
-  // TODO: Add auth middleware: requireAuth, requireRole(['admin', 'manager'])
+  requireAuth,
+  requireManager,
   getProductAnalytics
 );
 

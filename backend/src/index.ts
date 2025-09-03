@@ -52,22 +52,23 @@ app.get('/', (req, res) => {
 import './models';
 
 // 📱 Import routes
+import authRoutes from './routes/authRoutes';
 import menuRoutes from './routes/menuRoutes';
 import orderRoutes from './routes/orderRoutes';
 
 // 🔧 Import middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { sanitizeInput } from './middleware/validation';
+import { generalRateLimit } from './middleware/rateLimit';
 
 // 🧹 Global middleware
+app.use(generalRateLimit); // Rate limiting
 app.use(sanitizeInput);
 
 // 📱 API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
-
-// 📱 API Routes - Buraya ileride diğer route'ları ekleyeceğiz
-// app.use('/api/auth', authRoutes);
 
 // 🔥 404 handler - Must come after all routes
 app.use(notFoundHandler);

@@ -18,6 +18,9 @@ import {
   sanitizeInput
 } from '../middleware/validation';
 
+// Auth middleware imports
+import { requireAuth, requireStaff, requireManager, optionalAuth } from '../middleware/auth';
+
 // Create router instance
 const router = express.Router();
 
@@ -59,39 +62,42 @@ const router = express.Router();
 // POST /api/orders - Yeni sipariş oluştur
 router.post('/', 
   sanitizeInput,
-  // TODO: Add auth middleware: requireAuth, requireRole(['customer', 'admin'])
+  requireAuth,
   createNewOrder
 );
 
 // GET /api/orders - Siparişleri listele (customer kendi siparişlerini, admin hepsini görebilir)
 router.get('/', 
   validateQueryParams,
-  // TODO: Add auth middleware and customer filtering
+  requireAuth,
   getAllOrders
 );
 
 // GET /api/orders/active - Aktif siparişler (Staff/Admin için)
 router.get('/active',
-  // TODO: Add auth middleware: requireAuth, requireRole(['staff', 'admin', 'manager'])
+  requireAuth,
+  requireStaff,
   getActiveOrders
 );
 
 // GET /api/orders/search - Sipariş arama (Admin için)
 router.get('/search',
-  // TODO: Add auth middleware: requireAuth, requireRole(['admin', 'manager'])
+  requireAuth,
+  requireManager,
   searchOrders
 );
 
 // GET /api/orders/analytics - Sipariş analytics (Admin için)
 router.get('/analytics',
-  // TODO: Add auth middleware: requireAuth, requireRole(['admin', 'manager'])
+  requireAuth,
+  requireManager,
   getOrderAnalytics
 );
 
 // GET /api/orders/:id - Tek sipariş detayı
 router.get('/:id', 
   validateObjectId('id'),
-  // TODO: Add auth middleware and ownership check
+  requireAuth,
   getOrderById
 );
 
@@ -101,7 +107,8 @@ router.get('/:id',
 router.put('/:id/status',
   validateObjectId('id'),
   sanitizeInput,
-  // TODO: Add auth middleware: requireAuth, requireRole(['staff', 'admin', 'manager'])
+  requireAuth,
+  requireStaff,
   updateOrderStatus
 );
 
@@ -109,7 +116,8 @@ router.put('/:id/status',
 router.put('/:id/payment',
   validateObjectId('id'),
   sanitizeInput,
-  // TODO: Add auth middleware: requireAuth, requireRole(['admin', 'manager'])
+  requireAuth,
+  requireManager,
   updatePaymentStatus
 );
 
@@ -117,7 +125,7 @@ router.put('/:id/payment',
 router.delete('/:id',
   validateObjectId('id'),
   sanitizeInput,
-  // TODO: Add auth middleware and business logic for cancellation
+  requireAuth,
   cancelOrder
 );
 

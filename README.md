@@ -12,12 +12,18 @@ Mersin'deki en lezzetli döner ve makarna restoranı için modern web uygulamas�
 
 ## Teknolojiler
 
+### Frontend
 - React 19
 - TypeScript
 - Vite
 - Tailwind CSS
 - Framer Motion
 - Redux Toolkit
+
+### Backend & Auth
+- Firebase Auth
+- Firestore Database
+- Firebase Storage
 
 ## Kurulum
 

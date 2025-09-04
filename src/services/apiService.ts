@@ -1,33 +1,15 @@
-// 🎯 API Service - Smart Switch between Mock and Real Backend
+// 🎯 API Service - Firebase-Only Architecture
+// This project uses Firebase Auth + Firestore directly
+// Mock data is used for menu display only
 
 import { MockAPI } from './mockBackendService';
-import { RealAPI } from './realBackendService';
 
-// 🔧 Environment Configuration
-const BACKEND_MODE = import.meta.env.VITE_BACKEND_MODE || 'development';
-const IS_DEVELOPMENT = import.meta.env.DEV;
+// 🔧 Firebase-Only Mode
+console.log('🔥 API Mode: Firebase + Mock Menu Data');
 
-// 🚀 Smart API Selection
-const selectAPI = () => {
-    // Force mock in development if no backend is configured
-    if (IS_DEVELOPMENT && BACKEND_MODE === 'development') {
-        console.log('🔧 API Mode: Mock Backend (Development)');
-        return MockAPI;
-    }
-    
-    // Use real API in production or when explicitly configured
-    if (BACKEND_MODE === 'production' || BACKEND_MODE === 'real') {
-        console.log('🌐 API Mode: Real Backend (Production)');
-        return RealAPI;
-    }
-    
-    // Default to mock for safety
-    console.log('🔧 API Mode: Mock Backend (Default)');
-    return MockAPI;
-};
-
-// 🎯 Export the selected API
-export const API = selectAPI();
+// 🎯 Export Mock API for menu data
+// Note: Auth, orders, profiles use Firebase directly via services
+export const API = MockAPI;
 
 // 🔧 API Health Check (for testing real backend connection)
 export const checkBackendHealth = async (): Promise<boolean> => {
@@ -37,7 +19,7 @@ export const checkBackendHealth = async (): Promise<boolean> => {
             console.log('✅ Real Backend: Healthy');
             return true;
         }
-        
+
         // Mock is always "healthy"
         console.log('✅ Mock Backend: Always Ready');
         return true;

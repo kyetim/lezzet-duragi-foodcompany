@@ -28,28 +28,22 @@
 - **Charts:** Recharts
 - **Maps:** Mapbox GL JS
 
-### Backend Stack:
-- **Runtime:** Node.js 18+ (LTS)
-- **Framework:** Express.js + TypeScript
-- **Database:** MongoDB + Mongoose
-- **Cache:** Redis
-- **Search:** Elasticsearch
-- **File Storage:** AWS S3 / Cloudinary
-- **Email:** SendGrid / Nodemailer
-- **SMS:** Twilio
-- **Payment:** Stripe / Iyzico
-- **Authentication:** Firebase
-- **Validation:** Joi / Zod
-- **Testing:** Jest + Supertest
+### Backend Stack (Firebase-Only):
+- **Authentication:** Firebase Auth
+- **Database:** Firestore (NoSQL)
+- **Storage:** Firebase Storage
+- **Hosting:** Firebase Hosting
+- **Payment:** Stripe (Client-side)
+- **Validation:** Zod (Frontend)
+- **Testing:** Vitest + React Testing Library
 
 ### DevOps & Infrastructure:
-- **Hosting:** Vercel (Frontend) + Railway/Render (Backend)
-- **Database:** MongoDB Atlas
+- **Hosting:** Vercel (Frontend Only)
+- **Database:** Firebase Firestore
 - **CDN:** Cloudflare
 - **Monitoring:** Sentry
 - **CI/CD:** GitHub Actions
-- **Containerization:** Docker
-- **Environment:** Nx Monorepo (Future)
+- **Environment:** Single Repository (Firebase-Focused)
 
 ---
 

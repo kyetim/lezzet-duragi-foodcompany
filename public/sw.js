@@ -108,7 +108,7 @@ async function handleApiRequest(request) {
       // Background'da güncel veriyi getir
       fetch(request)
         .then((response) => {
-          if (response.ok) {
+          if (response.ok && !request.url.startsWith('chrome-extension://')) {
             cache.put(request, response.clone());
           }
         })
@@ -207,9 +207,12 @@ async function handleStaticAssets(request) {
     
     const response = await fetch(request);
     
-    if (response.ok) {
+    // ✅ Chrome extension URL'lerini cache'leme - unsupported scheme hatası önlenir
+    if (response.ok && !request.url.startsWith('chrome-extension://')) {
       cache.put(request, response.clone());
       console.log('⚡ Static asset cache edildi:', request.url);
+    } else if (request.url.startsWith('chrome-extension://')) {
+      console.log('🚫 Chrome extension URL cache\'lenmiyor:', request.url);
     }
     
     return response;
@@ -225,8 +228,8 @@ async function handlePageRequest(request) {
     console.log('🌐 Sayfa network\'den yükleniyor:', request.url);
     const response = await fetch(request);
     
-    // Başarılı response'u cache'e kaydet
-    if (response.ok) {
+    // Başarılı response'u cache'e kaydet (chrome-extension hariç)
+    if (response.ok && !request.url.startsWith('chrome-extension://')) {
       const cache = await caches.open(CACHE_NAME);
       cache.put(request, response.clone());
     }

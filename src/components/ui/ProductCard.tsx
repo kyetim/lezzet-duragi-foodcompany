@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Button } from './button';
-import { ShoppingCart, Clock } from 'lucide-react';
+import { ShoppingCart, Clock, Check } from 'lucide-react';
 import { getFoodImagesByCategory, optimizeImageUrl } from '@/helpers/foodImages';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 import type { MenuItem } from '@/interfaces/menu-item';
 
 interface ProductCardProps {
@@ -12,6 +14,22 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ item, onAddToCart, showDetailsButton = true, className = '' }: ProductCardProps) {
+    const [isAdding, setIsAdding] = useState(false);
+    const [justAdded, setJustAdded] = useState(false);
+
+    const handleAddToCart = async () => {
+        if (!onAddToCart || isAdding) return;
+
+        setIsAdding(true);
+        try {
+            onAddToCart(item);
+            setJustAdded(true);
+            setTimeout(() => setJustAdded(false), 2000);
+        } finally {
+            setTimeout(() => setIsAdding(false), 300);
+        }
+    };
+
     const getCategoryIcon = (category: string) => {
         switch (category.toLowerCase()) {
             case 'ana yemek': return '🍖';
@@ -90,9 +108,55 @@ export function ProductCard({ item, onAddToCart, showDetailsButton = true, class
                 )}
                 <div className="mt-auto flex flex-col gap-2">
                     {onAddToCart && (
-                        <Button onClick={() => onAddToCart(item)} className="btn-secondary flex items-center gap-2 w-full justify-center">
-                            <ShoppingCart className="w-4 h-4" /> Sepete Ekle
-                        </Button>
+                        <motion.div
+                            whileTap={{ scale: 0.95 }}
+                            animate={isAdding ? { scale: [1, 1.05, 1] } : {}}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <Button
+                                onClick={handleAddToCart}
+                                disabled={isAdding || !item.isAvailable}
+                                className={`btn-secondary flex items-center gap-2 w-full justify-center transition-all duration-300 ${justAdded ? 'bg-green-500 hover:bg-green-600 text-white' : ''
+                                    } ${!item.isAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                <AnimatePresence mode="wait">
+                                    {isAdding ? (
+                                        <motion.div
+                                            key="loading"
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.8 }}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                                            Ekleniyor...
+                                        </motion.div>
+                                    ) : justAdded ? (
+                                        <motion.div
+                                            key="added"
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.8 }}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <Check className="w-4 h-4" />
+                                            Eklendi!
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="default"
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.8 }}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <ShoppingCart className="w-4 h-4" />
+                                            Sepete Ekle
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </Button>
+                        </motion.div>
                     )}
                     {showDetailsButton && (
                         <Link to={`/product/${item.id}`} className="w-full">

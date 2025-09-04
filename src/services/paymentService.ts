@@ -11,8 +11,29 @@ export const paymentService = {
   async createPaymentIntent(amount: number): Promise<PaymentIntent> {
     try {
       console.log('🔄 Ödeme niyeti oluşturuluyor:', amount, 'TRY');
-      
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/create-payment-intent`, {
+
+      // Development modunda mock payment intent kullan
+      if (import.meta.env.DEV) {
+        console.log('🔧 Development mode: Using mock payment intent');
+
+        // Mock payment intent for testing
+        const mockPaymentIntent = {
+          clientSecret: `pi_test_${Math.random().toString(36).substr(2, 9)}_secret_${Math.random().toString(36).substr(2, 9)}`,
+          amount: Math.round(amount * 100),
+          id: `pi_test_${Math.random().toString(36).substr(2, 9)}`
+        };
+
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        console.log('✅ Mock ödeme niyeti oluşturuldu:', mockPaymentIntent);
+        return mockPaymentIntent;
+      }
+
+      // Production mode: Real Stripe API
+      const baseUrl = window.location.origin;
+
+      const response = await fetch(`${baseUrl}/api/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +62,29 @@ export const paymentService = {
   async confirmPayment(clientSecret: string, paymentMethod: any) {
     try {
       console.log('🔄 Ödeme onaylanıyor:', clientSecret);
-      
+
+      // Development modunda mock payment confirmation kullan
+      if (import.meta.env.DEV && clientSecret.includes('pi_test_')) {
+        console.log('🔧 Development mode: Using mock payment confirmation');
+
+        // Simulate payment processing delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Mock successful payment intent
+        const mockSuccessPayment = {
+          id: clientSecret.split('_secret_')[0],
+          status: 'succeeded',
+          amount: Math.round((paymentMethod.amount || 100) * 100),
+          currency: 'try',
+          created: Math.floor(Date.now() / 1000),
+          client_secret: clientSecret
+        };
+
+        console.log('✅ Mock ödeme başarıyla onaylandı:', mockSuccessPayment);
+        return mockSuccessPayment;
+      }
+
+      // Production mode: Real Stripe confirmation
       const stripe = await stripePromise;
       if (!stripe) {
         throw new Error('Stripe yüklenemedi. Lütfen yapılandırmanızı kontrol edin.');

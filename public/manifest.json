@@ -10,7 +10,11 @@
   "scope": "/",
   "lang": "tr",
   "dir": "ltr",
-  "categories": ["food", "lifestyle", "shopping"],
+  "categories": [
+    "food",
+    "lifestyle",
+    "shopping"
+  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -66,43 +70,13 @@
       "name": "Menüyü Gör",
       "short_name": "Menü",
       "description": "Döner ve makarna menümüzü inceleyin",
-      "url": "/menu",
-      "icons": [
-        {
-          "src": "/icons/menu-icon.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "url": "/menu"
     },
     {
       "name": "Siparişlerim",
       "short_name": "Siparişler",
       "description": "Sipariş geçmişinizi görüntüleyin",
-      "url": "/orders",
-      "icons": [
-        {
-          "src": "/icons/orders-icon.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshots/homepage.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Ana sayfa görünümü"
-    },
-    {
-      "src": "/screenshots/menu-mobile.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobil menü görünümü"
+      "url": "/orders"
     }
   ]
 }

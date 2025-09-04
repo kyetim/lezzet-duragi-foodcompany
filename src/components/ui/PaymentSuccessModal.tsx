@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  CheckCircle, 
-  X, 
-  Package, 
-  Clock, 
+import {
+  CheckCircle,
+  X,
+  Package,
+  Clock,
   MapPin,
   CreditCard,
   Star,
@@ -38,9 +38,9 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
 }) => {
   const formatTime = (date?: Date) => {
     if (!date) return '';
-    return date.toLocaleTimeString('tr-TR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleTimeString('tr-TR', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -56,7 +56,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             onClick={onClose}
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           />
-          
+
           {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -82,25 +82,25 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ 
-                  delay: 0.2, 
-                  type: "spring", 
-                  stiffness: 200, 
-                  damping: 10 
+                transition={{
+                  delay: 0.2,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 10
                 }}
                 className="relative inline-block mb-4"
               >
                 <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-10 h-10 text-white" fill="currentColor" />
                 </div>
-                
+
                 {/* Sparkle animations */}
                 <motion.div
-                  animate={{ 
+                  animate={{
                     rotate: 360,
                     scale: [1, 1.2, 1]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2,
                     repeat: Infinity,
                     ease: "linear"
@@ -109,13 +109,13 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
                 >
                   <Sparkles className="w-6 h-6 text-yellow-400" />
                 </motion.div>
-                
+
                 <motion.div
-                  animate={{ 
+                  animate={{
                     rotate: -360,
                     scale: [1, 1.1, 1]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 3,
                     repeat: Infinity,
                     ease: "linear",
@@ -135,7 +135,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
               >
                 Ödeme Başarılı! 🎉
               </motion.h2>
-              
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -176,7 +176,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
                   </div>
                 </div>
                 <span className="text-lg font-bold text-green-600">
-                  ₺{totalAmount.toFixed(2)}
+                  ₺{(totalAmount || 0).toFixed(2)}
                 </span>
               </div>
 
@@ -251,7 +251,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
               >
                 Devam Et
               </Button>
-              
+
               <Button
                 onClick={onClose}
                 variant="outline"

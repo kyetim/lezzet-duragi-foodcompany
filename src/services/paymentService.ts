@@ -12,9 +12,11 @@ export const paymentService = {
     try {
       console.log('🔄 Ödeme niyeti oluşturuluyor:', amount, 'TRY');
 
-      // Development modunda mock payment intent kullan
-      if (import.meta.env.DEV) {
-        console.log('🔧 Development mode: Using mock payment intent');
+      // Mock payment kullan: Development modunda VEYA Stripe key yoksa
+      const shouldUseMock = import.meta.env.DEV || !import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+      
+      if (shouldUseMock) {
+        console.log('🔧 Using mock payment intent (DEV mode or no Stripe key)');
 
         // Mock payment intent for testing
         const mockPaymentIntent = {
@@ -63,9 +65,11 @@ export const paymentService = {
     try {
       console.log('🔄 Ödeme onaylanıyor:', clientSecret);
 
-      // Development modunda mock payment confirmation kullan
-      if (import.meta.env.DEV && clientSecret.includes('pi_test_')) {
-        console.log('🔧 Development mode: Using mock payment confirmation');
+      // Mock payment kullan: Development modunda VEYA test client secret varsa
+      const shouldUseMock = import.meta.env.DEV || clientSecret.includes('pi_test_');
+      
+      if (shouldUseMock) {
+        console.log('🔧 Using mock payment confirmation');
 
         // Simulate payment processing delay
         await new Promise(resolve => setTimeout(resolve, 2000));

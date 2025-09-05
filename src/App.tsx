@@ -13,6 +13,7 @@ import { Layout } from '@/components/layout/Layout';
 import { HomePage } from '@/pages/HomePage';
 import { MenuPage } from '@/pages/MenuPage';
 import { AuthPage } from '@/pages/AuthPage';
+import AdminPage from '@/pages/AdminPage';
 
 // Non-critical pages - lazy loaded for performance
 const AboutPage = lazy(() => import('@/pages/AboutPage').then(module => ({ default: module.AboutPage })));
@@ -117,6 +118,13 @@ function App() {
                 <Layout>
                   <CheckoutPage />
                 </Layout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Admin Panel Route */}
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminPage />
               </ProtectedRoute>
             } />
               </Routes>

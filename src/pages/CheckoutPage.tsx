@@ -278,7 +278,6 @@ export const CheckoutPage: React.FC = () => {
                 paymentMethod={paymentMethod}
                 onPaymentMethodSelect={setPaymentMethod}
                 onCanProceed={setCanProceedToNext}
-                onOpenPaymentModal={() => setShowPaymentModal(true)}
               />
             )}
 
@@ -294,6 +293,7 @@ export const CheckoutPage: React.FC = () => {
                 onEditAddress={() => goToStep(0)}
                 onEditPayment={() => goToStep(1)}
                 isPlacingOrder={isPlacingOrder}
+                onOpenPaymentModal={() => setShowPaymentModal(true)}
               />
             )}
           </AnimatePresence>

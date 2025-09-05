@@ -7,7 +7,6 @@ interface PaymentStepProps {
     paymentMethod: 'cash' | 'card';
     onPaymentMethodSelect: (method: 'cash' | 'card') => void;
     onCanProceed: (canProceed: boolean) => void;
-    onOpenPaymentModal?: () => void; // Kredi kartı seçilince popup aç
 }
 
 const paymentOptions = [
@@ -36,8 +35,7 @@ const paymentOptions = [
 export function PaymentStep({
     paymentMethod,
     onPaymentMethodSelect,
-    onCanProceed,
-    onOpenPaymentModal
+    onCanProceed
 }: PaymentStepProps) {
 
     useEffect(() => {
@@ -79,10 +77,6 @@ export function PaymentStep({
                                     }`}
                                 onClick={() => {
                                     onPaymentMethodSelect(option.id);
-                                    // Kredi kartı seçilince otomatik popup aç
-                                    if (option.id === 'card' && onOpenPaymentModal) {
-                                        setTimeout(() => onOpenPaymentModal(), 300); // Kısa delay ile smooth açılım
-                                    }
                                 }}
                             >
                                 <CardContent className="p-6">

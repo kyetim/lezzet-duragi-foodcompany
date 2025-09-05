@@ -17,6 +17,7 @@ interface ReviewStepProps {
     onEditAddress: () => void;
     onEditPayment: () => void;
     isPlacingOrder: boolean;
+    onOpenPaymentModal?: () => void;
 }
 
 export function ReviewStep({
@@ -28,7 +29,8 @@ export function ReviewStep({
     onCanProceed,
     onEditAddress,
     onEditPayment,
-    isPlacingOrder
+    isPlacingOrder,
+    onOpenPaymentModal
 }: ReviewStepProps) {
     const [estimatedTime, setEstimatedTime] = useState(0);
 
@@ -170,21 +172,36 @@ export function ReviewStep({
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center gap-2">
-                                {paymentMethod === 'cash' ? (
-                                    <>
-                                        <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                                            💰
-                                        </div>
-                                        <span>Kapıda Nakit Ödeme</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                                            💳
-                                        </div>
-                                        <span>Kredi Kartı</span>
-                                    </>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    {paymentMethod === 'cash' ? (
+                                        <>
+                                            <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                                                💰
+                                            </div>
+                                            <span>Kapıda Nakit Ödeme</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                                💳
+                                            </div>
+                                            <span>Kredi Kartı</span>
+                                        </>
+                                    )}
+                                </div>
+                                
+                                {/* Kredi kartı seçiliyse kart bilgileri butonu */}
+                                {paymentMethod === 'card' && onOpenPaymentModal && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={onOpenPaymentModal}
+                                        className="text-primary-600 border-primary-300 hover:bg-primary-50"
+                                    >
+                                        <CreditCard className="w-4 h-4 mr-1" />
+                                        Kart Bilgileri
+                                    </Button>
                                 )}
                             </div>
                         </CardContent>

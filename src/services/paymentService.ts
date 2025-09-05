@@ -14,7 +14,7 @@ export const paymentService = {
 
       // Mock payment kullan: Development modunda VEYA Stripe key yoksa
       const shouldUseMock = import.meta.env.DEV || !import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-      
+
       if (shouldUseMock) {
         console.log('🔧 Using mock payment intent (DEV mode or no Stripe key)');
 
@@ -67,7 +67,7 @@ export const paymentService = {
 
       // Mock payment kullan: Development modunda VEYA test client secret varsa
       const shouldUseMock = import.meta.env.DEV || clientSecret.includes('pi_test_');
-      
+
       if (shouldUseMock) {
         console.log('🔧 Using mock payment confirmation');
 

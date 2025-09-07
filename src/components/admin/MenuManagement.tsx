@@ -26,6 +26,7 @@ import type {
   CreateMenuItemInput,
   UpdateMenuItemInput 
 } from '../../services/menuFirebaseService';
+import ProductFormModal from './ProductFormModal';
 
 // Category icons mapping
 const getCategoryIcon = (category: string) => {
@@ -122,6 +123,35 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
     }
   });
 
+  // Handle save from modal
+  const handleSaveItem = (savedItem: MenuItemFirestore) => {
+    if (editingItem) {
+      // Update existing item in list
+      setMenuItems(prev => prev.map(item => 
+        item.id === savedItem.id ? savedItem : item
+      ));
+    } else {
+      // Add new item to list
+      setMenuItems(prev => [savedItem, ...prev]);
+    }
+    
+    // Close modal and reset editing state
+    setIsModalOpen(false);
+    setEditingItem(null);
+  };
+
+  // Open modal for editing
+  const handleEditItem = (item: MenuItemFirestore) => {
+    setEditingItem(item);
+    setIsModalOpen(true);
+  };
+
+  // Open modal for new item
+  const handleNewItem = () => {
+    setEditingItem(null);
+    setIsModalOpen(true);
+  };
+
   // Filter menu items
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
@@ -157,10 +187,7 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
         </div>
         
         <Button
-          onClick={() => {
-            setEditingItem(null);
-            setIsModalOpen(true);
-          }}
+          onClick={handleNewItem}
           className="flex items-center gap-2"
           disabled={isLoading()}
         >
@@ -344,10 +371,7 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => {
-                          setEditingItem(item);
-                          setIsModalOpen(true);
-                        }}
+                        onClick={() => handleEditItem(item)}
                         disabled={isLoading()}
                       >
                         <Edit className="w-4 h-4 text-blue-500" />
@@ -407,22 +431,16 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
         </div>
       )}
 
-      {/* TODO: Add ProductFormModal here */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4">
-              {editingItem ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Product form modal coming soon...
-            </p>
-            <Button onClick={() => setIsModalOpen(false)}>
-              Kapat
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* Product Form Modal */}
+      <ProductFormModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingItem(null);
+        }}
+        editingItem={editingItem}
+        onSave={handleSaveItem}
+      />
     </div>
   );
 };

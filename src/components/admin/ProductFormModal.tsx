@@ -81,11 +81,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     // Simple static CSS for light mode only
     const styleId = 'product-form-light-only';
     let existingStyle = document.getElementById(styleId);
-    
+
     if (existingStyle) {
       existingStyle.remove();
     }
-    
+
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
@@ -127,9 +127,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
       }
     `;
-    
+
     document.head.appendChild(style);
-    
+
     return () => {
       const styleToRemove = document.getElementById(styleId);
       if (styleToRemove) {
@@ -137,7 +137,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       }
     };
   }, []);
-  
+
   // Simple inline styles for light mode
   const lightInputStyle = {
     backgroundColor: '#ffffff',
@@ -148,7 +148,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     fontSize: '16px',
     width: '100%',
   };
-  
+
   const lightLabelStyle = {
     color: '#111827',
     fontWeight: '600',

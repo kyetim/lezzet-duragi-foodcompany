@@ -18,7 +18,6 @@ import { PaymentModal } from '../components/payment/PaymentModal';
 import { PaymentSuccessModal } from '../components/ui/PaymentSuccessModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
-import type { Order, OrderStatus } from '../interfaces/order';
 import type { UserAddress } from '../interfaces/user';
 
 export const CheckoutPage: React.FC = () => {
@@ -80,9 +79,11 @@ export const CheckoutPage: React.FC = () => {
     const fetchAddresses = async () => {
       try {
         // Mock address data for testing
-        const mockAddresses = [
+        const mockAddresses: UserAddress[] = [
           {
             id: 'mock-1',
+            userId: currentUser.uid,
+            addressType: 'home' as const,
             title: 'Ev Adresi',
             fullName: currentUser.displayName || 'Test Kullanıcı',
             phone: '+90 555 123 4567',
@@ -96,6 +97,8 @@ export const CheckoutPage: React.FC = () => {
           },
           {
             id: 'mock-2',
+            userId: currentUser.uid,
+            addressType: 'work' as const,
             title: 'İş Yeri',
             fullName: currentUser.displayName || 'Test Kullanıcı',
             phone: '+90 555 987 6543',
@@ -172,7 +175,7 @@ export const CheckoutPage: React.FC = () => {
       if (paymentIntentId) {
         firebaseOrderData.paymentIntentId = paymentIntentId;
       }
-      
+
       if (notes && notes.trim()) {
         firebaseOrderData.notes = notes.trim();
       }

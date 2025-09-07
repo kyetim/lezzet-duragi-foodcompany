@@ -166,6 +166,62 @@ class MenuFirebaseService {
         }
     }
 
+    // Get menu items by category
+    async getMenuItemsByCategory(category: string): Promise<MenuItemFirestore[]> {
+        try {
+            console.log(`🔄 Fetching menu items for category: ${category}`);
+
+            const menuRef = collection(db, this.collectionName);
+            const q = query(
+                menuRef,
+                where('category', '==', category),
+                where('isAvailable', '==', true),
+                orderBy('name', 'asc')
+            );
+            const querySnapshot = await getDocs(q);
+
+            const menuItems: MenuItemFirestore[] = [];
+            querySnapshot.forEach((doc) => {
+                menuItems.push({
+                    id: doc.id,
+                    ...doc.data()
+                } as MenuItemFirestore);
+            });
+
+            console.log(`✅ Found ${menuItems.length} items in category ${category}`);
+            return menuItems;
+        } catch (error) {
+            console.error('❌ Error fetching menu items by category:', error);
+            throw new Error('Kategori öğeleri alınırken hata oluştu');
+        }
+    }
+
+    // Get single menu item
+    async getMenuItemById(id: string): Promise<MenuItemFirestore | null> {
+        try {
+            console.log(`🔄 Fetching menu item: ${id}`);
+
+            const docRef = doc(db, this.collectionName, id);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const menuItem = {
+                    id: docSnap.id,
+                    ...docSnap.data()
+                } as MenuItemFirestore;
+
+                console.log('✅ Menu item found:', menuItem.name);
+                return menuItem;
+            } else {
+                console.log('❌ Menu item not found');
+                return null;
+            }
+        } catch (error) {
+            console.error('❌ Error fetching menu item:', error);
+            throw new Error('Menü öğesi alınırken hata oluştu');
+        }
+    }
+
     // Get categories
     async getCategories(): Promise<string[]> {
         try {

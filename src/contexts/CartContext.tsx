@@ -1,8 +1,16 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { CartItem } from '../interfaces/cart';
 
-// Re-export CartItem for backward compatibility
-export { CartItem };
+// Define CartItem interface directly here for better compatibility
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  description?: string;
+  category: string;
+  notes?: string;
+}
 
 interface CartState {
   items: CartItem[];

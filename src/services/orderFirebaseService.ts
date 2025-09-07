@@ -3,7 +3,6 @@ import {
   doc,
   getDocs,
   getDoc,
-  addDoc,
   updateDoc,
   deleteDoc,
   serverTimestamp,
@@ -14,7 +13,7 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { CartItem } from '../interfaces/cart';
+import type { CartItem } from '../contexts/CartContext';
 
 // Order Status Types
 export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'on_delivery' | 'delivered' | 'cancelled';
@@ -101,7 +100,6 @@ export interface CreateOrderInput {
 
 class OrderFirebaseService {
   private collectionName = 'orders';
-  private itemsSubCollection = 'order_items';
 
   // Calculate order totals
   private calculateOrderTotals(items: CartItem[]) {
@@ -115,7 +113,6 @@ class OrderFirebaseService {
 
   // Generate order number
   private generateOrderNumber(): string {
-    const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000000);
     return `ORD-${new Date().getFullYear()}-${random}`;
   }

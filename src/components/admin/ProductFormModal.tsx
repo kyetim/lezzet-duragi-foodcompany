@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  X,
-  Save,
-  Upload,
-  Package,
+import { 
+  X, 
+  Save, 
+  Package, 
   DollarSign,
   Clock,
   Tag,
   FileText,
   Camera,
-  Check,
   AlertCircle
 } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -76,18 +73,34 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [ingredientInput, setIngredientInput] = useState('');
   const [allergenInput, setAllergenInput] = useState('');
 
-  const { showToast } = useToast();
+  const { success: showToastSuccess, error: showToastError } = useToast();
   const { withLoading, isLoading } = useLoading();
-  const { theme } = useTheme();
-
+  
+  // Direct dark mode detection from document
+  const [isDark, setIsDark] = useState(false);
+  
+  useEffect(() => {
+    const checkTheme = () => {
+      const isDarkMode = document.documentElement.classList.contains('dark') || 
+                        window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDark(isDarkMode);
+    };
+    
+    checkTheme();
+    // Listen for theme changes
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, { attributes: true });
+    
+    return () => observer.disconnect();
+  }, []);
+  
   // Theme-based styles
-  const isDark = theme === 'dark';
   const inputStyle = {
     backgroundColor: isDark ? '#374151' : '#ffffff',
     color: isDark ? '#ffffff' : '#000000',
     borderColor: isDark ? '#4B5563' : '#D1D5DB',
   };
-
+  
   const labelStyle = {
     color: isDark ? '#E5E7EB' : '#374151',
   };
@@ -200,7 +213,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   // Save product
   const handleSave = withLoading(async () => {
     if (!validateForm()) {
-      showToast('Lütfen tüm gerekli alanları doldurun', 'error');
+      showToastError('Lütfen tüm gerekli alanları doldurun');
       return;
     }
 
@@ -221,7 +234,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
           updatedAt: new Date() as any
         };
 
-        showToast('Ürün başarıyla güncellendi', 'success');
+        showToastSuccess('Ürün başarıyla güncellendi');
       } else {
         // Create new item
         const newItemId = await menuFirebaseService.createMenuItem(formData);
@@ -235,14 +248,14 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
           updatedAt: new Date() as any
         };
 
-        showToast('Yeni ürün başarıyla eklendi', 'success');
+        showToastSuccess('Yeni ürün başarıyla eklendi');
       }
 
       onSave(savedItem);
       onClose();
     } catch (error) {
       console.error('Error saving product:', error);
-      showToast('Ürün kaydedilirken hata oluştu', 'error');
+      showToastError('Ürün kaydedilirken hata oluştu');
     }
   });
 

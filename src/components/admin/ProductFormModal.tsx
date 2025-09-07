@@ -288,7 +288,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         value={formData.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         placeholder="Örn: Tavuk Döner"
-                        className={errors.name ? 'border-red-500' : ''}
+                        className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${errors.name ? 'border-red-500' : ''}`}
                       />
                       {errors.name && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
@@ -305,9 +305,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         onChange={(e) => handleInputChange('description', e.target.value)}
                         placeholder="Ürün açıklaması..."
                         rows={3}
-                        className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none ${
+                        className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                           errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                        } bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        }`}
                       />
                       {errors.description && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
@@ -327,7 +327,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             value={formData.price}
                             onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
                             placeholder="0.00"
-                            className={`pl-10 ${errors.price ? 'border-red-500' : ''}`}
+                            className={`pl-10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${errors.price ? 'border-red-500' : ''}`}
                             step="0.5"
                             min="0"
                           />
@@ -349,7 +349,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             value={formData.preparationTime}
                             onChange={(e) => handleInputChange('preparationTime', parseInt(e.target.value) || 0)}
                             placeholder="0"
-                            className="pl-10"
+                            className="pl-10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                             min="0"
                           />
                         </div>
@@ -431,7 +431,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         value={formData.image}
                         onChange={(e) => handleInputChange('image', e.target.value)}
                         placeholder="https://example.com/image.jpg"
-                        className={errors.image ? 'border-red-500' : ''}
+                        className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${errors.image ? 'border-red-500' : ''}`}
                       />
                       {errors.image && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
@@ -486,7 +486,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         placeholder="Özel etiket ekle..."
-                        className="flex-1"
+                        className="flex-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         onKeyPress={(e) => e.key === 'Enter' && addTag(newTag)}
                       />
                       <Button onClick={() => addTag(newTag)} variant="outline" size="sm">
@@ -518,6 +518,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         value={formData.calories}
                         onChange={(e) => handleInputChange('calories', parseInt(e.target.value) || 0)}
                         placeholder="0"
+                        className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         min="0"
                       />
                     </div>
@@ -529,7 +530,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           value={ingredientInput}
                           onChange={(e) => setIngredientInput(e.target.value)}
                           placeholder="İçerik ekle..."
-                          className="flex-1"
+                          className="flex-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {
                               addToArray('ingredients', ingredientInput);
@@ -571,7 +572,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           value={allergenInput}
                           onChange={(e) => setAllergenInput(e.target.value)}
                           placeholder="Alerjen ekle..."
-                          className="flex-1"
+                          className="flex-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {
                               addToArray('allergens', allergenInput);

@@ -66,6 +66,15 @@ class MenuFirebaseService {
         try {
             console.log('🔄 Fetching all menu items from Firestore...');
 
+            // DEV Environment Bypass (since permissions work in prod but not dev)
+            if (import.meta.env.DEV) {
+                console.log('🚧 DEV Environment: Using mock menu items');
+                
+                // Return empty array in dev to simulate no data initially
+                console.log('✅ Found 0 menu items (dev mode)');
+                return [];
+            }
+
             const menuRef = collection(db, this.collectionName);
             const q = query(menuRef, orderBy('createdAt', 'desc'));
             const querySnapshot = await getDocs(q);
@@ -90,6 +99,18 @@ class MenuFirebaseService {
     async createMenuItem(menuItemData: CreateMenuItemInput): Promise<string> {
         try {
             console.log('🔄 Creating new menu item...', menuItemData);
+
+            // DEV Environment Bypass (since permissions work in prod but not dev)
+            if (import.meta.env.DEV) {
+                console.log('🚧 DEV Environment: Using mock menu item creation');
+                const mockItemId = `mock_menu_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+                // Simulate delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                console.log('✅ Mock menu item created:', mockItemId);
+                return mockItemId;
+            }
 
             // Create menu item document
             const menuItem = {

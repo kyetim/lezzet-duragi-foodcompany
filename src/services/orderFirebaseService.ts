@@ -1,11 +1,11 @@
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  getDoc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
   serverTimestamp,
   Timestamp,
   query,
@@ -14,7 +14,7 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { CartItem } from '../contexts/CartContext';
+import { CartItem } from '../interfaces/cart';
 
 // Order Status Types
 export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'on_delivery' | 'delivered' | 'cancelled';
@@ -51,34 +51,34 @@ export interface Order {
   id?: string;
   userId: string;
   orderNumber: string;
-  
+
   // Customer Info
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  
+
   // Order Items
   items: OrderItem[];
   itemsCount: number;
-  
+
   // Pricing
   subtotal: number;
   deliveryFee: number;
   total: number;
-  
+
   // Delivery Info
   deliveryAddress: UserAddress;
   estimatedDeliveryTime: number; // in minutes
-  
+
   // Payment Info
   paymentMethod: 'cash' | 'card';
   paymentStatus: 'pending' | 'completed' | 'failed';
   paymentIntentId?: string;
-  
+
   // Order Status
   status: OrderStatus;
   notes?: string;
-  
+
   // Timestamps
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -124,11 +124,11 @@ class OrderFirebaseService {
   async getAllOrders(): Promise<Order[]> {
     try {
       console.log('🔄 Fetching all orders from Firestore...');
-      
+
       const ordersRef = collection(db, this.collectionName);
       const q = query(ordersRef, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      
+
       const orders: Order[] = [];
       querySnapshot.forEach((doc) => {
         orders.push({
@@ -149,15 +149,15 @@ class OrderFirebaseService {
   async getOrdersByUserId(userId: string): Promise<Order[]> {
     try {
       console.log(`🔄 Fetching orders for user: ${userId}`);
-      
+
       const ordersRef = collection(db, this.collectionName);
       const q = query(
-        ordersRef, 
+        ordersRef,
         where('userId', '==', userId),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const orders: Order[] = [];
       querySnapshot.forEach((doc) => {
         orders.push({
@@ -178,16 +178,16 @@ class OrderFirebaseService {
   async getOrderById(orderId: string): Promise<Order | null> {
     try {
       console.log(`🔄 Fetching order: ${orderId}`);
-      
+
       const docRef = doc(db, this.collectionName, orderId);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         const order = {
           id: docSnap.id,
           ...docSnap.data()
         } as Order;
-        
+
         console.log('✅ Order found:', order.orderNumber);
         return order;
       } else {
@@ -204,7 +204,7 @@ class OrderFirebaseService {
   async createOrder(orderData: CreateOrderInput): Promise<string> {
     try {
       console.log('🔄 Creating new order in Firestore...', orderData);
-      
+
       // Debug: Check for undefined values
       console.log('🔍 Debug order fields:', {
         paymentIntentId: orderData.paymentIntentId,
@@ -217,26 +217,26 @@ class OrderFirebaseService {
       if (import.meta.env.DEV) {
         console.log('🚧 DEV Environment: Using mock order creation');
         const mockOrderId = `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        
+
         // Simulate delay
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         console.log('✅ Mock order created:', mockOrderId);
         return mockOrderId;
       }
 
       const { subtotal, deliveryFee, total, itemsCount } = this.calculateOrderTotals(orderData.items);
-      
+
       // Create order document (filter out undefined values)
       const orderBase = {
         userId: orderData.userId,
         orderNumber: this.generateOrderNumber(),
-        
+
         // Customer Info
         customerName: orderData.customerName,
         customerEmail: orderData.customerEmail,
         customerPhone: orderData.customerPhone,
-        
+
         // Order Items
         items: orderData.items.map(item => ({
           id: item.id,
@@ -249,23 +249,23 @@ class OrderFirebaseService {
           notes: item.notes
         })),
         itemsCount,
-        
+
         // Pricing
         subtotal,
         deliveryFee,
         total,
-        
+
         // Delivery Info
         deliveryAddress: orderData.deliveryAddress,
         estimatedDeliveryTime: orderData.estimatedDeliveryTime || 30,
-        
+
         // Payment Info
         paymentMethod: orderData.paymentMethod,
         paymentStatus: orderData.paymentMethod === 'card' ? 'completed' : 'pending',
-        
+
         // Order Status
         status: 'confirmed',
-        
+
         // Timestamps
         createdAt: serverTimestamp() as Timestamp,
         updatedAt: serverTimestamp() as Timestamp,
@@ -274,11 +274,11 @@ class OrderFirebaseService {
 
       // Add optional fields only if they exist (aggressive undefined filtering)
       const order: any = { ...orderBase };
-      
+
       if (orderData.paymentIntentId && orderData.paymentIntentId !== undefined && orderData.paymentIntentId !== null) {
         order.paymentIntentId = orderData.paymentIntentId;
       }
-      
+
       if (orderData.notes && orderData.notes !== undefined && orderData.notes !== null && orderData.notes.trim()) {
         order.notes = orderData.notes.trim();
       }
@@ -294,14 +294,14 @@ class OrderFirebaseService {
 
       // Use batch write for atomic operation
       const batch = writeBatch(db);
-      
+
       // Add order document
       const orderRef = doc(collection(db, this.collectionName));
       batch.set(orderRef, order);
 
       // Commit the batch
       await batch.commit();
-      
+
       console.log('✅ Order created with ID:', orderRef.id);
       return orderRef.id;
     } catch (error) {
@@ -320,7 +320,7 @@ class OrderFirebaseService {
         status,
         updatedAt: serverTimestamp() as Timestamp,
       });
-      
+
       console.log('✅ Order status updated successfully');
     } catch (error) {
       console.error('❌ Error updating order status:', error);
@@ -335,7 +335,7 @@ class OrderFirebaseService {
 
       const docRef = doc(db, this.collectionName, orderId);
       await deleteDoc(docRef);
-      
+
       console.log('✅ Order deleted successfully');
     } catch (error) {
       console.error('❌ Error deleting order:', error);
@@ -347,15 +347,15 @@ class OrderFirebaseService {
   async getOrdersByStatus(status: OrderStatus): Promise<Order[]> {
     try {
       console.log(`🔄 Fetching orders with status: ${status}`);
-      
+
       const ordersRef = collection(db, this.collectionName);
       const q = query(
-        ordersRef, 
+        ordersRef,
         where('status', '==', status),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const orders: Order[] = [];
       querySnapshot.forEach((doc) => {
         orders.push({
@@ -376,11 +376,11 @@ class OrderFirebaseService {
   async getRecentOrders(limit: number = 10): Promise<Order[]> {
     try {
       console.log(`🔄 Fetching ${limit} recent orders...`);
-      
+
       const ordersRef = collection(db, this.collectionName);
       const q = query(ordersRef, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      
+
       const orders: Order[] = [];
       let count = 0;
       querySnapshot.forEach((doc) => {

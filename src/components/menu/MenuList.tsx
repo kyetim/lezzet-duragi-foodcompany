@@ -20,7 +20,8 @@ export function MenuList({ items }: MenuListProps) {
             price: menuItem.price,
             quantity: 1,
             image: menuItem.image,
-            description: menuItem.description
+            description: menuItem.description,
+            category: menuItem.category
         });
     };
 

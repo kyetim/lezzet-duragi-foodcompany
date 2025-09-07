@@ -1,4 +1,5 @@
-import { menuFirebaseService, CreateMenuItemInput } from '../services/menuFirebaseService';
+import { menuFirebaseService } from '../services/menuFirebaseService';
+import type { CreateMenuItemInput } from '../services/menuFirebaseService';
 
 // Sample menu data for initialization
 const sampleMenuItems: CreateMenuItemInput[] = [

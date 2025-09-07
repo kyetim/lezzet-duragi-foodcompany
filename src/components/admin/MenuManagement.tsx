@@ -20,8 +20,8 @@ import { Badge } from '../ui/badge';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { useToast } from '../../hooks/useToast';
 import { useLoading } from '../../hooks/useLoading';
-import { 
-  menuFirebaseService, 
+import { menuFirebaseService } from '../../services/menuFirebaseService';
+import type { 
   MenuItemFirestore,
   CreateMenuItemInput,
   UpdateMenuItemInput 

@@ -76,27 +76,10 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const { success: showToastSuccess, error: showToastError } = useToast();
   const { withLoading, isLoading } = useLoading();
 
-  // SINGLE CLEAN APPROACH: Force colors with !important
-  const [isDark, setIsDark] = useState(false);
-
+  // CLEAN RESTART - Light mode only, no theme detection
   useEffect(() => {
-    const checkTheme = () => {
-      const isDarkMode = document.documentElement.classList.contains('dark') ||
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDark(isDarkMode);
-    };
-
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { attributes: true });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // ULTRA AGGRESSIVE APPROACH - CSS Variables + !important
-  useEffect(() => {
-    // Inject CSS that overrides EVERYTHING
-    const styleId = 'product-form-forced-styles';
+    // Simple static CSS for light mode only
+    const styleId = 'product-form-light-only';
     let existingStyle = document.getElementById(styleId);
     
     if (existingStyle) {
@@ -106,37 +89,42 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
-      .force-input {
-        background-color: ${isDark ? '#1F2937' : '#ffffff'} !important;
-        color: ${isDark ? '#ffffff' : '#000000'} !important;
-        border: 2px solid ${isDark ? '#6B7280' : '#374151'} !important;
-        border-radius: 6px !important;
-        padding: 8px 12px !important;
-        font-size: 14px !important;
+      .light-form-input {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #374151 !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+        font-weight: 400 !important;
         width: 100% !important;
         outline: none !important;
         box-shadow: none !important;
+        transition: border-color 0.2s !important;
       }
       
-      .force-input::placeholder {
-        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+      .light-form-input:focus {
+        border-color: #f97316 !important;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1) !important;
+      }
+      
+      .light-form-input::placeholder {
+        color: #6b7280 !important;
         opacity: 1 !important;
+        font-weight: 400 !important;
       }
       
-      .force-input::-webkit-input-placeholder {
-        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
-      }
-      
-      .force-input::-moz-placeholder {
-        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
-      }
-      
-      .force-label {
-        color: ${isDark ? '#ffffff' : '#000000'} !important;
+      .light-form-label {
+        color: #111827 !important;
         font-weight: 600 !important;
         font-size: 14px !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 6px !important;
         display: block !important;
+      }
+      
+      .light-form-error {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
       }
     `;
     
@@ -148,18 +136,25 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
         styleToRemove.remove();
       }
     };
-  }, [isDark]);
+  }, []);
   
-  // Minimal inline styles as backup
-  const forcedInputStyle = {
-    backgroundColor: isDark ? '#1F2937' : '#ffffff',
-    color: isDark ? '#ffffff' : '#000000',
-    border: `2px solid ${isDark ? '#6B7280' : '#374151'}`,
+  // Simple inline styles for light mode
+  const lightInputStyle = {
+    backgroundColor: '#ffffff',
+    color: '#000000',
+    border: '2px solid #374151',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    fontSize: '16px',
+    width: '100%',
   };
   
-  const forcedLabelStyle = {
-    color: isDark ? '#ffffff' : '#000000',
+  const lightLabelStyle = {
+    color: '#111827',
     fontWeight: '600',
+    fontSize: '14px',
+    marginBottom: '6px',
+    display: 'block',
   };
 
   // Initialize form with editing item data
@@ -371,17 +366,14 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="force-label" style={forcedLabelStyle}>Ürün Adı *</label>
+                      <label className="light-form-label" style={lightLabelStyle}>Ürün Adı *</label>
                       <input
                         type="text"
                         value={formData.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         placeholder="Örn: Tavuk Döner"
-                        className="force-input"
-                        style={{
-                          ...forcedInputStyle,
-                          border: errors.name ? '2px solid #EF4444 !important' : forcedInputStyle.border
-                        }}
+                        className={`light-form-input ${errors.name ? 'light-form-error' : ''}`}
+                        style={lightInputStyle}
                       />
                       {errors.name && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
@@ -392,18 +384,17 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="force-label" style={forcedLabelStyle}>Açıklama *</label>
+                      <label className="light-form-label" style={lightLabelStyle}>Açıklama *</label>
                       <textarea
                         value={formData.description}
                         onChange={(e) => handleInputChange('description', e.target.value)}
                         placeholder="Ürün açıklaması..."
                         rows={3}
-                        className="force-input"
+                        className={`light-form-input ${errors.description ? 'light-form-error' : ''}`}
                         style={{
-                          ...forcedInputStyle,
+                          ...lightInputStyle,
                           height: 'auto',
-                          resize: 'none',
-                          border: errors.description ? '2px solid #EF4444 !important' : forcedInputStyle.border
+                          resize: 'none'
                         }}
                       />
                       {errors.description && (
@@ -416,7 +407,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label style={forcedLabelStyle}>Fiyat (₺) *</label>
+                        <label style={lightLabelStyle}>Fiyat (₺) *</label>
                         <div className="relative">
                           <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <input
@@ -425,9 +416,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
                             placeholder="0.00"
                             style={{
-                              ...forcedInputStyle,
+                              ...lightInputStyle,
                               paddingLeft: '40px',
-                              border: errors.price ? '2px solid #EF4444 !important' : forcedInputStyle.border
+                              border: errors.price ? '2px solid #EF4444 !important' : lightInputStyle.border
                             }}
                             step="0.5"
                             min="0"
@@ -442,7 +433,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Hazırlık Süresi (dk)</label>
+                        <label className="block text-sm font-medium mb-1" style={lightLabelStyle}>Hazırlık Süresi (dk)</label>
                         <div className="relative">
                           <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <Input
@@ -450,7 +441,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             value={formData.preparationTime}
                             onChange={(e) => handleInputChange('preparationTime', parseInt(e.target.value) || 0)}
                             placeholder="0"
-                            style={forcedInputStyle}
+                            style={lightInputStyle}
                             className="pl-10"
                             min="0"
                           />
@@ -469,7 +460,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Kategori *</label>
+                      <label className="block text-sm font-medium mb-1" style={lightLabelStyle}>Kategori *</label>
                       <div className="grid grid-cols-2 gap-2">
                         {categories.map(category => (
                           <Button
@@ -500,7 +491,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           onChange={(e) => handleInputChange('isVegetarian', e.target.checked)}
                           className="rounded"
                         />
-                        <span className="text-sm" style={forcedLabelStyle}>🌱 Vejetaryen</span>
+                        <span className="text-sm" style={lightLabelStyle}>🌱 Vejetaryen</span>
                       </label>
 
                       <label className="flex items-center gap-2">
@@ -510,7 +501,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           onChange={(e) => handleInputChange('isAvailable', e.target.checked)}
                           className="rounded"
                         />
-                        <span className="text-sm" style={forcedLabelStyle}>✅ Mevcut</span>
+                        <span className="text-sm" style={lightLabelStyle}>✅ Mevcut</span>
                       </label>
                     </div>
                   </div>
@@ -528,12 +519,12 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Görsel URL *</label>
+                      <label className="block text-sm font-medium mb-1" style={lightLabelStyle}>Görsel URL *</label>
                       <Input
                         value={formData.image}
                         onChange={(e) => handleInputChange('image', e.target.value)}
                         placeholder="https://example.com/image.jpg"
-                        style={forcedInputStyle}
+                        style={lightInputStyle}
                         className={errors.image ? 'border-red-500' : ''}
                       />
                       {errors.image && (
@@ -589,7 +580,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         placeholder="Özel etiket ekle..."
-                        style={forcedInputStyle}
+                        style={lightInputStyle}
                         className="flex-1"
                         onKeyPress={(e) => e.key === 'Enter' && addTag(newTag)}
                       />
@@ -616,25 +607,25 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Kalori</label>
+                      <label className="block text-sm font-medium mb-1" style={lightLabelStyle}>Kalori</label>
                       <Input
                         type="number"
                         value={formData.calories}
                         onChange={(e) => handleInputChange('calories', parseInt(e.target.value) || 0)}
                         placeholder="0"
-                        style={forcedInputStyle}
+                        style={lightInputStyle}
                         min="0"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>İçindekiler</label>
+                      <label className="block text-sm font-medium mb-1" style={lightLabelStyle}>İçindekiler</label>
                       <div className="flex gap-2 mb-2">
                         <Input
                           value={ingredientInput}
                           onChange={(e) => setIngredientInput(e.target.value)}
                           placeholder="İçerik ekle..."
-                          style={forcedInputStyle}
+                          style={lightInputStyle}
                           className="flex-1"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {
@@ -671,13 +662,13 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Alerjenler</label>
+                      <label className="block text-sm font-medium mb-1" style={lightLabelStyle}>Alerjenler</label>
                       <div className="flex gap-2 mb-2">
                         <Input
                           value={allergenInput}
                           onChange={(e) => setAllergenInput(e.target.value)}
                           placeholder="Alerjen ekle..."
-                          style={forcedInputStyle}
+                          style={lightInputStyle}
                           className="flex-1"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {

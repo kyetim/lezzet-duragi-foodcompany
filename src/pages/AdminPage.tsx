@@ -20,11 +20,12 @@ import { Button } from '@/components/ui/button';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { DashboardOverview } from '@/components/admin/DashboardOverview';
-import { MenuManagement } from '@/components/admin/MenuManagement';
+import MenuManagement from '../components/admin/MenuManagement';
 import { OrderManagement } from '@/components/admin/OrderManagement';
 import { CustomerManagement } from '@/components/admin/CustomerManagement';
 import { AnalyticsView } from '@/components/admin/AnalyticsView';
 import { AdminSettings } from '@/components/admin/AdminSettings';
+import { initializeMenuData } from '../utils/initializeMenuData';
 
 type AdminView = 'dashboard' | 'menu' | 'orders' | 'customers' | 'analytics' | 'settings';
 
@@ -94,6 +95,16 @@ export default function AdminPage() {
 
                 const hasAdminAccess = adminEmails.includes(currentUser.email || '');
                 setIsAuthorized(hasAdminAccess);
+
+                // Initialize menu data if user is admin
+                if (hasAdminAccess) {
+                    try {
+                        await initializeMenuData();
+                    } catch (error) {
+                        console.warn('Menu initialization failed:', error);
+                        // Don't block admin access if menu initialization fails
+                    }
+                }
             } catch (error) {
                 console.error('Admin auth check error:', error);
                 setIsAuthorized(false);

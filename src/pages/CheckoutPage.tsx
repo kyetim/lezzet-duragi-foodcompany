@@ -7,6 +7,7 @@ import { useLoading } from '../hooks/useLoading';
 import { useCheckoutSteps } from '../hooks/useCheckoutSteps';
 import { userAddressService } from '../services/userService';
 import { orderService } from '../services/orderService';
+import { orderFirebaseService, type CreateOrderInput } from '../services/orderFirebaseService';
 import { Button } from '../components/ui/button';
 import { PageLoading } from '../components/ui/LoadingSpinner';
 import { CheckoutProgressIndicator } from '../components/checkout/CheckoutProgressIndicator';
@@ -150,41 +151,42 @@ export const CheckoutPage: React.FC = () => {
   const calculateTax = () => calculateSubtotal() * 0.08; // 8% tax
   const calculateTotal = () => calculateSubtotal() + calculateDeliveryFee() + calculateTax();
 
-  // Order processing
-  const processOrder = withLoading(async () => {
+  // Order processing with Firebase
+  const processOrder = withLoading(async (paymentIntentId?: string) => {
     try {
       setIsPlacingOrder(true);
 
-      const cleanOrderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'> = {
+      // Prepare Firebase order data (filter undefined values)
+      const firebaseOrderData: CreateOrderInput = {
         userId: currentUser!.uid,
-        items: cartState.items.map(item => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.image || null,
-          description: item.description || null
-        })),
-        subtotal: calculateSubtotal(),
-        deliveryFee: calculateDeliveryFee(),
-        tax: calculateTax(),
-        totalAmount: calculateTotal(),
-        deliveryAddress: {
-          ...selectedAddress!,
-          fullAddress: selectedAddress!.fullAddress || `${selectedAddress!.address}, ${selectedAddress!.district}, ${selectedAddress!.city}`
-        },
-        paymentMethod: paymentMethod === 'cash' ? 'Nakit' : 'Kredi Kartı',
-        notes: notes.trim() || null,
-        estimatedDeliveryTime: new Date(Date.now() + 45 * 60000),
-        status: 'pending' as OrderStatus,
-        paymentStatus: 'pending' as const
+        customerName: currentUser!.displayName || 'Müşteri',
+        customerEmail: currentUser!.email || '',
+        customerPhone: selectedAddress!.phone,
+        items: cartState.items,
+        deliveryAddress: selectedAddress!,
+        paymentMethod: paymentMethod,
+        estimatedDeliveryTime: 30 // minutes
       };
 
-      const orderData = Object.fromEntries(
-        Object.entries(cleanOrderData).filter(([_, value]) => value !== undefined)
-      ) as Omit<Order, 'id' | 'createdAt' | 'updatedAt'>;
+      // Add optional fields only if they have values
+      if (paymentIntentId) {
+        firebaseOrderData.paymentIntentId = paymentIntentId;
+      }
+      
+      if (notes && notes.trim()) {
+        firebaseOrderData.notes = notes.trim();
+      }
 
-      const orderId = await orderService.createOrder(orderData);
+      console.log('🔍 Debug Auth State:', {
+        currentUser: currentUser?.uid,
+        email: currentUser?.email,
+        isAuthenticated: !!currentUser
+      });
+      console.log('🔄 Creating Firebase order...', firebaseOrderData);
+
+      // Create order in Firebase
+      const orderId = await orderFirebaseService.createOrder(firebaseOrderData);
+
       clearCart();
       setCompletedOrderId(orderId);
       setShowSuccessModal(true);
@@ -196,7 +198,7 @@ export const CheckoutPage: React.FC = () => {
 
       console.log('✅ Sipariş başarıyla oluşturuldu:', orderId);
     } catch (error) {
-      console.error('Error placing order:', error);
+      console.error('❌ Error placing order:', error);
       toast.error('Sipariş Hatası', 'Sipariş verilirken bir hata oluştu. Lütfen tekrar deneyin.');
       throw error;
     } finally {
@@ -212,9 +214,9 @@ export const CheckoutPage: React.FC = () => {
     }
   };
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = async (paymentIntentId?: string) => {
     setShowPaymentModal(false);
-    await processOrder();
+    await processOrder(paymentIntentId);
   };
 
   const handleNextStep = () => {

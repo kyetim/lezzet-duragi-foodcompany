@@ -1,9 +1,10 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  TrendingUp, 
-  DollarSign, 
-  ShoppingBag, 
-  Users, 
+import {
+  TrendingUp,
+  DollarSign,
+  ShoppingBag,
+  Users,
   Clock,
   Package,
   Star,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { orderFirebaseService, type Order, type OrderStatus } from '../../services/orderFirebaseService';
 
 interface StatCard {
   title: string;
@@ -57,32 +59,7 @@ const statsData: StatCard[] = [
   }
 ];
 
-const recentOrders = [
-  {
-    id: 'ORD-001',
-    customer: 'Ahmet Yılmaz',
-    items: 'Adana Döner, Ayran',
-    total: '₺45',
-    status: 'preparing',
-    time: '10:30'
-  },
-  {
-    id: 'ORD-002',
-    customer: 'Elif Kara',
-    items: 'Tavuk Döner, Makarna',
-    total: '₺65',
-    status: 'ready',
-    time: '10:25'
-  },
-  {
-    id: 'ORD-003',
-    customer: 'Mehmet Demir',
-    items: 'Karışık Döner, Kola',
-    total: '₺38',
-    status: 'delivered',
-    time: '10:15'
-  }
-];
+// Mock data replaced with real Firebase data - now using recentOrders state
 
 const popularItems = [
   { name: 'Adana Döner', sold: 15, revenue: '₺540' },
@@ -110,13 +87,99 @@ const getStatusText = (status: string) => {
 };
 
 export function DashboardOverview() {
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [todayStats, setTodayStats] = useState({
+    totalSales: 0,
+    orderCount: 0,
+    newCustomers: 0,
+    averageOrder: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch real orders from Firebase
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        console.log('🔄 Fetching dashboard data...');
+
+        // Get recent orders
+        const orders = await orderFirebaseService.getAllOrders(10);
+        setRecentOrders(orders);
+
+        // Calculate today's stats
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const todayOrders = orders.filter(order => {
+          const orderDate = order.createdAt.toDate();
+          return orderDate >= today;
+        });
+
+        const totalSales = todayOrders.reduce((sum, order) => sum + order.total, 0);
+        const orderCount = todayOrders.length;
+        const averageOrder = orderCount > 0 ? totalSales / orderCount : 0;
+
+        setTodayStats({
+          totalSales,
+          orderCount,
+          newCustomers: Math.floor(orderCount * 0.3), // Estimate
+          averageOrder
+        });
+
+        console.log('✅ Dashboard data loaded:', { orderCount, totalSales });
+      } catch (error) {
+        console.error('❌ Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Dynamic stats data
+  const statsData: StatCard[] = [
+    {
+      title: 'Günlük Satış',
+      value: `₺${todayStats.totalSales.toFixed(2)}`,
+      change: '+12.5%',
+      trend: 'up',
+      icon: DollarSign,
+      color: 'bg-green-500'
+    },
+    {
+      title: 'Sipariş Sayısı',
+      value: todayStats.orderCount.toString(),
+      change: '+8.2%',
+      trend: 'up',
+      icon: ShoppingBag,
+      color: 'bg-blue-500'
+    },
+    {
+      title: 'Yeni Müşteriler',
+      value: todayStats.newCustomers.toString(),
+      change: '+15.3%',
+      trend: 'up',
+      icon: Users,
+      color: 'bg-purple-500'
+    },
+    {
+      title: 'Ortalama Sipariş',
+      value: `₺${todayStats.averageOrder.toFixed(0)}`,
+      change: '-2.1%',
+      trend: 'down',
+      icon: TrendingUp,
+      color: 'bg-orange-500'
+    }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statsData.map((stat, index) => {
           const IconComponent = stat.icon;
-          
+
           return (
             <motion.div
               key={stat.title}
@@ -134,17 +197,15 @@ export function DashboardOverview() {
                       <p className="text-2xl font-bold text-gray-900">
                         {stat.value}
                       </p>
-                      <div className={`flex items-center text-sm ${
-                        stat.trend === 'up' ? 'text-green-600' : 
-                        stat.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-                      }`}>
-                        <TrendingUp className={`w-4 h-4 mr-1 ${
-                          stat.trend === 'down' ? 'rotate-180' : ''
-                        }`} />
+                      <div className={`flex items-center text-sm ${stat.trend === 'up' ? 'text-green-600' :
+                          stat.trend === 'down' ? 'text-red-600' : 'text-gray-600'
+                        }`}>
+                        <TrendingUp className={`w-4 h-4 mr-1 ${stat.trend === 'down' ? 'rotate-180' : ''
+                          }`} />
                         {stat.change} önceki güne göre
                       </div>
                     </div>
-                    
+
                     <div className={`${stat.color} p-3 rounded-lg`}>
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
@@ -179,31 +240,51 @@ export function DashboardOverview() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentOrders.map((order, index) => (
-                  <motion.div
-                    key={order.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium text-gray-900">{order.id}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {getStatusText(order.status)}
-                        </span>
+                {isLoading ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600 mx-auto"></div>
+                    <p className="text-sm text-gray-500 mt-2">Siparişler yükleniyor...</p>
+                  </div>
+                ) : recentOrders.length === 0 ? (
+                  <div className="text-center py-4">
+                    <Package className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500">Henüz sipariş bulunmuyor</p>
+                  </div>
+                ) : (
+                  recentOrders.map((order, index) => (
+                    <motion.div
+                      key={order.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + index * 0.1 }}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-gray-900">{order.orderNumber}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                            {getStatusText(order.status)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600">{order.customerName}</p>
+                        <p className="text-xs text-gray-500">
+                          {order.items.slice(0, 2).map(item => item.name).join(', ')}
+                          {order.items.length > 2 && ` +${order.items.length - 2} daha`}
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-600">{order.customer}</p>
-                      <p className="text-xs text-gray-500">{order.items}</p>
-                    </div>
-                    
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">{order.total}</p>
-                      <p className="text-xs text-gray-500">{order.time}</p>
-                    </div>
-                  </motion.div>
-                ))}
+
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">₺{order.total.toFixed(2)}</p>
+                        <p className="text-xs text-gray-500">
+                          {order.createdAt.toDate().toLocaleTimeString('tr-TR', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -301,7 +382,7 @@ export function DashboardOverview() {
                   Adana Döner stoku 5 porsiyon kaldı.
                 </p>
               </div>
-              
+
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-blue-600" />

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Menu, 
-  Bell, 
-  Search, 
-  Settings, 
-  LogOut, 
+import {
+  Menu,
+  Bell,
+  Search,
+  Settings,
+  LogOut,
   User,
   ChevronDown,
   MessageSquare,
@@ -13,11 +13,11 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import type { User } from 'firebase/auth';
+import type { User as FirebaseUser } from 'firebase/auth';
 
 interface AdminHeaderProps {
   onToggleSidebar: () => void;
-  currentUser: User | null;
+  currentUser: FirebaseUser | null;
 }
 
 export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) {
@@ -129,19 +129,17 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
                   <div className="p-4 border-b border-gray-200">
                     <h3 className="font-semibold text-gray-900">Bildirimler</h3>
                   </div>
-                  
+
                   <div className="max-h-80 overflow-y-auto">
                     {mockNotifications.map((notification) => (
                       <div
                         key={notification.id}
-                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                          notification.unread ? 'bg-blue-50' : ''
-                        }`}
+                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${notification.unread ? 'bg-blue-50' : ''
+                          }`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`w-2 h-2 rounded-full mt-2 ${
-                            notification.unread ? 'bg-blue-500' : 'bg-gray-300'
-                          }`} />
+                          <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-blue-500' : 'bg-gray-300'
+                            }`} />
                           <div className="flex-1">
                             <h4 className="font-medium text-gray-900 text-sm">
                               {notification.title}
@@ -157,7 +155,7 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="p-3 text-center border-t border-gray-200">
                     <Button variant="ghost" size="sm" className="text-primary-600">
                       Tümünü Gör
@@ -178,14 +176,14 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
               <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-primary-600" />
               </div>
-              
+
               <div className="hidden md:block text-left">
                 <p className="text-sm font-medium text-gray-900">
                   {currentUser?.displayName || 'Admin'}
                 </p>
                 <p className="text-xs text-gray-500">Yönetici</p>
               </div>
-              
+
               <ChevronDown className="w-4 h-4 text-gray-400" />
             </Button>
 
@@ -208,7 +206,7 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
                       <span className="text-xs text-green-600 font-medium">Yönetici</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-2">
                     <Button
                       variant="ghost"
@@ -218,7 +216,7 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
                       <User className="w-4 h-4 mr-2" />
                       Profil Ayarları
                     </Button>
-                    
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -228,7 +226,7 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
                       Hesap Ayarları
                     </Button>
                   </div>
-                  
+
                   <div className="p-2 border-t border-gray-200">
                     <Button
                       variant="ghost"

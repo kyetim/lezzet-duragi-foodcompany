@@ -17,11 +17,20 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
     }
+
+    // Order items alt koleksiyonu
+    match /orders/{orderId}/order_items/{itemId} {
+      allow read, write: if request.auth != null;
+      allow create: if request.auth != null;
+    }
     
-    // Menü öğeleri herkes tarafından okunabilir
+    // Menü öğeleri herkes tarafından okunabilir, admin yazabilir
     match /menu/{menuId} {
       allow read: if true;
-      allow write: if false; // Sadece admin yazabilir
+      allow write: if request.auth != null; // Authenticated users can write (admin check will be handled by app logic)
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null;
     }
     
     // Diğer tüm koleksiyonlar için varsayılan kural

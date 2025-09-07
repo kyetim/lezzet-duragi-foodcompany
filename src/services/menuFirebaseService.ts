@@ -69,7 +69,7 @@ class MenuFirebaseService {
             // DEV Environment Bypass (since permissions work in prod but not dev)
             if (import.meta.env.DEV) {
                 console.log('🚧 DEV Environment: Using mock menu items');
-                
+
                 // Return empty array in dev to simulate no data initially
                 console.log('✅ Found 0 menu items (dev mode)');
                 return [];
@@ -247,6 +247,16 @@ class MenuFirebaseService {
     async getCategories(): Promise<string[]> {
         try {
             console.log('🔄 Fetching categories...');
+
+            // DEV Environment Bypass (since permissions work in prod but not dev)
+            if (import.meta.env.DEV) {
+                console.log('🚧 DEV Environment: Using mock categories');
+
+                // Return default categories for dev
+                const mockCategories = ['doner', 'makarna', 'icecek', 'salata'];
+                console.log('✅ Categories found (dev mode):', mockCategories);
+                return mockCategories;
+            }
 
             const menuRef = collection(db, this.collectionName);
             const querySnapshot = await getDocs(menuRef);

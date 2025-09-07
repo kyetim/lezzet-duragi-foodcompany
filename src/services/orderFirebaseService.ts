@@ -118,9 +118,18 @@ class OrderFirebaseService {
   }
 
   // Get all orders (for admin)
-  async getAllOrders(): Promise<Order[]> {
+  async getAllOrders(limit?: number): Promise<Order[]> {
     try {
       console.log('🔄 Fetching all orders from Firestore...');
+
+      // DEV Environment Bypass (since permissions work in prod but not dev)
+      if (import.meta.env.DEV) {
+        console.log('🚧 DEV Environment: Using mock orders');
+
+        // Return empty array in dev to simulate no data initially
+        console.log('✅ Found 0 orders (dev mode)');
+        return [];
+      }
 
       const ordersRef = collection(db, this.collectionName);
       const q = query(ordersRef, orderBy('createdAt', 'desc'));

@@ -102,7 +102,24 @@ export function DashboardOverview() {
       try {
         console.log('🔄 Fetching dashboard data...');
 
-        // Get recent orders
+        // DEV Environment Mock Data
+        if (import.meta.env.DEV) {
+          console.log('🚧 DEV Environment: Using mock dashboard data');
+          
+          setRecentOrders([]);
+          setTodayStats({
+            totalSales: 245.50,
+            orderCount: 8,
+            newCustomers: 3,
+            averageOrder: 30.69
+          });
+          
+          console.log('✅ Mock dashboard data loaded');
+          setIsLoading(false);
+          return;
+        }
+
+        // Get recent orders (production)
         const orders = await orderFirebaseService.getAllOrders(10);
         setRecentOrders(orders);
 
@@ -129,6 +146,14 @@ export function DashboardOverview() {
         console.log('✅ Dashboard data loaded:', { orderCount, totalSales });
       } catch (error) {
         console.error('❌ Error fetching dashboard data:', error);
+        
+        // Fallback to mock data on error
+        setTodayStats({
+          totalSales: 0,
+          orderCount: 0,
+          newCustomers: 0,
+          averageOrder: 0
+        });
       } finally {
         setIsLoading(false);
       }

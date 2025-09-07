@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, 
-  Save, 
-  Package, 
+import {
+  X,
+  Save,
+  Package,
   DollarSign,
   Clock,
   Tag,
@@ -75,35 +75,67 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   const { success: showToastSuccess, error: showToastError } = useToast();
   const { withLoading, isLoading } = useLoading();
-  
+
   // Direct dark mode detection from document
   const [isDark, setIsDark] = useState(false);
-  
+
   useEffect(() => {
     const checkTheme = () => {
-      const isDarkMode = document.documentElement.classList.contains('dark') || 
-                        window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDarkMode = document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDark(isDarkMode);
     };
-    
+
     checkTheme();
     // Listen for theme changes
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true });
-    
+
     return () => observer.disconnect();
   }, []);
-  
-  // Theme-based styles
+
+  // Theme-based styles - MORE AGGRESSIVE COLORS
   const inputStyle = {
-    backgroundColor: isDark ? '#374151' : '#ffffff',
+    backgroundColor: isDark ? '#1F2937' : '#ffffff',
     color: isDark ? '#ffffff' : '#000000',
-    borderColor: isDark ? '#4B5563' : '#D1D5DB',
+    borderColor: isDark ? '#6B7280' : '#9CA3AF',
+    borderWidth: '2px',
   };
   
   const labelStyle = {
-    color: isDark ? '#E5E7EB' : '#374151',
+    color: isDark ? '#ffffff' : '#000000',
+    fontWeight: '600',
   };
+
+  // Additional styles for better visibility
+  const textareaStyle = {
+    ...inputStyle,
+  };
+
+  // Add CSS for placeholder colors
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .product-form-input::placeholder {
+        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+        opacity: 1 !important;
+      }
+      .product-form-input::-webkit-input-placeholder {
+        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+      }
+      .product-form-input::-moz-placeholder {
+        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+      }
+      .product-form-input:-ms-input-placeholder {
+        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, [isDark]);
 
   // Initialize form with editing item data
   useEffect(() => {
@@ -320,7 +352,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         placeholder="Örn: Tavuk Döner"
                         style={inputStyle}
-                        className={errors.name ? 'border-red-500' : ''}
+                        className={`product-form-input ${errors.name ? 'border-red-500' : ''}`}
                       />
                       {errors.name && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">

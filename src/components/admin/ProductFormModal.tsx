@@ -276,14 +276,14 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
               <div className="space-y-4">
                 {/* Basic Info */}
                 <Card className="p-4">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
                     <FileText className="w-4 h-4" />
                     Temel Bilgiler
                   </h3>
                   
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Ürün Adı *</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Ürün Adı *</label>
                       <Input
                         value={formData.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
@@ -299,15 +299,15 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Açıklama *</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Açıklama *</label>
                       <textarea
                         value={formData.description}
                         onChange={(e) => handleInputChange('description', e.target.value)}
                         placeholder="Ürün açıklaması..."
                         rows={3}
-                        className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                        className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none ${
                           errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                        } bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
+                        } bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
                       />
                       {errors.description && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
@@ -319,7 +319,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium mb-1">Fiyat (₺) *</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Fiyat (₺) *</label>
                         <div className="relative">
                           <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <Input
@@ -341,7 +341,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium mb-1">Hazırlık Süresi (dk)</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Hazırlık Süresi (dk)</label>
                         <div className="relative">
                           <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <Input
@@ -360,14 +360,14 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                 {/* Category & Status */}
                 <Card className="p-4">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
                     <Tag className="w-4 h-4" />
                     Kategori & Durum
                   </h3>
                   
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Kategori *</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Kategori *</label>
                       <div className="grid grid-cols-2 gap-2">
                         {categories.map(category => (
                           <Button
@@ -398,7 +398,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           onChange={(e) => handleInputChange('isVegetarian', e.target.checked)}
                           className="rounded"
                         />
-                        <span className="text-sm">🌱 Vejetaryen</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">🌱 Vejetaryen</span>
                       </label>
 
                       <label className="flex items-center gap-2">
@@ -408,7 +408,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           onChange={(e) => handleInputChange('isAvailable', e.target.checked)}
                           className="rounded"
                         />
-                        <span className="text-sm">✅ Mevcut</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">✅ Mevcut</span>
                       </label>
                     </div>
                   </div>
@@ -419,14 +419,14 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
               <div className="space-y-4">
                 {/* Image */}
                 <Card className="p-4">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
                     <Camera className="w-4 h-4" />
                     Ürün Görseli
                   </h3>
                   
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Görsel URL *</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Görsel URL *</label>
                       <Input
                         value={formData.image}
                         onChange={(e) => handleInputChange('image', e.target.value)}
@@ -458,7 +458,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                 {/* Tags */}
                 <Card className="p-4">
-                  <h3 className="font-semibold mb-3">Etiketler</h3>
+                  <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Etiketler</h3>
                   
                   <div className="space-y-3">
                     <div className="flex flex-wrap gap-1">
@@ -508,11 +508,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                 {/* Additional Info */}
                 <Card className="p-4">
-                  <h3 className="font-semibold mb-3">Ek Bilgiler</h3>
+                  <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Ek Bilgiler</h3>
                   
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Kalori</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Kalori</label>
                       <Input
                         type="number"
                         value={formData.calories}
@@ -523,7 +523,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">İçindekiler</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">İçindekiler</label>
                       <div className="flex gap-2 mb-2">
                         <Input
                           value={ingredientInput}
@@ -565,7 +565,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Alerjenler</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Alerjenler</label>
                       <div className="flex gap-2 mb-2">
                         <Input
                           value={allergenInput}

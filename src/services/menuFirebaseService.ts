@@ -173,10 +173,10 @@ class MenuFirebaseService {
             // DEV Environment Bypass (since permissions work in prod but not dev)
             if (import.meta.env.DEV) {
                 console.log('🚧 DEV Environment: Using mock menu item deletion');
-                
+
                 // Simulate delay
                 await new Promise(resolve => setTimeout(resolve, 300));
-                
+
                 console.log('✅ Mock menu item deleted:', id);
                 return;
             }
@@ -199,10 +199,10 @@ class MenuFirebaseService {
             // DEV Environment Bypass (since permissions work in prod but not dev)
             if (import.meta.env.DEV) {
                 console.log('🚧 DEV Environment: Using mock availability toggle');
-                
+
                 // Simulate delay
                 await new Promise(resolve => setTimeout(resolve, 200));
-                
+
                 console.log('✅ Mock availability toggled:', id, 'to', isAvailable);
                 return;
             }

@@ -93,24 +93,73 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     return () => observer.disconnect();
   }, []);
 
-  // SINGLE STYLE APPROACH - Override everything with !important
+  // ULTRA AGGRESSIVE APPROACH - CSS Variables + !important
+  useEffect(() => {
+    // Inject CSS that overrides EVERYTHING
+    const styleId = 'product-form-forced-styles';
+    let existingStyle = document.getElementById(styleId);
+    
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .force-input {
+        background-color: ${isDark ? '#1F2937' : '#ffffff'} !important;
+        color: ${isDark ? '#ffffff' : '#000000'} !important;
+        border: 2px solid ${isDark ? '#6B7280' : '#374151'} !important;
+        border-radius: 6px !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+        width: 100% !important;
+        outline: none !important;
+        box-shadow: none !important;
+      }
+      
+      .force-input::placeholder {
+        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+        opacity: 1 !important;
+      }
+      
+      .force-input::-webkit-input-placeholder {
+        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+      }
+      
+      .force-input::-moz-placeholder {
+        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
+      }
+      
+      .force-label {
+        color: ${isDark ? '#ffffff' : '#000000'} !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        margin-bottom: 4px !important;
+        display: block !important;
+      }
+    `;
+    
+    document.head.appendChild(style);
+    
+    return () => {
+      const styleToRemove = document.getElementById(styleId);
+      if (styleToRemove) {
+        styleToRemove.remove();
+      }
+    };
+  }, [isDark]);
+  
+  // Minimal inline styles as backup
   const forcedInputStyle = {
-    backgroundColor: isDark ? '#1F2937 !important' : '#ffffff !important',
-    color: isDark ? '#ffffff !important' : '#000000 !important',
-    border: isDark ? '2px solid #6B7280 !important' : '2px solid #9CA3AF !important',
-    borderRadius: '6px',
-    padding: '8px 12px',
-    fontSize: '14px',
-    outline: 'none',
-    width: '100%',
+    backgroundColor: isDark ? '#1F2937' : '#ffffff',
+    color: isDark ? '#ffffff' : '#000000',
+    border: `2px solid ${isDark ? '#6B7280' : '#374151'}`,
   };
-
+  
   const forcedLabelStyle = {
-    color: isDark ? '#ffffff !important' : '#000000 !important',
-    fontWeight: '600 !important',
-    fontSize: '14px',
-    marginBottom: '4px',
-    display: 'block',
+    color: isDark ? '#ffffff' : '#000000',
+    fontWeight: '600',
   };
 
   // Initialize form with editing item data
@@ -322,12 +371,13 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label style={forcedLabelStyle}>Ürün Adı *</label>
+                      <label className="force-label" style={forcedLabelStyle}>Ürün Adı *</label>
                       <input
                         type="text"
                         value={formData.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         placeholder="Örn: Tavuk Döner"
+                        className="force-input"
                         style={{
                           ...forcedInputStyle,
                           border: errors.name ? '2px solid #EF4444 !important' : forcedInputStyle.border
@@ -342,12 +392,13 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label style={forcedLabelStyle}>Açıklama *</label>
+                      <label className="force-label" style={forcedLabelStyle}>Açıklama *</label>
                       <textarea
                         value={formData.description}
                         onChange={(e) => handleInputChange('description', e.target.value)}
                         placeholder="Ürün açıklaması..."
                         rows={3}
+                        className="force-input"
                         style={{
                           ...forcedInputStyle,
                           height: 'auto',

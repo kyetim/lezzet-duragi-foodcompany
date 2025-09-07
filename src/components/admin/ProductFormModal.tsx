@@ -76,66 +76,42 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const { success: showToastSuccess, error: showToastError } = useToast();
   const { withLoading, isLoading } = useLoading();
 
-  // Direct dark mode detection from document
+  // SINGLE CLEAN APPROACH: Force colors with !important
   const [isDark, setIsDark] = useState(false);
-
+  
   useEffect(() => {
     const checkTheme = () => {
-      const isDarkMode = document.documentElement.classList.contains('dark') ||
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDarkMode = document.documentElement.classList.contains('dark') || 
+                        window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDark(isDarkMode);
     };
-
+    
     checkTheme();
-    // Listen for theme changes
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true });
-
+    
     return () => observer.disconnect();
   }, []);
-
-  // Theme-based styles - MORE AGGRESSIVE COLORS
-  const inputStyle = {
-    backgroundColor: isDark ? '#1F2937' : '#ffffff',
-    color: isDark ? '#ffffff' : '#000000',
-    borderColor: isDark ? '#6B7280' : '#9CA3AF',
-    borderWidth: '2px',
+  
+  // SINGLE STYLE APPROACH - Override everything with !important
+  const forcedInputStyle = {
+    backgroundColor: isDark ? '#1F2937 !important' : '#ffffff !important',
+    color: isDark ? '#ffffff !important' : '#000000 !important',
+    border: isDark ? '2px solid #6B7280 !important' : '2px solid #9CA3AF !important',
+    borderRadius: '6px',
+    padding: '8px 12px',
+    fontSize: '14px',
+    outline: 'none',
+    width: '100%',
   };
   
-  const labelStyle = {
-    color: isDark ? '#ffffff' : '#000000',
-    fontWeight: '600',
+  const forcedLabelStyle = {
+    color: isDark ? '#ffffff !important' : '#000000 !important',
+    fontWeight: '600 !important',
+    fontSize: '14px',
+    marginBottom: '4px',
+    display: 'block',
   };
-
-  // Additional styles for better visibility
-  const textareaStyle = {
-    ...inputStyle,
-  };
-
-  // Add CSS for placeholder colors
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      .product-form-input::placeholder {
-        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
-        opacity: 1 !important;
-      }
-      .product-form-input::-webkit-input-placeholder {
-        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
-      }
-      .product-form-input::-moz-placeholder {
-        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
-      }
-      .product-form-input:-ms-input-placeholder {
-        color: ${isDark ? '#D1D5DB' : '#6B7280'} !important;
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, [isDark]);
 
   // Initialize form with editing item data
   useEffect(() => {
@@ -346,13 +322,16 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={labelStyle}>Ürün Adı *</label>
-                      <Input
+                      <label style={forcedLabelStyle}>Ürün Adı *</label>
+                      <input
+                        type="text"
                         value={formData.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         placeholder="Örn: Tavuk Döner"
-                        style={inputStyle}
-                        className={`product-form-input ${errors.name ? 'border-red-500' : ''}`}
+                        style={{
+                          ...forcedInputStyle,
+                          border: errors.name ? '2px solid #EF4444 !important' : forcedInputStyle.border
+                        }}
                       />
                       {errors.name && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
@@ -363,15 +342,18 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={labelStyle}>Açıklama *</label>
+                      <label style={forcedLabelStyle}>Açıklama *</label>
                       <textarea
                         value={formData.description}
                         onChange={(e) => handleInputChange('description', e.target.value)}
                         placeholder="Ürün açıklaması..."
                         rows={3}
-                        style={inputStyle}
-                        className={`w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none ${errors.description ? 'border-red-500' : ''
-                          }`}
+                        style={{
+                          ...forcedInputStyle,
+                          height: 'auto',
+                          resize: 'none',
+                          border: errors.description ? '2px solid #EF4444 !important' : forcedInputStyle.border
+                        }}
                       />
                       {errors.description && (
                         <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
@@ -383,16 +365,19 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium mb-1" style={labelStyle}>Fiyat (₺) *</label>
+                        <label style={forcedLabelStyle}>Fiyat (₺) *</label>
                         <div className="relative">
                           <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <Input
+                          <input
                             type="number"
                             value={formData.price}
                             onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
                             placeholder="0.00"
-                            style={inputStyle}
-                            className={`pl-10 ${errors.price ? 'border-red-500' : ''}`}
+                            style={{
+                              ...forcedInputStyle,
+                              paddingLeft: '40px',
+                              border: errors.price ? '2px solid #EF4444 !important' : forcedInputStyle.border
+                            }}
                             step="0.5"
                             min="0"
                           />

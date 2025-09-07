@@ -78,21 +78,21 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   // SINGLE CLEAN APPROACH: Force colors with !important
   const [isDark, setIsDark] = useState(false);
-  
+
   useEffect(() => {
     const checkTheme = () => {
-      const isDarkMode = document.documentElement.classList.contains('dark') || 
-                        window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDarkMode = document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDark(isDarkMode);
     };
-    
+
     checkTheme();
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true });
-    
+
     return () => observer.disconnect();
   }, []);
-  
+
   // SINGLE STYLE APPROACH - Override everything with !important
   const forcedInputStyle = {
     backgroundColor: isDark ? '#1F2937 !important' : '#ffffff !important',
@@ -104,7 +104,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     outline: 'none',
     width: '100%',
   };
-  
+
   const forcedLabelStyle = {
     color: isDark ? '#ffffff !important' : '#000000 !important',
     fontWeight: '600 !important',
@@ -391,7 +391,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium mb-1" style={labelStyle}>Hazırlık Süresi (dk)</label>
+                        <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Hazırlık Süresi (dk)</label>
                         <div className="relative">
                           <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <Input
@@ -399,7 +399,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             value={formData.preparationTime}
                             onChange={(e) => handleInputChange('preparationTime', parseInt(e.target.value) || 0)}
                             placeholder="0"
-                            style={inputStyle}
+                            style={forcedInputStyle}
                             className="pl-10"
                             min="0"
                           />
@@ -418,7 +418,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={labelStyle}>Kategori *</label>
+                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Kategori *</label>
                       <div className="grid grid-cols-2 gap-2">
                         {categories.map(category => (
                           <Button
@@ -449,7 +449,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           onChange={(e) => handleInputChange('isVegetarian', e.target.checked)}
                           className="rounded"
                         />
-                        <span className="text-sm" style={labelStyle}>🌱 Vejetaryen</span>
+                        <span className="text-sm" style={forcedLabelStyle}>🌱 Vejetaryen</span>
                       </label>
 
                       <label className="flex items-center gap-2">
@@ -459,7 +459,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           onChange={(e) => handleInputChange('isAvailable', e.target.checked)}
                           className="rounded"
                         />
-                        <span className="text-sm" style={labelStyle}>✅ Mevcut</span>
+                        <span className="text-sm" style={forcedLabelStyle}>✅ Mevcut</span>
                       </label>
                     </div>
                   </div>
@@ -477,12 +477,12 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={labelStyle}>Görsel URL *</label>
+                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Görsel URL *</label>
                       <Input
                         value={formData.image}
                         onChange={(e) => handleInputChange('image', e.target.value)}
                         placeholder="https://example.com/image.jpg"
-                        style={inputStyle}
+                        style={forcedInputStyle}
                         className={errors.image ? 'border-red-500' : ''}
                       />
                       {errors.image && (
@@ -538,7 +538,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         placeholder="Özel etiket ekle..."
-                        style={inputStyle}
+                        style={forcedInputStyle}
                         className="flex-1"
                         onKeyPress={(e) => e.key === 'Enter' && addTag(newTag)}
                       />
@@ -565,25 +565,25 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={labelStyle}>Kalori</label>
+                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Kalori</label>
                       <Input
                         type="number"
                         value={formData.calories}
                         onChange={(e) => handleInputChange('calories', parseInt(e.target.value) || 0)}
                         placeholder="0"
-                        style={inputStyle}
+                        style={forcedInputStyle}
                         min="0"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={labelStyle}>İçindekiler</label>
+                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>İçindekiler</label>
                       <div className="flex gap-2 mb-2">
                         <Input
                           value={ingredientInput}
                           onChange={(e) => setIngredientInput(e.target.value)}
                           placeholder="İçerik ekle..."
-                          style={inputStyle}
+                          style={forcedInputStyle}
                           className="flex-1"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {
@@ -620,13 +620,13 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={labelStyle}>Alerjenler</label>
+                      <label className="block text-sm font-medium mb-1" style={forcedLabelStyle}>Alerjenler</label>
                       <div className="flex gap-2 mb-2">
                         <Input
                           value={allergenInput}
                           onChange={(e) => setAllergenInput(e.target.value)}
                           placeholder="Alerjen ekle..."
-                          style={inputStyle}
+                          style={forcedInputStyle}
                           className="flex-1"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {

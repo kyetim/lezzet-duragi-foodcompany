@@ -65,29 +65,39 @@ const sampleMenuItems: CreateMenuItemInput[] = [
 export const initializeMenuData = async (): Promise<void> => {
   try {
     console.log('🔄 Initializing menu data...');
-    
+
     // Check if menu already has items
-    const existingItems = await menuFirebaseService.getAllMenuItems();
-    
-    if (existingItems.length > 0) {
-      console.log('✅ Menu already has items, skipping initialization');
-      return;
+    try {
+      const existingItems = await menuFirebaseService.getAllMenuItems();
+
+      if (existingItems.length > 0) {
+        console.log('✅ Menu already has items, skipping initialization');
+        return;
+      }
+    } catch (error) {
+      console.warn('⚠️ Could not check existing menu items, proceeding with initialization');
     }
 
     // Add sample menu items
     console.log(`📝 Adding ${sampleMenuItems.length} sample menu items...`);
-    
+
     for (const item of sampleMenuItems) {
-      await menuFirebaseService.createMenuItem(item);
-      console.log(`✅ Added: ${item.name}`);
-      
-      // Small delay to avoid rate limits
-      await new Promise(resolve => setTimeout(resolve, 100));
+      try {
+        await menuFirebaseService.createMenuItem(item);
+        console.log(`✅ Added: ${item.name}`);
+
+        // Small delay to avoid rate limits
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } catch (itemError) {
+        console.warn(`⚠️ Failed to add ${item.name}:`, itemError);
+        // Continue with other items
+      }
     }
-    
+
     console.log('🎉 Menu data initialization completed!');
   } catch (error) {
     console.error('❌ Error initializing menu data:', error);
-    throw error;
+    // Don't throw - let the app continue without menu initialization
+    console.warn('🚧 Menu initialization failed, but app will continue');
   }
 };

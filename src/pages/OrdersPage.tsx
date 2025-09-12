@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { OrderHistory } from '../components/profile/OrderHistory';
-import { orderService } from '../services/orderService';
+import { orderFirebaseService } from '../services/orderFirebaseService';
 import type { Order, UserAddress } from '../interfaces/order';
 
 export const OrdersPage: React.FC = () => {
@@ -15,10 +15,12 @@ export const OrdersPage: React.FC = () => {
     if (currentUser) {
       const fetchOrders = async () => {
         try {
-          const userOrders = await orderService.getUserOrders(currentUser.uid);
+          console.log('🔄 Fetching orders for user:', currentUser.uid);
+          const userOrders = await orderFirebaseService.getOrdersByUserId(currentUser.uid);
+          console.log('✅ Orders fetched:', userOrders.length, 'orders');
           setOrders(userOrders);
         } catch (error) {
-          console.error('Error fetching orders:', error);
+          console.error('❌ Error fetching orders:', error);
         }
       };
       

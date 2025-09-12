@@ -17,7 +17,9 @@ export interface Address {
 
 export interface UserAddress {
     id: string;
+    userId: string; // Firebase user ID
     title: string; // "Ev", "İş", "Diğer"
+    addressType: string; // Alternative to title for compatibility
     fullName: string;
     phone: string;
     address: string;

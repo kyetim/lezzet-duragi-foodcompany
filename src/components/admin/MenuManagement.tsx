@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  Search, 
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
+  Search,
   Filter,
   Package,
   Clock,
@@ -21,10 +21,10 @@ import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { useToast } from '../../hooks/useToast';
 import { useLoading } from '../../hooks/useLoading';
 import { menuFirebaseService } from '../../services/menuFirebaseService';
-import type { 
+import type {
   MenuItemFirestore,
   CreateMenuItemInput,
-  UpdateMenuItemInput 
+  UpdateMenuItemInput
 } from '../../services/menuFirebaseService';
 import ProductFormModal from './ProductFormModal';
 
@@ -54,7 +54,7 @@ const getCategoryDisplayName = (category: string) => {
   return displayMap[category.toLowerCase()] || category;
 };
 
-interface MenuManagementProps {}
+interface MenuManagementProps { }
 
 const MenuManagement: React.FC<MenuManagementProps> = () => {
   const [menuItems, setMenuItems] = useState<MenuItemFirestore[]>([]);
@@ -63,7 +63,7 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItemFirestore | null>(null);
-  
+
   const { showToast } = useToast();
   const { withLoading, isLoading } = useLoading();
 
@@ -74,7 +74,7 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
         menuFirebaseService.getAllMenuItems(),
         menuFirebaseService.getCategories()
       ]);
-      
+
       setMenuItems(items);
       setCategories(cats);
       console.log('📋 Menu data loaded:', { items: items.length, categories: cats.length });
@@ -88,14 +88,14 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
   const handleToggleAvailability = withLoading(async (id: string, currentStatus: boolean) => {
     try {
       await menuFirebaseService.toggleAvailability(id, !currentStatus);
-      
+
       // Update local state
-      setMenuItems(prev => prev.map(item => 
+      setMenuItems(prev => prev.map(item =>
         item.id === id ? { ...item, isAvailable: !currentStatus } : item
       ));
-      
+
       showToast(
-        `Ürün ${!currentStatus ? 'aktif' : 'pasif'} edildi`, 
+        `Ürün ${!currentStatus ? 'aktif' : 'pasif'} edildi`,
         'success'
       );
     } catch (error) {
@@ -112,10 +112,10 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
 
     try {
       await menuFirebaseService.deleteMenuItem(id);
-      
+
       // Update local state
       setMenuItems(prev => prev.filter(item => item.id !== id));
-      
+
       showToast('Ürün başarıyla silindi', 'success');
     } catch (error) {
       console.error('❌ Error deleting item:', error);
@@ -127,14 +127,14 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
   const handleSaveItem = (savedItem: MenuItemFirestore) => {
     if (editingItem) {
       // Update existing item in list
-      setMenuItems(prev => prev.map(item => 
+      setMenuItems(prev => prev.map(item =>
         item.id === savedItem.id ? savedItem : item
       ));
     } else {
       // Add new item to list
       setMenuItems(prev => [savedItem, ...prev]);
     }
-    
+
     // Close modal and reset editing state
     setIsModalOpen(false);
     setEditingItem(null);
@@ -156,7 +156,7 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchTerm.toLowerCase());
+      item.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -178,14 +178,14 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900">
             📋 Menü Yönetimi
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600">
             Menü ürünlerini ekleyin, düzenleyin ve yönetin
           </p>
         </div>
-        
+
         <Button
           onClick={handleNewItem}
           className="flex items-center gap-2"
@@ -200,48 +200,48 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <Package className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Package className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Toplam Ürün</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+              <p className="text-sm text-gray-600">Toplam Ürün</p>
+              <p className="text-xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </Card>
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-              <Eye className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Eye className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Aktif Ürün</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{stats.available}</p>
+              <p className="text-sm text-gray-600">Aktif Ürün</p>
+              <p className="text-xl font-bold text-gray-900">{stats.available}</p>
             </div>
           </div>
         </Card>
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-              <EyeOff className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <div className="p-2 bg-red-100 rounded-lg">
+              <EyeOff className="w-5 h-5 text-red-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Pasif Ürün</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{stats.unavailable}</p>
+              <p className="text-sm text-gray-600">Pasif Ürün</p>
+              <p className="text-xl font-bold text-gray-900">{stats.unavailable}</p>
             </div>
           </div>
         </Card>
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-              <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Kategori</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{stats.categories}</p>
+              <p className="text-sm text-gray-600">Kategori</p>
+              <p className="text-xl font-bold text-gray-900">{stats.categories}</p>
             </div>
           </div>
         </Card>
@@ -269,7 +269,7 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
             >
               <option value="all">Tüm Kategoriler</option>
               {categories.map(category => (
@@ -301,10 +301,10 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
                 <Card className="p-4">
                   <div className="flex items-center gap-4">
                     {/* Product Image */}
-                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                       {item.image ? (
-                        <img 
-                          src={item.image} 
+                        <img
+                          src={item.image}
                           alt={item.name}
                           className="w-full h-full object-cover"
                         />
@@ -316,24 +316,24 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
                     {/* Product Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                        <h3 className="font-semibold text-gray-900 truncate">
                           {item.name}
                         </h3>
-                        <Badge variant={item.isAvailable ? 'default' : 'secondary'}>
+                        <Badge variant={item.isAvailable ? 'success' : 'secondary'}>
                           {item.isAvailable ? 'Aktif' : 'Pasif'}
                         </Badge>
                         {item.isVegetarian && (
-                          <Badge variant="outline" className="text-green-600 border-green-600">
+                          <Badge variant="success">
                             🌱 Vejetaryen
                           </Badge>
                         )}
                       </div>
-                      
-                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate mb-2">
+
+                      <p className="text-sm text-gray-600 truncate mb-2">
                         {item.description}
                       </p>
-                      
-                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+
+                      <div className="flex items-center gap-4 text-xs text-gray-500">
                         <span>{getCategoryIcon(item.category)} {getCategoryDisplayName(item.category)}</span>
                         <span>₺{item.price.toFixed(2)}</span>
                         {item.preparationTime && (
@@ -396,11 +396,11 @@ const MenuManagement: React.FC<MenuManagementProps> = () => {
           {filteredItems.length === 0 && !isLoading() && (
             <Card className="p-8 text-center">
               <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Ürün Bulunamadı
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {searchTerm || selectedCategory !== 'all' 
+              <p className="text-gray-600 mb-4">
+                {searchTerm || selectedCategory !== 'all'
                   ? 'Arama kriterlerinize uygun ürün bulunamadı.'
                   : 'Henüz hiç ürün eklenmemiş.'
                 }

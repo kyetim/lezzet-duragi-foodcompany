@@ -6,7 +6,7 @@ import { useToast } from '../hooks/useToast';
 import { useLoading } from '../hooks/useLoading';
 import { useCheckoutSteps } from '../hooks/useCheckoutSteps';
 import { userAddressService } from '../services/userService';
-import { orderService } from '../services/orderService';
+// Order service removed - using Firebase directly
 import { orderFirebaseService, type CreateOrderInput } from '../services/orderFirebaseService';
 import { Button } from '../components/ui/button';
 import { PageLoading } from '../components/ui/LoadingSpinner';
@@ -83,7 +83,7 @@ export const CheckoutPage: React.FC = () => {
           {
             id: 'mock-1',
             userId: currentUser.uid,
-            addressType: 'home' as const,
+            addressType: 'home',
             title: 'Ev Adresi',
             fullName: currentUser.displayName || 'Test Kullanıcı',
             phone: '+90 555 123 4567',
@@ -98,7 +98,7 @@ export const CheckoutPage: React.FC = () => {
           {
             id: 'mock-2',
             userId: currentUser.uid,
-            addressType: 'work' as const,
+            addressType: 'work',
             title: 'İş Yeri',
             fullName: currentUser.displayName || 'Test Kullanıcı',
             phone: '+90 555 987 6543',
@@ -189,6 +189,41 @@ export const CheckoutPage: React.FC = () => {
 
       // Create order in Firebase
       const orderId = await orderFirebaseService.createOrder(firebaseOrderData);
+
+      // 🔔 Trigger admin notification (for dev mode)
+      if (import.meta.env.DEV) {
+        console.log('🔔 Triggering admin notification for new order');
+
+        const orderData = {
+          orderId: orderId,
+          customerName: selectedAddress?.fullName || currentUser?.displayName || 'Müşteri',
+          amount: calculateTotal(),
+          userId: currentUser?.uid,
+          timestamp: new Date().toISOString()
+        };
+
+        // Save to localStorage for cross-window notifications
+        localStorage.setItem('new_order_trigger', JSON.stringify(orderData));
+
+        // Dispatch custom event for same-window notification (immediate)
+        window.dispatchEvent(new CustomEvent('adminOrderNotification', {
+          detail: orderData
+        }));
+
+        // Also trigger admin panel refresh
+        window.dispatchEvent(new CustomEvent('adminOrderRefresh', {
+          detail: {
+            order: firebaseOrderData,
+            orderId: orderId,
+            type: 'new_order'
+          }
+        }));
+
+        // Also trigger storage event for other windows
+        setTimeout(() => {
+          localStorage.removeItem('new_order_trigger');
+        }, 100);
+      }
 
       clearCart();
       setCompletedOrderId(orderId);

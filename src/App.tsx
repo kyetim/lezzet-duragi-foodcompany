@@ -5,6 +5,8 @@ import { store } from '@/store';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { AdminNotificationProvider } from '@/contexts/AdminNotificationContext';
+import { UserNotificationProvider } from '@/contexts/UserNotificationContext';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { ErrorFallback } from '@/components/ui/ErrorFallback';
 import { Layout } from '@/components/layout/Layout';
@@ -40,8 +42,10 @@ function App() {
       <Provider store={store}>
           <ToastProvider>
             <AuthProvider>
-              <CartProvider>
-                <Router>
+              <AdminNotificationProvider>
+                <UserNotificationProvider>
+                  <CartProvider>
+                  <Router>
                   <SEO />
                   <ScrollToTop />
                   <ToastContainer />
@@ -129,8 +133,10 @@ function App() {
             } />
               </Routes>
             </Router>
-          </CartProvider>
-          </AuthProvider>
+                  </CartProvider>
+                </UserNotificationProvider>
+              </AdminNotificationProvider>
+            </AuthProvider>
         </ToastProvider>
       </Provider>
     </ErrorBoundary>

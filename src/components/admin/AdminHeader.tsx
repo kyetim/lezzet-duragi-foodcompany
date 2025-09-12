@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { NotificationBell } from '@/components/ui/NotificationBell';
+import { useAdminNotifications } from '@/contexts/AdminNotificationContext';
 import type { User as FirebaseUser } from 'firebase/auth';
 
 interface AdminHeaderProps {
@@ -22,37 +24,8 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) {
   const { logout } = useAuth();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useAdminNotifications();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  const mockNotifications = [
-    {
-      id: 1,
-      title: 'Yeni Sipariş',
-      message: 'Müşteri #1234 yeni sipariş verdi',
-      time: '2 dakika önce',
-      type: 'order',
-      unread: true
-    },
-    {
-      id: 2,
-      title: 'Stok Uyarısı',
-      message: 'Adana Döner stoku azalıyor',
-      time: '15 dakika önce',
-      type: 'warning',
-      unread: true
-    },
-    {
-      id: 3,
-      title: 'İnceleme',
-      message: 'Yeni müşteri yorumu geldi',
-      time: '1 saat önce',
-      type: 'review',
-      unread: false
-    }
-  ];
-
-  const unreadCount = mockNotifications.filter(n => n.unread).length;
 
   const handleLogout = async () => {
     try {
@@ -101,70 +74,13 @@ export function AdminHeader({ onToggleSidebar, currentUser }: AdminHeaderProps) 
             </Button>
           </div>
 
-          {/* Notifications */}
-          <div className="relative">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 hover:bg-gray-100"
-            >
-              <Bell className="w-5 h-5 text-gray-600" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </Button>
-
-            <AnimatePresence>
-              {showNotifications && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 top-12 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-                >
-                  <div className="p-4 border-b border-gray-200">
-                    <h3 className="font-semibold text-gray-900">Bildirimler</h3>
-                  </div>
-
-                  <div className="max-h-80 overflow-y-auto">
-                    {mockNotifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${notification.unread ? 'bg-blue-50' : ''
-                          }`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-blue-500' : 'bg-gray-300'
-                            }`} />
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-900 text-sm">
-                              {notification.title}
-                            </h4>
-                            <p className="text-gray-600 text-sm mt-1">
-                              {notification.message}
-                            </p>
-                            <p className="text-gray-400 text-xs mt-2">
-                              {notification.time}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="p-3 text-center border-t border-gray-200">
-                    <Button variant="ghost" size="sm" className="text-primary-600">
-                      Tümünü Gör
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          {/* Notifications - Real-time Notification System */}
+          <NotificationBell
+            notifications={notifications}
+            unreadCount={unreadCount}
+            onMarkAsRead={markAsRead}
+            onMarkAllAsRead={markAllAsRead}
+          />
 
           {/* User Menu */}
           <div className="relative">

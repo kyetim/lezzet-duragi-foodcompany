@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { NotificationBell } from '@/components/ui/NotificationBell';
+import { useUserNotifications } from '@/contexts/UserNotificationContext';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -16,6 +18,7 @@ export function Header({ onCartClick }: HeaderProps) {
 
   const { state } = useCart();
   const { currentUser, logout } = useAuth();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, clearNotifications } = useUserNotifications();
 
   const cartItemCount = state.itemCount;
 
@@ -81,6 +84,17 @@ export function Header({ onCartClick }: HeaderProps) {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 ml-1 sm:ml-2">
+            {/* Notifications - Only show for logged in users */}
+            {currentUser && (
+              <NotificationBell
+                notifications={notifications}
+                unreadCount={unreadCount}
+                onMarkAsRead={markAsRead}
+                onMarkAllAsRead={markAllAsRead}
+                onClearNotifications={clearNotifications}
+              />
+            )}
+
             {/* Cart */}
             <motion.button
               onClick={onCartClick}

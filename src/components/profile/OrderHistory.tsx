@@ -78,7 +78,18 @@ export const OrderHistory: React.FC<OrderHistoryProps> = ({
     }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: any) => {
+    // Firebase Timestamp check
+    if (date?.toDate) {
+      return date.toDate().toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+    // Regular Date object
     return new Date(date).toLocaleDateString('tr-TR', {
       year: 'numeric',
       month: 'long',
@@ -135,7 +146,7 @@ export const OrderHistory: React.FC<OrderHistoryProps> = ({
 
                   <div className="text-right">
                     <p className="text-lg font-semibold text-gray-900">
-                      ₺{order.totalAmount.toFixed(2)}
+                      ₺{(order.total || 0).toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-600">
                       {order.items.length} ürün

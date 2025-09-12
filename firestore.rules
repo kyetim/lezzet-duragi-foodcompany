@@ -1,41 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Kullanıcılar kendi profil bilgilerine erişebilir
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Kullanıcılar kendi adreslerine erişebilir (userAddresses koleksiyonu)
-    match /userAddresses/{addressId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
-    }
-    
-    // Kullanıcılar kendi siparişlerine erişebilir (orders koleksiyonu)
-    match /orders/{orderId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
-    }
-
-    // Order items alt koleksiyonu
-    match /orders/{orderId}/order_items/{itemId} {
-      allow read, write: if request.auth != null;
-      allow create: if request.auth != null;
-    }
-    
-    // Menü öğeleri herkes tarafından okunabilir, admin yazabilir
-    match /menu/{menuId} {
-      allow read: if true;
-      allow write: if request.auth != null; // Authenticated users can write (admin check will be handled by app logic)
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if request.auth != null;
-    }
-    
-    // Diğer tüm koleksiyonlar için varsayılan kural
+    // Development mode - full access for authenticated users
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write, create, update, delete: if request.auth != null;
     }
   }
 }

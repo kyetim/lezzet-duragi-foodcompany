@@ -14,6 +14,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { orderFirebaseService, type Order, type OrderStatus } from '../../services/orderFirebaseService';
+import { collection, query, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface StatCard {
   title: string;
@@ -24,49 +26,7 @@ interface StatCard {
   color: string;
 }
 
-const statsData: StatCard[] = [
-  {
-    title: 'Günlük Satış',
-    value: '₺1,240',
-    change: '+12.5%',
-    trend: 'up',
-    icon: DollarSign,
-    color: 'bg-green-500'
-  },
-  {
-    title: 'Sipariş Sayısı',
-    value: '23',
-    change: '+8.2%',
-    trend: 'up',
-    icon: ShoppingBag,
-    color: 'bg-blue-500'
-  },
-  {
-    title: 'Yeni Müşteriler',
-    value: '5',
-    change: '+15.3%',
-    trend: 'up',
-    icon: Users,
-    color: 'bg-purple-500'
-  },
-  {
-    title: 'Ortalama Sipariş',
-    value: '₺54',
-    change: '-2.1%',
-    trend: 'down',
-    icon: TrendingUp,
-    color: 'bg-orange-500'
-  }
-];
-
-// Mock data replaced with real Firebase data - now using recentOrders state
-
-const popularItems = [
-  { name: 'Adana Döner', sold: 15, revenue: '₺540' },
-  { name: 'Tavuk Döner', sold: 12, revenue: '₺420' },
-  { name: 'Karışık Döner', sold: 8, revenue: '₺320' },
-  { name: 'Makarna', sold: 6, revenue: '₺180' }
-];
+// All stats data is now dynamically calculated from real Firebase data
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -96,71 +56,80 @@ export function DashboardOverview() {
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch real orders from Firebase
+  // Real-time listener for dashboard data
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        console.log('🔄 Fetching dashboard data...');
+    console.log('🔄 Setting up dashboard real-time listener...');
 
-        // DEV Environment Mock Data
-        if (import.meta.env.DEV) {
-          console.log('🚧 DEV Environment: Using mock dashboard data');
-          
-          setRecentOrders([]);
-          setTodayStats({
-            totalSales: 245.50,
-            orderCount: 8,
-            newCustomers: 3,
-            averageOrder: 30.69
-          });
-          
-          console.log('✅ Mock dashboard data loaded');
-          setIsLoading(false);
-          return;
-        }
+    const ordersRef = collection(db, 'orders');
+    const ordersQuery = query(ordersRef);
 
-        // Get recent orders (production)
-        const orders = await orderFirebaseService.getAllOrders(10);
-        setRecentOrders(orders);
+    const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+      const allOrders: Order[] = [];
+      const today = new Date();
+      const todayStr = today.toDateString();
+
+      let totalSales = 0;
+      let orderCount = 0;
+      let newCustomers = 0;
+      const customers = new Set<string>();
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+
+        // Skip test orders
+        if (data.isTestOrder) return;
+
+        const order: Order = {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+          estimatedReadyAt: data.estimatedReadyAt
+        } as Order;
+
+        allOrders.push(order);
 
         // Calculate today's stats
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const orderDate = data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+        if (orderDate.toDateString() === todayStr) {
+          totalSales += data.total || 0;
+          orderCount++;
+          customers.add(data.userId);
+        }
+      });
 
-        const todayOrders = orders.filter(order => {
-          const orderDate = order.createdAt.toDate();
-          return orderDate >= today;
-        });
+      // Update recent orders (last 5)
+      const sortedOrders = allOrders
+        .sort((a, b) => {
+          const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+          const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+          return bDate.getTime() - aDate.getTime();
+        })
+        .slice(0, 5);
 
-        const totalSales = todayOrders.reduce((sum, order) => sum + order.total, 0);
-        const orderCount = todayOrders.length;
-        const averageOrder = orderCount > 0 ? totalSales / orderCount : 0;
+      setRecentOrders(sortedOrders);
 
-        setTodayStats({
-          totalSales,
-          orderCount,
-          newCustomers: Math.floor(orderCount * 0.3), // Estimate
-          averageOrder
-        });
+      // Update stats
+      setTodayStats({
+        totalSales,
+        orderCount,
+        newCustomers: customers.size,
+        averageOrder: orderCount > 0 ? totalSales / orderCount : 0
+      });
 
-        console.log('✅ Dashboard data loaded:', { orderCount, totalSales });
-      } catch (error) {
-        console.error('❌ Error fetching dashboard data:', error);
-        
-        // Fallback to mock data on error
-        setTodayStats({
-          totalSales: 0,
-          orderCount: 0,
-          newCustomers: 0,
-          averageOrder: 0
-        });
-      } finally {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
+      console.log('📊 Dashboard updated:', { orderCount, totalSales, customers: customers.size });
+    }, (error) => {
+      console.error('❌ Dashboard listener error:', error);
+      setIsLoading(false);
+    });
+
+    return () => {
+      console.log('🔚 Cleaning up dashboard listener');
+      unsubscribe();
     };
-
-    fetchDashboardData();
   }, []);
+
 
   // Dynamic stats data
   const statsData: StatCard[] = [
@@ -223,7 +192,7 @@ export function DashboardOverview() {
                         {stat.value}
                       </p>
                       <div className={`flex items-center text-sm ${stat.trend === 'up' ? 'text-green-600' :
-                          stat.trend === 'down' ? 'text-red-600' : 'text-gray-600'
+                        stat.trend === 'down' ? 'text-red-600' : 'text-gray-600'
                         }`}>
                         <TrendingUp className={`w-4 h-4 mr-1 ${stat.trend === 'down' ? 'rotate-180' : ''
                           }`} />
@@ -301,7 +270,10 @@ export function DashboardOverview() {
                       <div className="text-right">
                         <p className="font-semibold text-gray-900">₺{order.total.toFixed(2)}</p>
                         <p className="text-xs text-gray-500">
-                          {order.createdAt.toDate().toLocaleTimeString('tr-TR', {
+                          {(order.createdAt?.toDate ?
+                            order.createdAt.toDate() :
+                            new Date(order.createdAt)
+                          ).toLocaleTimeString('tr-TR', {
                             hour: '2-digit',
                             minute: '2-digit'
                           })}
@@ -315,7 +287,7 @@ export function DashboardOverview() {
           </Card>
         </motion.div>
 
-        {/* Popular Items */}
+        {/* Popular Items - Coming Soon */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -329,22 +301,12 @@ export function DashboardOverview() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {popularItems.map((item, index) => (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + index * 0.1 }}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">{item.name}</p>
-                      <p className="text-sm text-gray-600">{item.sold} adet satıldı</p>
-                    </div>
-                    <p className="font-semibold text-primary-600">{item.revenue}</p>
-                  </motion.div>
-                ))}
+              <div className="text-center py-8">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Package className="w-6 h-6 text-gray-400" />
+                </div>
+                <p className="text-gray-500 text-sm">Daha fazla sipariş geldiğinde</p>
+                <p className="text-gray-500 text-sm">popüler ürünler burada görünecek</p>
               </div>
             </CardContent>
           </Card>

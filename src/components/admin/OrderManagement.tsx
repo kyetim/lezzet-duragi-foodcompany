@@ -12,6 +12,8 @@ import {
   Eye,
   Edit
 } from 'lucide-react';
+import { onSnapshot, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { orderFirebaseService, type Order, type OrderStatus } from '../../services/orderFirebaseService';
@@ -32,20 +34,92 @@ export function OrderManagement() {
   const [filterStatus, setFilterStatus] = useState<OrderStatus | 'all'>('all');
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    console.log('🔄 Setting up real-time orders listener for admin...');
+
+    // Firebase-only system - load real orders and set up real-time listener
+    console.log('🔥 Firebase-only mode: Loading real orders');
+    const loadRealOrders = async () => {
       try {
-        console.log('🔄 Fetching orders for admin...');
-        const allOrders = await orderFirebaseService.getAllOrders(50);
-        setOrders(allOrders);
-        console.log('✅ Orders loaded:', allOrders.length);
+        const realOrders = await orderFirebaseService.getAllOrders(50);
+        setOrders(realOrders);
+        setIsLoading(false);
+        console.log('✅ Real orders loaded:', realOrders.length);
       } catch (error) {
-        console.error('❌ Error fetching orders:', error);
-      } finally {
+        console.error('❌ Error loading real orders:', error);
         setIsLoading(false);
       }
     };
+    loadRealOrders();
 
-    fetchOrders();
+    // Set up custom event listener for immediate order addition
+    const handleAdminOrderRefresh = (e: CustomEvent) => {
+      const { order, orderId, type } = e.detail;
+      console.log('🔔 Admin panel received order event:', type, orderId);
+
+      if (type === 'new_order' && order) {
+        const formattedOrder: Order = {
+          id: orderId,
+          userId: order.userId,
+          status: order.status,
+          items: order.items,
+          totalAmount: order.total,
+          deliveryAddress: order.deliveryAddress,
+          paymentMethod: order.paymentMethod,
+          createdAt: new Date(order.createdAt),
+          updatedAt: new Date(order.updatedAt)
+        };
+
+        setOrders(prevOrders => {
+          const orderExists = prevOrders.some(order => order.id === orderId);
+          if (!orderExists) {
+            console.log('✅ Adding new order to admin panel:', orderId);
+            return [formattedOrder, ...prevOrders]; // Add to top
+          }
+          return prevOrders;
+        });
+      }
+    };
+
+    window.addEventListener('adminOrderRefresh', handleAdminOrderRefresh as EventListener);
+
+    // Also set up real-time listener for new orders
+    const ordersRef = collection(db, 'orders');
+
+    const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
+      console.log('📊 Admin orders real-time update received');
+
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          const newOrder = { id: change.doc.id, ...change.doc.data() } as Order;
+          console.log('🆕 New order added to admin panel via Firestore:', newOrder.id);
+
+          setOrders(prevOrders => {
+            const orderExists = prevOrders.some(order => order.id === newOrder.id);
+            if (!orderExists) {
+              return [newOrder, ...prevOrders]; // Add to top
+            }
+            return prevOrders;
+          });
+        } else if (change.type === 'modified') {
+          const updatedOrder = { id: change.doc.id, ...change.doc.data() } as Order;
+          console.log('📝 Order updated in admin panel:', updatedOrder.id);
+
+          setOrders(prevOrders =>
+            prevOrders.map(order =>
+              order.id === updatedOrder.id ? updatedOrder : order
+            )
+          );
+        }
+      });
+    }, (error) => {
+      console.error('❌ Admin orders real-time listener error:', error);
+    });
+
+    return () => {
+      console.log('🔚 Cleaning up admin orders listener');
+      window.removeEventListener('adminOrderRefresh', handleAdminOrderRefresh as EventListener);
+      unsubscribe();
+    };
   }, []);
 
   const handleStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
@@ -166,7 +240,10 @@ export function OrderManagement() {
                             {statusInfo.label}
                           </span>
                           <span className="text-sm text-gray-500">
-                            {order.createdAt.toDate().toLocaleString('tr-TR')}
+                            {order.createdAt?.toDate ? 
+                              order.createdAt.toDate().toLocaleString('tr-TR') : 
+                              new Date(order.createdAt).toLocaleString('tr-TR')
+                            }
                           </span>
                         </div>
 

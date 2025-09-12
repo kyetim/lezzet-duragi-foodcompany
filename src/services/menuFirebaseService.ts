@@ -66,14 +66,7 @@ class MenuFirebaseService {
         try {
             console.log('🔄 Fetching all menu items from Firestore...');
 
-            // DEV Environment Bypass (since permissions work in prod but not dev)
-            if (import.meta.env.DEV) {
-                console.log('🚧 DEV Environment: Using mock menu items');
-
-                // Return empty array in dev to simulate no data initially
-                console.log('✅ Found 0 menu items (dev mode)');
-                return [];
-            }
+            // Firebase-only system - no more mock data
 
             const menuRef = collection(db, this.collectionName);
             const q = query(menuRef, orderBy('createdAt', 'desc'));
@@ -100,17 +93,7 @@ class MenuFirebaseService {
         try {
             console.log('🔄 Creating new menu item...', menuItemData);
 
-            // DEV Environment Bypass (since permissions work in prod but not dev)
-            if (import.meta.env.DEV) {
-                console.log('🚧 DEV Environment: Using mock menu item creation');
-                const mockItemId = `mock_menu_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-                // Simulate delay
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                console.log('✅ Mock menu item created:', mockItemId);
-                return mockItemId;
-            }
+            // Firebase-only system - create real menu item
 
             // Create menu item document
             const menuItem = {
@@ -137,16 +120,7 @@ class MenuFirebaseService {
             const { id, ...dataToUpdate } = updateData;
             console.log(`🔄 Updating menu item: ${id}`, dataToUpdate);
 
-            // DEV Environment Bypass (since permissions work in prod but not dev)
-            if (import.meta.env.DEV) {
-                console.log('🚧 DEV Environment: Using mock menu item update');
-
-                // Simulate delay
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                console.log('✅ Mock menu item updated:', id);
-                return;
-            }
+            // Firebase-only system - update real menu item
 
             const docRef = doc(db, this.collectionName, id);
 
@@ -170,16 +144,7 @@ class MenuFirebaseService {
         try {
             console.log(`🔄 Deleting menu item: ${id}`);
 
-            // DEV Environment Bypass (since permissions work in prod but not dev)
-            if (import.meta.env.DEV) {
-                console.log('🚧 DEV Environment: Using mock menu item deletion');
-
-                // Simulate delay
-                await new Promise(resolve => setTimeout(resolve, 300));
-
-                console.log('✅ Mock menu item deleted:', id);
-                return;
-            }
+            // Firebase-only system - delete real menu item
 
             const docRef = doc(db, this.collectionName, id);
             await deleteDoc(docRef);
@@ -196,16 +161,7 @@ class MenuFirebaseService {
         try {
             console.log(`🔄 Toggling availability for item: ${id} to ${isAvailable}`);
 
-            // DEV Environment Bypass (since permissions work in prod but not dev)
-            if (import.meta.env.DEV) {
-                console.log('🚧 DEV Environment: Using mock availability toggle');
-
-                // Simulate delay
-                await new Promise(resolve => setTimeout(resolve, 200));
-
-                console.log('✅ Mock availability toggled:', id, 'to', isAvailable);
-                return;
-            }
+            // Firebase-only system - toggle real availability
 
             const docRef = doc(db, this.collectionName, id);
             await updateDoc(docRef, {
@@ -281,15 +237,7 @@ class MenuFirebaseService {
         try {
             console.log('🔄 Fetching categories...');
 
-            // DEV Environment Bypass (since permissions work in prod but not dev)
-            if (import.meta.env.DEV) {
-                console.log('🚧 DEV Environment: Using mock categories');
-
-                // Return default categories for dev
-                const mockCategories = ['doner', 'makarna', 'icecek', 'salata'];
-                console.log('✅ Categories found (dev mode):', mockCategories);
-                return mockCategories;
-            }
+            // Firebase-only system - get real categories
 
             const menuRef = collection(db, this.collectionName);
             const querySnapshot = await getDocs(menuRef);

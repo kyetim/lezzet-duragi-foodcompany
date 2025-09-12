@@ -18,20 +18,9 @@ import type { CartItem } from '../contexts/CartContext';
 // Order Status Types
 export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'on_delivery' | 'delivered' | 'cancelled';
 
-// User Address Interface
-export interface UserAddress {
-  id: string;
-  userId: string;
-  title: string;
-  fullName: string;
-  phone: string;
-  address: string;
-  district: string;
-  city: string;
-  postalCode?: string;
-  isDefault: boolean;
-  addressType: 'home' | 'work' | 'other';
-}
+// User Address Interface - simplified to match shared interface
+import type { UserAddress as SharedUserAddress } from '../interfaces/user';
+export type UserAddress = SharedUserAddress;
 
 // Order Item Interface
 export interface OrderItem {
@@ -63,6 +52,7 @@ export interface Order {
   // Pricing
   subtotal: number;
   deliveryFee: number;
+  tax: number;
   total: number;
 
   // Delivery Info
@@ -104,11 +94,12 @@ class OrderFirebaseService {
   // Calculate order totals
   private calculateOrderTotals(items: CartItem[]) {
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const deliveryFee = subtotal >= 100 ? 0 : 15; // Free delivery over 100 TL
-    const total = subtotal + deliveryFee;
+    const deliveryFee = subtotal > 50 ? 0 : 10; // Free delivery over 50 TL (same as CheckoutPage)
+    const tax = subtotal * 0.08; // 8% tax (same as CheckoutPage)
+    const total = subtotal + deliveryFee + tax;
     const itemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    return { subtotal, deliveryFee, total, itemsCount };
+    return { subtotal, deliveryFee, tax, total, itemsCount };
   }
 
   // Generate order number
@@ -117,19 +108,36 @@ class OrderFirebaseService {
     return `ORD-${new Date().getFullYear()}-${random}`;
   }
 
+  // Clean object from undefined values recursively
+  private cleanObject(obj: any): any {
+    if (obj === null || obj === undefined) {
+      return null;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.cleanObject(item)).filter(item => item !== undefined);
+    }
+
+    if (typeof obj === 'object') {
+      const cleaned: any = {};
+      Object.keys(obj).forEach(key => {
+        const value = obj[key];
+        if (value !== undefined) {
+          cleaned[key] = this.cleanObject(value);
+        }
+      });
+      return cleaned;
+    }
+
+    return obj;
+  }
+
   // Get all orders (for admin)
-  async getAllOrders(limit?: number): Promise<Order[]> {
+  async getAllOrders(_limit?: number): Promise<Order[]> {
     try {
       console.log('🔄 Fetching all orders from Firestore...');
 
-      // DEV Environment Bypass (since permissions work in prod but not dev)
-      if (import.meta.env.DEV) {
-        console.log('🚧 DEV Environment: Using mock orders');
-
-        // Return empty array in dev to simulate no data initially
-        console.log('✅ Found 0 orders (dev mode)');
-        return [];
-      }
+      // Firebase-only system - no more mock data
 
       const ordersRef = collection(db, this.collectionName);
       const q = query(ordersRef, orderBy('createdAt', 'desc'));
@@ -219,19 +227,10 @@ class OrderFirebaseService {
         notesLength: orderData.notes?.length
       });
 
-      // DEV Environment Bypass (since permissions work in prod but not dev)
-      if (import.meta.env.DEV) {
-        console.log('🚧 DEV Environment: Using mock order creation');
-        const mockOrderId = `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      // Firebase-only system - create real order
+      console.log('🔥 Attempting to create order in Firebase...');
 
-        // Simulate delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        console.log('✅ Mock order created:', mockOrderId);
-        return mockOrderId;
-      }
-
-      const { subtotal, deliveryFee, total, itemsCount } = this.calculateOrderTotals(orderData.items);
+      const { subtotal, deliveryFee, tax, total, itemsCount } = this.calculateOrderTotals(orderData.items);
 
       // Create order document (filter out undefined values)
       const orderBase = {
@@ -243,8 +242,8 @@ class OrderFirebaseService {
         customerEmail: orderData.customerEmail,
         customerPhone: orderData.customerPhone,
 
-        // Order Items
-        items: orderData.items.map(item => ({
+        // Order Items (cleaned)
+        items: orderData.items.map(item => this.cleanObject({
           id: item.id,
           productId: item.id,
           name: item.name,
@@ -259,10 +258,11 @@ class OrderFirebaseService {
         // Pricing
         subtotal,
         deliveryFee,
+        tax,
         total,
 
         // Delivery Info
-        deliveryAddress: orderData.deliveryAddress,
+        deliveryAddress: this.cleanObject(orderData.deliveryAddress),
         estimatedDeliveryTime: orderData.estimatedDeliveryTime || 30,
 
         // Payment Info
@@ -289,21 +289,17 @@ class OrderFirebaseService {
         order.notes = orderData.notes.trim();
       }
 
-      // Final safety check: remove any undefined values that might have slipped through
-      Object.keys(order).forEach(key => {
-        if (order[key] === undefined || order[key] === null) {
-          delete order[key];
-        }
-      });
+      // Final aggressive cleaning of the entire order object
+      const finalOrder = this.cleanObject(order);
 
-      console.log('✅ Final order object (cleaned):', order);
+      console.log('🧹 Final cleaned order object:', JSON.stringify(finalOrder, null, 2));
 
       // Use batch write for atomic operation
       const batch = writeBatch(db);
 
       // Add order document
       const orderRef = doc(collection(db, this.collectionName));
-      batch.set(orderRef, order);
+      batch.set(orderRef, finalOrder);
 
       // Commit the batch
       await batch.commit();

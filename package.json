@@ -1,9 +1,17 @@
 {
   "name": "lezzet-duragi",
   "version": "1.0.0",
-  "description": "Lezzet Duragi Frontend",
+  "description": "🍖 Modern food ordering platform with admin panel - React + Firebase + TypeScript",
   "type": "module",
   "main": "index.js",
+  "homepage": "https://lezzet-duragi.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/lezzet-duragi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/lezzet-duragi/issues"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,14 +19,33 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext ts,tsx --fix"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "react",
+    "typescript",
+    "firebase",
+    "food-ordering",
+    "restaurant",
+    "admin-panel",
+    "pwa",
+    "stripe",
+    "tailwindcss",
+    "vite",
+    "modern-web-app"
+  ],
+  "author": {
+    "name": "Kadir Yetim",
+    "email": "your.email@example.com",
+    "url": "https://github.com/yourusername"
+  },
+  "license": "MIT",
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-label": "^2.1.7",

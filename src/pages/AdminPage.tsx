@@ -7,10 +7,7 @@ import {
     ShoppingBag,
     BarChart3,
     Settings,
-    Package,
-    TrendingUp,
-    Clock,
-    DollarSign
+    Package
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,6 +23,8 @@ import { CustomerManagement } from '@/components/admin/CustomerManagement';
 import { AnalyticsView } from '@/components/admin/AnalyticsView';
 import { AdminSettings } from '@/components/admin/AdminSettings';
 import { initializeMenuData } from '../utils/initializeMenuData';
+import { createOrdersCollection } from '../utils/createOrdersCollection';
+import { createTestOrder } from '../utils/createTestOrder';
 
 type AdminView = 'dashboard' | 'menu' | 'orders' | 'customers' | 'analytics' | 'settings';
 
@@ -96,13 +95,19 @@ export default function AdminPage() {
                 const hasAdminAccess = adminEmails.includes(currentUser.email || '');
                 setIsAuthorized(hasAdminAccess);
 
-                // Initialize menu data if user is admin
+                // Initialize collections if user is admin
                 if (hasAdminAccess) {
                     try {
+                        // Create a test order to initialize orders collection
+                        console.log('🔧 Initializing orders collection...');
+                        await createTestOrder();
+                        console.log('✅ Orders collection initialized with test order');
+
+                        // Initialize menu data
                         await initializeMenuData();
                     } catch (error) {
-                        console.warn('Menu initialization failed:', error);
-                        // Don't block admin access if menu initialization fails
+                        console.warn('Initialization failed:', error);
+                        // Don't block admin access if initialization fails
                     }
                 }
             } catch (error) {
@@ -190,7 +195,7 @@ export default function AdminPage() {
                 <AdminSidebar
                     isOpen={isSidebarOpen}
                     currentView={currentView}
-                    onViewChange={setCurrentView}
+                    onViewChange={(view) => setCurrentView(view as AdminView)}
                     menuItems={adminMenuItems}
                 />
 
